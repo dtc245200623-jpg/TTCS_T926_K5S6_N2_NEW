@@ -23,6 +23,16 @@ public class AuthApplication {
         return args -> {
             String encodedPassword = passwordEncoder.encode("123456@");
             
+            // Tạm thời: Reset toàn bộ mật khẩu của tất cả user về mặc định
+            java.util.List<User> allUsers = userRepository.findAll();
+            for (User u : allUsers) {
+                u.setPassword(encodedPassword);
+                u.setFailedAttempts(0);
+                u.setLockTime(null);
+            }
+            userRepository.saveAll(allUsers);
+            System.out.println(">>> Đã reset toàn bộ mật khẩu về 123456@");
+
             // Dữ liệu cho 7 vai trò hệ thống và các tài khoản yêu cầu
             String[][] userRoles = {
                 {"quantrivien@ictu.edu.vn", "ROLE_ADMIN"}, // Sẽ được xử lý cấp full quyền ở dưới

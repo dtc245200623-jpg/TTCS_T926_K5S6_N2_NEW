@@ -23,8 +23,16 @@ public class UserController {
     // Yêu cầu quyền ROLE_ADMIN cho tất cả các API quản lý tài khoản
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
-        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách người dùng thành công", userService.getAllUsers()));
+    public ResponseEntity<ApiResponse<org.springframework.data.domain.Page<UserResponse>>> getAllUsers(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách người dùng thành công", 
+                userService.getAllUsers(search, role, status, pageable)));
     }
 
     @PostMapping
@@ -56,5 +64,12 @@ public class UserController {
             return ResponseEntity.badRequest().body(ApiResponse.error("Mật khẩu mới không được để trống"));
         }
         return ResponseEntity.ok(ApiResponse.success("Đổi mật khẩu thành công", userService.adminChangePassword(id, newPassword)));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(ApiResponse.success("Xóa tài khoản thành công", null));
     }
 }

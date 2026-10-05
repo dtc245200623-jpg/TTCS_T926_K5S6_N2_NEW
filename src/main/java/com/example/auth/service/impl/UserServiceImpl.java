@@ -21,10 +21,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final com.example.auth.service.EmailService emailService;
 
     @Override
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
+    public org.springframework.data.domain.Page<UserResponse> getAllUsers(String search, String role, Boolean isLocked, org.springframework.data.domain.Pageable pageable) {
+        return userRepository.searchUsers(search, role, isLocked, pageable).map(this::mapToResponse);
     }
 
     @Override
@@ -36,15 +37,25 @@ public class UserServiceImpl implements UserService {
             throw new AppException("Username đã tồn tại");
         }
         
+        // Tạo mật khẩu ngẫu nhiên
+        String tempPassword = java.util.UUID.randomUUID().toString().substring(0, 8);
+        
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .roles(request.getRoles())
+                .fullName(request.getFullName())
+                .department(request.getDepartment())
+                .password(passwordEncoder.encode(tempPassword))
+                .roles(request.getRoles() != null && !request.getRoles().isEmpty() ? request.getRoles() : java.util.Set.of("ROLE_USER"))
                 .tokenVersion(1L)
                 .build();
         
-        return mapToResponse(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+        
+        // Gửi email kích hoạt với mật khẩu tạm
+        emailService.sendActivationEmail(savedUser.getEmail(), tempPassword);
+        
+        return mapToResponse(savedUser);
     }
 
     @Override
@@ -107,11 +118,36 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(userRepository.save(user));
     }
 
+    @Override
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException("Không tìm thấy người dùng"));
+                
+        // Không cho phép xóa tài khoản root admin
+        if (user.getRoles().contains("ROLE_ADMIN") && user.getUsername().equals("quantrihethong")) {
+            throw new AppException("Không thể xóa tài khoản quản trị viên gốc");
+        }
+        
+        // Ngăn quản trị viên tự xóa chính mình
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && user.getUsername().equals(authentication.getName())) {
+            throw new AppException("Bạn không thể tự xóa tài khoản của chính mình");
+        }
+        
+        try {
+            userRepository.delete(user);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new AppException("Không thể xóa tài khoản này vì đang có dữ liệu liên quan (công tác, hồ sơ...)");
+        }
+    }
+
     private UserResponse mapToResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .fullName(user.getFullName())
+                .department(user.getDepartment())
                 .roles(user.getRoles())
                 .isLocked(Boolean.TRUE.equals(user.getIsLocked()))
                 .createdAt(user.getCreatedAt())

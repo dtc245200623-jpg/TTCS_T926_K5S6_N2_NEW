@@ -19,7 +19,7 @@ public class JobRequestController {
     private final JobRequestService jobRequestService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('HIRING_MANAGER', 'APPROVER', 'HR_MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('HIRING_MANAGER', 'APPROVER', 'HR_MANAGER', 'ADMIN', 'CANDIDATE')")
     public ResponseEntity<ApiResponse<List<JobRequestDto>>> getAllJobRequests() {
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách thành công", jobRequestService.getAllJobRequests()));
     }

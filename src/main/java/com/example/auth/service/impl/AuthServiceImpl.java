@@ -59,8 +59,9 @@ public class AuthServiceImpl implements AuthService {
                 userRepository.save(user);
                 throw new AppException("Tài khoản đã bị khóa tạm thời. Vui lòng thử lại sau 15 phút.");
             }
+            int remainingAttempts = 5 - user.getFailedAttempts();
             userRepository.save(user);
-            throw new AppException("Tên đăng nhập hoặc mật khẩu không chính xác");
+            throw new AppException("Tên đăng nhập hoặc mật khẩu không chính xác. Bạn còn " + remainingAttempts + " lần đăng nhập sai trước khi bị khóa.");
         }
 
         if (user.getFailedAttempts() > 0 || user.getLockTime() != null) {
@@ -204,17 +205,19 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void forgotPassword(com.example.auth.dto.ForgotPasswordRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AppException("Không tìm thấy tài khoản với email này"));
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
-        // Generate 6-digit OTP
-        String otp = String.format("%06d", new java.util.Random().nextInt(999999));
-        user.setResetOtp(otp);
-        user.setResetOtpExpiry(LocalDateTime.now().plusMinutes(5));
-        userRepository.save(user);
+        if (user != null) {
+            // Generate 6-digit OTP
+            String otp = String.format("%06d", new java.util.Random().nextInt(999999));
+            user.setResetOtp(otp);
+            user.setResetOtpExpiry(LocalDateTime.now().plusMinutes(30));
+            userRepository.save(user);
 
-        // Send Email
-        emailService.sendOtpEmail(user.getEmail(), otp);
+            // Send Email
+            emailService.sendOtpEmail(user.getEmail(), otp);
+        }
+        // Nếu user không tồn tại, kết thúc im lặng để frontend vẫn hiện cùng một thông báo
     }
 
     @Override
@@ -224,7 +227,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new AppException("Không tìm thấy tài khoản với email này"));
 
         if (user.getResetOtp() == null || !user.getResetOtp().equals(request.getOtp())) {
-            throw new AppException("Mã OTP không hợp lệ");
+            throw new AppException("Mã OTP không hợp lệ hoặc đã được sử dụng");
         }
 
         if (user.getResetOtpExpiry() == null || user.getResetOtpExpiry().isBefore(LocalDateTime.now())) {

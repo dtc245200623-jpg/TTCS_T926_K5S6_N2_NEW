@@ -32,6 +32,12 @@ public class User implements UserDetails {
     @Column(name = "email", unique = true)
     private String email;
 
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "department")
+    private String department;
+
     /**
      * token_version được dùng để quản lý trạng thái hiệu lực của JWT token.
      * Khi người dùng đổi mật khẩu hoặc đăng xuất khỏi tất cả các thiết bị,

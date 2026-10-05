@@ -20,6 +20,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN u.roles r WHERE " +
+           "(:search IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(u.department) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+           "AND (:role IS NULL OR r = :role) " +
+           "AND (:isLocked IS NULL OR u.isLocked = :isLocked)")
+    org.springframework.data.domain.Page<User> searchUsers(
+            @Param("search") String search, 
+            @Param("role") String role, 
+            @Param("isLocked") Boolean isLocked, 
+            org.springframework.data.domain.Pageable pageable);
+
     /**
      * Tăng tokenVersion trực tiếp trong DB (atomic operation)
      */

@@ -13,4 +13,6 @@ public class UserResponse {
     private Set<String> roles;
     private boolean isLocked;
     private java.time.LocalDateTime createdAt;
+    private String fullName;
+    private String department;
 }

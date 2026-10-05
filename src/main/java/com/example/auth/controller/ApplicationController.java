@@ -29,7 +29,7 @@ public class ApplicationController {
         String cvUrl = null;
         if (file != null && !file.isEmpty()) {
             try {
-                java.nio.file.Path uploadDir = java.nio.file.Paths.get("FE/uploads");
+                java.nio.file.Path uploadDir = java.nio.file.Paths.get("FE/uploads").toAbsolutePath();
                 if (!java.nio.file.Files.exists(uploadDir)) {
                     java.nio.file.Files.createDirectories(uploadDir);
                 }
@@ -38,7 +38,8 @@ public class ApplicationController {
                 file.transferTo(filePath.toFile());
                 cvUrl = "uploads/" + filename;
             } catch (Exception e) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Lỗi khi tải lên file CV"));
+                e.printStackTrace();
+                return ResponseEntity.badRequest().body(ApiResponse.error("Lỗi khi tải lên file CV: " + e.getMessage()));
             }
         }
 
