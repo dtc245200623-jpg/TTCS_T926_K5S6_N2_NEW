@@ -586,15 +586,15 @@
         <div class="content-area">
             <div class="container">
                 <h1 id="pageTitle"
-                    style="text-align: center; color: #1e3a8a; font-size: 32px; font-weight: 800; margin-bottom: 10px;">
-                    Chào mừng bạn quay trở lại hệ thống</h1>
-                <div id="pageContent">
-                    <div id="welcomeAlert" style="transition: opacity 0.8s ease;">
-                        <p style="text-align: center; color: #64748b; font-size: 16px; margin-bottom: 30px;">Hôm nay bạn
-                            muốn thực hiện công việc gì?</p>
-                        <div class="tasks-grid" id="tasksContainer">
-                            <!-- Tasks generated here -->
-                        </div>
+                    style="text-align: center; color: #1e3a8a; font-size: 32px; font-weight: 800; margin-bottom: 20px;">
+                    Cấu trúc Phòng ban</h1>
+                <div id="pageContent" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <h3>Cây Sơ Đồ Tổ Chức</h3>
+                        <button onclick="openAddModal()" style="background-color: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">+ Thêm phòng ban mới</button>
+                    </div>
+                    <div id="departmentTreeContainer" style="padding-left: 10px;">
+                        Đang tải danh sách phòng ban...
                     </div>
                 </div>
             </div>
@@ -2237,6 +2237,171 @@
                 }
             }, 1000); // 1 second
         })();
+    </script>
+    <!-- Thêm Modal Thêm phòng ban -->
+    <div id="addDeptModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 8px; width: 400px; max-width: 90%;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="margin: 0;">Thêm phòng ban mới</h3>
+                <span onclick="closeAddModal()" style="cursor: pointer; font-size: 20px;">&times;</span>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Tên phòng ban</label>
+                <input type="text" id="deptName" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Mô tả</label>
+                <input type="text" id="deptDesc" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Phòng ban cha</label>
+                <select id="deptParent" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="">-- Không có (Phòng ban gốc) --</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Người phụ trách</label>
+                <select id="deptManager" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="">-- Chọn người phụ trách --</option>
+                </select>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button onclick="closeAddModal()" style="padding: 8px 16px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer;">Hủy</button>
+                <button onclick="createDept()" style="padding: 8px 16px; border: none; background: #3b82f6; color: white; border-radius: 4px; cursor: pointer;">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchDepartmentTree() {
+            try {
+                const token = localStorage.getItem('accessToken');
+                const response = await fetch('/api/departments/tree', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const res = await response.json();
+                if (res.success) {
+                    const container = document.getElementById('departmentTreeContainer');
+                    if (res.data.length === 0) {
+                        container.innerHTML = '<p>Chưa có phòng ban nào.</p>';
+                    } else {
+                        container.innerHTML = renderTree(res.data);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching tree:", error);
+            }
+        }
+
+        function renderTree(departments) {
+            let html = '<ul style="list-style-type: none; padding-left: 20px;">';
+            for (let dept of departments) {
+                let badge = dept.status === 'ACTIVE' ? '<span style="color: green; font-size:12px;">[Hoạt động]</span>' : '<span style="color: red; font-size:12px;">[Ngừng áp dụng]</span>';
+                let manager = dept.managerName ? ` (QL: ${dept.managerName})` : ' (Chưa có QL)';
+                html += `<li style="margin: 10px 0;">
+                    <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; display: inline-block; min-width: 300px; background: #f8fafc;">
+                        <strong>${dept.name}</strong> ${manager} ${badge}
+                        <div style="margin-top: 5px; font-size: 12px;">
+                            <a href="#" style="color:#3b82f6; margin-right:10px;">Gán người QL</a>
+                            <a href="#" style="color:#ef4444;" onclick="deleteDept(${dept.id})">Xóa/Vô hiệu hóa</a>
+                        </div>
+                    </div>`;
+                if (dept.children && dept.children.length > 0) {
+                    html += renderTree(dept.children);
+                }
+                html += '</li>';
+            }
+            html += '</ul>';
+            return html;
+        }
+
+        async function deleteDept(id) {
+            if(!confirm('Bạn có chắc chắn muốn xóa phòng ban này?')) return;
+            const token = localStorage.getItem('accessToken');
+            const res = await fetch(`/api/departments/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            alert(data.message);
+            fetchDepartmentTree();
+        }
+
+        // Đóng Modal
+        function closeAddModal() {
+            document.getElementById('addDeptModal').style.display = 'none';
+            document.getElementById('deptName').value = '';
+            document.getElementById('deptDesc').value = '';
+            document.getElementById('deptParent').value = '';
+            document.getElementById('deptManager').value = '';
+        }
+
+        // Tải danh sách phòng ban và user cho dropdown
+        async function loadDropdowns() {
+            const token = localStorage.getItem('accessToken');
+            const headers = { 'Authorization': `Bearer ${token}` };
+            
+            // Load Departments
+            const resDept = await fetch('/api/departments/flat', { headers });
+            const dataDept = await resDept.json();
+            if(dataDept.success) {
+                let html = '<option value="">-- Không có (Phòng ban gốc) --</option>';
+                dataDept.data.forEach(d => { html += `<option value="${d.id}">${d.name}</option>`; });
+                document.getElementById('deptParent').innerHTML = html;
+            }
+
+            // Load Users
+            const resUser = await fetch('/api/departments/users', { headers });
+            const dataUser = await resUser.json();
+            if(dataUser.success) {
+                let html = '<option value="">-- Chọn người phụ trách --</option>';
+                dataUser.data.forEach(u => { html += `<option value="${u.id}">${u.fullName}</option>`; });
+                document.getElementById('deptManager').innerHTML = html;
+            }
+        }
+
+        // Mở Modal (có load dropdown)
+        function openAddModal() {
+            loadDropdowns();
+            document.getElementById('addDeptModal').style.display = 'flex';
+        }
+
+        // Gọi API Tạo phòng ban
+        async function createDept() {
+            const name = document.getElementById('deptName').value;
+            const desc = document.getElementById('deptDesc').value;
+            const parentId = document.getElementById('deptParent').value;
+            const managerId = document.getElementById('deptManager').value;
+            
+            if(!name) { alert('Vui lòng nhập tên phòng ban'); return; }
+
+            const payload = { name: name, description: desc };
+            if(parentId) payload.parentId = parseInt(parentId);
+            if(managerId) payload.managerId = parseInt(managerId);
+
+            const token = localStorage.getItem('accessToken');
+            const res = await fetch('/api/departments', {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if(data.success) {
+                alert('Tạo phòng ban thành công!');
+                closeAddModal();
+                fetchDepartmentTree(); // Load lại cây
+            } else {
+                alert(data.message || 'Có lỗi xảy ra');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDepartmentTree();
+        });
     </script>
 </body>
 

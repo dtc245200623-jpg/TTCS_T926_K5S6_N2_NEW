@@ -586,15 +586,22 @@
         <div class="content-area">
             <div class="container">
                 <h1 id="pageTitle"
-                    style="text-align: center; color: #1e3a8a; font-size: 32px; font-weight: 800; margin-bottom: 10px;">
-                    Chào mừng bạn quay trở lại hệ thống</h1>
-                <div id="pageContent">
-                    <div id="welcomeAlert" style="transition: opacity 0.8s ease;">
-                        <p style="text-align: center; color: #64748b; font-size: 16px; margin-bottom: 30px;">Hôm nay bạn
-                            muốn thực hiện công việc gì?</p>
-                        <div class="tasks-grid" id="tasksContainer">
-                            <!-- Tasks generated here -->
-                        </div>
+                    style="text-align: center; color: #1e3a8a; font-size: 32px; font-weight: 800; margin-bottom: 20px;">
+                    Danh mục Dữ liệu (Master Data)</h1>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;">
+                    <button id="btn-salary" class="tab-btn" onclick="showTab('salary')" style="padding: 10px 20px; border: none; background: #3b82f6; color: white; border-radius: 4px; cursor: pointer;">Dải lương</button>
+                    <button id="btn-competency" class="tab-btn" onclick="showTab('competency')" style="padding: 10px 20px; border: none; background: #64748b; color: white; border-radius: 4px; cursor: pointer;">Khung năng lực</button>
+                    <button id="btn-question" class="tab-btn" onclick="showTab('question')" style="padding: 10px 20px; border: none; background: #64748b; color: white; border-radius: 4px; cursor: pointer;">Câu hỏi phỏng vấn</button>
+                </div>
+
+                <div id="pageContent" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <h3 id="tabTitle">Quản lý Dải lương</h3>
+                        <button onclick="openModal()" style="background-color: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">+ Thêm mới</button>
+                    </div>
+                    <div id="dataContainer" style="padding-left: 10px;">
+                        Đang tải dữ liệu...
                     </div>
                 </div>
             </div>
@@ -2237,6 +2244,170 @@
                 }
             }, 1000); // 1 second
         })();
+    </script>
+    <!-- Modal Thêm Dải lương -->
+    <div id="modalSalary" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 8px; width: 400px; max-width: 90%;">
+            <h3>Thêm Dải lương</h3>
+            <div class="form-group" style="margin-bottom: 15px;"><label>Chức danh</label><input type="text" id="salJob" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+            <div class="form-group" style="margin-bottom: 15px;"><label>Lương Min</label><input type="number" id="salMin" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+            <div class="form-group" style="margin-bottom: 15px;"><label>Lương Max</label><input type="number" id="salMax" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;"><button onclick="closeModal('modalSalary')">Hủy</button><button onclick="createSalary()">Lưu</button></div>
+        </div>
+    </div>
+    
+    <!-- Modal Khung năng lực -->
+    <div id="modalCompetency" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 8px; width: 400px; max-width: 90%;">
+            <h3>Thêm Khung năng lực</h3>
+            <div class="form-group" style="margin-bottom: 15px;"><label>Tên năng lực</label><input type="text" id="compName" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+            <div class="form-group" style="margin-bottom: 15px;"><label>Mô tả</label><input type="text" id="compDesc" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;"><button onclick="closeModal('modalCompetency')">Hủy</button><button onclick="createCompetency()">Lưu</button></div>
+        </div>
+    </div>
+    
+    <!-- Modal Câu hỏi -->
+    <div id="modalQuestion" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 8px; width: 400px; max-width: 90%;">
+            <h3>Thêm Câu hỏi phỏng vấn</h3>
+            <div class="form-group" style="margin-bottom: 15px;"><label>Nội dung câu hỏi</label><input type="text" id="qContent" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+            <div class="form-group" style="margin-bottom: 15px;"><label>Gợi ý trả lời</label><input type="text" id="qAnswer" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;"><button onclick="closeModal('modalQuestion')">Hủy</button><button onclick="createQuestion()">Lưu</button></div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'salary';
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.style.background = '#64748b');
+            document.getElementById('btn-' + tab).style.background = '#3b82f6';
+            
+            if (tab === 'salary') document.getElementById('tabTitle').innerText = 'Quản lý Dải lương';
+            if (tab === 'competency') document.getElementById('tabTitle').innerText = 'Quản lý Khung năng lực';
+            if (tab === 'question') document.getElementById('tabTitle').innerText = 'Ngân hàng Câu hỏi phỏng vấn';
+            
+            fetchData();
+        }
+
+        async function fetchData() {
+            const token = localStorage.getItem('accessToken');
+            let endpoint = '';
+            if (currentTab === 'salary') endpoint = '/api/master-data/salary-ranges';
+            if (currentTab === 'competency') endpoint = '/api/master-data/competencies';
+            if (currentTab === 'question') endpoint = '/api/master-data/questions';
+
+            try {
+                const response = await fetch(endpoint, { headers: { 'Authorization': `Bearer ${token}` } });
+                const res = await response.json();
+                const container = document.getElementById('dataContainer');
+                
+                if (!res.data || res.data.length === 0) {
+                    container.innerHTML = '<p>Chưa có dữ liệu nào ở mục này.</p>';
+                    return;
+                }
+
+                let html = '<ul style="list-style-type: none; padding: 0;">';
+                for (let item of res.data) {
+                    let badge = item.status === 'ACTIVE' ? '<span style="color: green; font-size:12px;">[Hoạt động]</span>' : '<span style="color: red; font-size:12px;">[Ngừng áp dụng]</span>';
+                    
+                    let content = '';
+                    if (currentTab === 'salary') {
+                        content = `<strong>Chức danh: ${item.jobTitleName}</strong><br><span style="color:#64748b;font-size:14px;">Lương Min: ${item.minSalary} | Lương Max: ${item.maxSalary}</span>`;
+                    } else if (currentTab === 'competency') {
+                        content = `<strong>${item.name}</strong><br><span style="color:#64748b;font-size:14px;">Mô tả: ${item.description || ''}</span>`;
+                    } else {
+                        content = `<strong>Q: ${item.questionContent}</strong><br><span style="color:#64748b;font-size:14px;">Gợi ý trả lời: ${item.suggestedAnswer || ''}</span>`;
+                    }
+
+                    html += `<li style="margin: 10px 0;">
+                        <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
+                            ${content} ${badge}
+                            <div style="margin-top: 10px; font-size: 12px;">
+                                <a href="#" style="color:#ef4444;" onclick="deleteData(${item.id})">Xóa/Vô hiệu hóa</a>
+                            </div>
+                        </div>
+                    </li>`;
+                }
+                html += '</ul>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function deleteData(id) {
+            if(!confirm('Bạn có chắc chắn muốn vô hiệu hóa bản ghi này?')) return;
+            const token = localStorage.getItem('accessToken');
+            let endpoint = '';
+            if (currentTab === 'salary') endpoint = `/api/master-data/salary-ranges/${id}`;
+            if (currentTab === 'competency') endpoint = `/api/master-data/competencies/${id}`;
+            if (currentTab === 'question') endpoint = `/api/master-data/questions/${id}`;
+
+            await fetch(endpoint, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+            fetchData();
+        }
+
+        function openModal() {
+            if (currentTab === 'salary') document.getElementById('modalSalary').style.display = 'flex';
+            if (currentTab === 'competency') document.getElementById('modalCompetency').style.display = 'flex';
+            if (currentTab === 'question') document.getElementById('modalQuestion').style.display = 'flex';
+        }
+        function closeModal(id) { 
+            document.getElementById(id).style.display = 'none'; 
+        }
+
+        async function createSalary() {
+            const token = localStorage.getItem('accessToken');
+            const body = {
+                jobTitleName: document.getElementById('salJob').value,
+                minSalary: document.getElementById('salMin').value,
+                maxSalary: document.getElementById('salMax').value
+            };
+            if(!body.jobTitleName) return alert('Vui lòng nhập tên chức danh');
+            await fetch('/api/master-data/salary-ranges', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            closeModal('modalSalary');
+            fetchData();
+        }
+
+        async function createCompetency() {
+            const token = localStorage.getItem('accessToken');
+            const body = {
+                name: document.getElementById('compName').value,
+                description: document.getElementById('compDesc').value
+            };
+            if(!body.name) return alert('Vui lòng nhập tên năng lực');
+            await fetch('/api/master-data/competencies', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            closeModal('modalCompetency');
+            fetchData();
+        }
+
+        async function createQuestion() {
+            const token = localStorage.getItem('accessToken');
+            const body = {
+                questionContent: document.getElementById('qContent').value,
+                suggestedAnswer: document.getElementById('qAnswer').value
+            };
+            if(!body.questionContent) return alert('Vui lòng nhập nội dung câu hỏi');
+            await fetch('/api/master-data/questions', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            closeModal('modalQuestion');
+            fetchData();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { fetchData(); });
     </script>
 </body>
 

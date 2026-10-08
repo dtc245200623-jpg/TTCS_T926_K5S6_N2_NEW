@@ -44,7 +44,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh-token", "/api/auth/forgot-password", "/api/auth/reset-password", "/h2-console/**").permitAll()
-                .requestMatchers("/", "/login.html", "/dashboard.html", "/users.html", "/forgot-password.html", "/*.css", "/*.js", "/images/**", "/*.png", "/*.jpg").permitAll()
+                .requestMatchers("/", "/login.html", "/dashboard.html", "/users.html", "/forgot-password.html", "/departments.html", "/job-titles.html", "/master-data.html", "/*.css", "/*.js", "/images/**", "/*.png", "/*.jpg").permitAll()
                 .requestMatchers("/api/auth/change-password", "/api/auth/revoke-sessions", "/api/auth/logout").authenticated()
                 .anyRequest().authenticated()
             )

@@ -5,12 +5,12 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:sqlserver://localhost\SQLEXPRESS02;databaseName=TTCS_T926_K5S6_N2;encrypt=true;trustServerCertificate=true
-    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
     username: sa
-    password: 123
+    password: password
   jpa:
-    database-platform: org.hibernate.dialect.SQLServerDialect
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
