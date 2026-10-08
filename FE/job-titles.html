@@ -586,15 +586,15 @@
         <div class="content-area">
             <div class="container">
                 <h1 id="pageTitle"
-                    style="text-align: center; color: #1e3a8a; font-size: 32px; font-weight: 800; margin-bottom: 10px;">
-                    Chào mừng bạn quay trở lại hệ thống</h1>
-                <div id="pageContent">
-                    <div id="welcomeAlert" style="transition: opacity 0.8s ease;">
-                        <p style="text-align: center; color: #64748b; font-size: 16px; margin-bottom: 30px;">Hôm nay bạn
-                            muốn thực hiện công việc gì?</p>
-                        <div class="tasks-grid" id="tasksContainer">
-                            <!-- Tasks generated here -->
-                        </div>
+                    style="text-align: center; color: #1e3a8a; font-size: 32px; font-weight: 800; margin-bottom: 20px;">
+                    Quản lý Chức danh</h1>
+                <div id="pageContent" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <h3>Danh sách Chức danh</h3>
+                        <button onclick="openAddModal()" style="background-color: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">+ Thêm chức danh mới</button>
+                    </div>
+                    <div id="jobTitleContainer" style="padding-left: 10px;">
+                        Đang tải danh sách chức danh...
                     </div>
                 </div>
             </div>
@@ -2237,6 +2237,121 @@
                 }
             }, 1000); // 1 second
         })();
+    </script>
+    <!-- Thêm Modal Thêm chức danh -->
+    <div id="addDeptModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 8px; width: 400px; max-width: 90%;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="margin: 0;">Thêm chức danh mới</h3>
+                <span onclick="closeAddModal()" style="cursor: pointer; font-size: 20px;">&times;</span>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Tên chức danh</label>
+                <input type="text" id="jobName" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Mô tả</label>
+                <input type="text" id="jobDesc" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button onclick="closeAddModal()" style="padding: 8px 16px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer;">Hủy</button>
+                <button onclick="createJobTitle()" style="padding: 8px 16px; border: none; background: #3b82f6; color: white; border-radius: 4px; cursor: pointer;">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchJobTitles() {
+            try {
+                const token = localStorage.getItem('accessToken');
+                const response = await fetch('/api/job-titles', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const res = await response.json();
+                if (res.success) {
+                    const container = document.getElementById('jobTitleContainer');
+                    if (res.data.length === 0) {
+                        container.innerHTML = '<p>Chưa có chức danh nào.</p>';
+                    } else {
+                        container.innerHTML = renderList(res.data);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching job titles:", error);
+            }
+        }
+
+        function renderList(jobTitles) {
+            let html = '<ul style="list-style-type: none; padding: 0;">';
+            for (let job of jobTitles) {
+                let badge = job.status === 'ACTIVE' ? '<span style="color: green; font-size:12px;">[Hoạt động]</span>' : '<span style="color: red; font-size:12px;">[Ngừng áp dụng]</span>';
+                html += `<li style="margin: 10px 0;">
+                    <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
+                        <strong>${job.name}</strong> ${badge}
+                        <p style="font-size: 14px; color: #64748b; margin-top: 5px;">${job.description || ''}</p>
+                        <div style="margin-top: 10px; font-size: 12px;">
+                            <a href="#" style="color:#ef4444;" onclick="deleteJob(${job.id})">Xóa/Vô hiệu hóa</a>
+                        </div>
+                    </div>
+                </li>`;
+            }
+            html += '</ul>';
+            return html;
+        }
+
+        async function deleteJob(id) {
+            if(!confirm('Bạn có chắc chắn muốn xóa chức danh này?')) return;
+            const token = localStorage.getItem('accessToken');
+            const res = await fetch(`/api/job-titles/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            alert(data.message);
+            fetchJobTitles();
+        }
+
+        // Mở Modal
+        function openAddModal() {
+            document.getElementById('addDeptModal').style.display = 'flex';
+        }
+
+        // Đóng Modal
+        function closeAddModal() {
+            document.getElementById('addDeptModal').style.display = 'none';
+            document.getElementById('jobName').value = '';
+            document.getElementById('jobDesc').value = '';
+        }
+
+        // Gọi API Tạo chức danh
+        async function createJobTitle() {
+            const name = document.getElementById('jobName').value;
+            const desc = document.getElementById('jobDesc').value;
+            if(!name) { alert('Vui lòng nhập tên chức danh'); return; }
+
+            const token = localStorage.getItem('accessToken');
+            const res = await fetch('/api/job-titles', {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ name: name, description: desc })
+            });
+            const data = await res.json();
+            if(data.success) {
+                alert('Tạo chức danh thành công!');
+                closeAddModal();
+                fetchJobTitles(); // Load lại
+            } else {
+                alert(data.message || 'Có lỗi xảy ra');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchJobTitles();
+        });
     </script>
 </body>
 
