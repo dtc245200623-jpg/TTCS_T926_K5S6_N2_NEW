@@ -1,2358 +1,311 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Tuyển dụng Nội bộ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Quản lý Danh mục Chức danh</title>
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: url('images/bg-interview.jpg') no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.4);
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.03);
-            z-index: 10;
-        }
-
-        .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sidebar-header h2 {
-            font-size: 18px;
-            color: #1e3a8a;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .sidebar-menu {
-            padding: 20px 10px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: #475569;
-            text-decoration: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 6px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.9);
-            color: #2563eb;
-            transform: translateX(4px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-        }
-
-        .menu-item.active {
-            background: #2563eb;
-            color: white;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .menu-item.active svg {
-            stroke: white;
-        }
-
-        /* Main Content */
-        .main-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(12px);
-            padding: 16px 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            z-index: 5;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: #1e293b;
-            font-size: 14px;
-            text-align: right;
-        }
-
-        .user-role-badge {
-            display: block;
-            font-size: 12px;
-            color: #64748b;
-            font-weight: 400;
-            margin-top: 2px;
-        }
-
-        .btn-logout {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 13px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-logout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-        }
-
-        .content-area {
-            padding: 30px;
-            flex: 1;
-            overflow-y: auto;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 30px 20px;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            padding: 32px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            border: 1px solid var(--border);
         }
 
         h1 {
-            color: #1e293b;
-            font-size: 26px;
-            margin-bottom: 24px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .tasks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-        }
-
-        .task-card {
-            background: white;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-            transition: all 0.3s ease;
-        }
-
-        .task-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.05);
-            border-color: #cbd5e1;
-        }
-
-        .task-title {
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 10px;
-            font-size: 17px;
-        }
-
-        .task-desc {
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        /* SPA UI Components */
-        .form-group {
+            font-size: 22px;
             margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
         }
 
         .form-group label {
-            display: block;
-            font-weight: 500;
-            font-size: 14px;
-            margin-bottom: 8px;
-            color: #334155;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-sub);
         }
 
         .form-control {
-            width: 100%;
-            padding: 14px 18px;
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
+            padding: 10px;
             font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             outline: none;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
         }
 
         .form-control:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-            background: white;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background-color: var(--primary);
             color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            background-color: var(--primary-hover);
         }
 
-        .data-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 10px;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: 16px;
-            border-bottom: 2px solid #e2e8f0;
-            color: #64748b;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .data-table td {
-            padding: 16px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-            color: #334155;
-        }
-
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .data-table tr {
-            transition: all 0.2s ease;
-        }
-
-        .data-table tr:hover td {
-            background: rgba(248, 250, 252, 0.8);
-        }
-
-        .status-badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .status-pending {
-            background: #fef9c3;
-            color: #a16207;
-        }
-
-        .status-active {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-locked {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .card-view {
-            background: white;
-            padding: 28px;
-            border-radius: 16px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            margin-bottom: 24px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-        }
-
-        /* Chatbot UI */
-        .chatbot-fab {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
-        }
-
-        .chatbot-fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 30px rgba(79, 70, 229, 0.5);
-        }
-
-        .chatbot-fab svg {
-            width: 28px;
-            height: 28px;
+        .btn-danger {
+            background-color: var(--danger);
             color: white;
-            fill: currentColor;
+            padding: 6px 12px;
+            font-size: 12px;
         }
 
-        .chatbot-window {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            width: 350px;
-            height: 500px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px) scale(0.95);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .chatbot-window.open {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0) scale(1);
-        }
-
-        .chatbot-header {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            padding: 20px;
+        .btn-warning {
+            background-color: var(--warning);
             color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+            margin-right: 4px;
+        }
+
+        .toolbar {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        .chatbot-header h3 {
-            font-size: 16px;
+        .search-box {
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-sub);
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .chatbot-close {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: 0.2s;
-            display: flex;
+        .badge-level {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: #e0f2fe;
+            color: #0369a1;
         }
 
-        .chatbot-close:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        .chatbot-messages {
-            flex: 1;
+        .empty-row {
+            text-align: center;
+            color: var(--text-sub);
             padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            background: #f8fafc;
-        }
-
-        .chat-msg {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 14px;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-
-        .chat-msg.bot {
-            background: white;
-            color: #1e293b;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-            border: 1px solid #e2e8f0;
-        }
-
-        .chat-msg.user {
-            background: #4f46e5;
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
-        }
-
-        .chatbot-input-area {
-            padding: 16px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .chatbot-input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 1px solid #cbd5e1;
-            border-radius: 20px;
-            font-size: 14px;
-            outline: none;
-            transition: 0.2s;
-            background: #f8fafc;
-        }
-
-        .chatbot-input:focus {
-            border-color: #4f46e5;
-            background: white;
-        }
-
-        .chatbot-send {
-            background: #4f46e5;
-            color: white;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.2s;
-            flex-shrink: 0;
-        }
-
-        .chatbot-send:hover {
-            background: #4338ca;
-            transform: scale(1.05);
-        }
-
-        .chatbot-send svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 12px 16px;
-            background: white;
-            border-radius: 16px;
-            border-bottom-left-radius: 4px;
-            align-self: flex-start;
-            border: 1px solid #e2e8f0;
-            align-items: center;
-        }
-
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            background: #94a3b8;
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out both;
-        }
-
-        .typing-dot:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-
-        @keyframes typing {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0);
-            }
-
-            40% {
-                transform: scale(1);
-            }
         }
     </style>
 </head>
-
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                </path>
-            </svg>
-            <h2>Tuyển dụng Nội bộ</h2>
-        </div>
-        <div class="sidebar-menu" id="sidebarMenu">
-            <!-- Menu items will be generated here -->
-        </div>
-    </div>
+    <div class="container">
+        <h1>Quản lý Danh mục Chức danh</h1>
 
-    <div class="main-wrapper">
-        <div class="header">
-            <div class="user-info">
-                <div>
-                    <div class="user-name" id="displayUsername">Đang tải...</div>
-                    <div class="user-role-badge" id="displayRoles">...</div>
+        <!-- Form Thêm / Sửa -->
+        <form id="jobTitleForm" onsubmit="saveJobTitle(event)">
+            <input type="hidden" id="editIndex" value="-1">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="titleCode">Mã chức danh *</label>
+                    <input type="text" id="titleCode" class="form-control" placeholder="VD: DEV_01" required>
                 </div>
-                <button title="Đổi mật khẩu"
-                    style="background: none; border: none; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center; padding: 8px;"
-                    onclick="openChangePasswordModal()" onmouseover="this.style.color='#2563eb'"
-                    onmouseout="this.style.color='#64748b'">
-                    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-                        </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z">
-                        </path>
-                    </svg>
-                </button>
-                <button class="btn-logout" id="logoutBtn">Đăng xuất</button>
-            </div>
-        </div>
-
-        <div class="content-area">
-            <div class="container">
-                <h1 id="pageTitle"
-                    style="text-align: center; color: #1e3a8a; font-size: 32px; font-weight: 800; margin-bottom: 20px;">
-                    Quản lý Chức danh</h1>
-                <div id="pageContent" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                        <h3>Danh sách Chức danh</h3>
-                        <button onclick="openAddModal()" style="background-color: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">+ Thêm chức danh mới</button>
-                    </div>
-                    <div id="jobTitleContainer" style="padding-left: 10px;">
-                        Đang tải danh sách chức danh...
-                    </div>
+                <div class="form-group">
+                    <label for="titleName">Tên chức danh *</label>
+                    <input type="text" id="titleName" class="form-control" placeholder="VD: Lập trình viên" required>
+                </div>
+                <div class="form-group">
+                    <label for="titleLevel">Cấp bậc *</label>
+                    <select id="titleLevel" class="form-control" required>
+                        <option value="">-- Chọn cấp bậc --</option>
+                        <option value="Intern/Fresher">Intern/Fresher</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Middle">Middle</option>
+                        <option value="Senior">Senior</option>
+                        <option value="Lead/Manager">Lead/Manager</option>
+                    </select>
+                </div>
+                <div class="form-group" style="justify-content: flex-end;">
+                    <button type="submit" id="btnSubmit" class="btn btn-primary">Thêm chức danh</button>
                 </div>
             </div>
-        </div>
-    </div>
+        </form>
 
-    <!-- Chatbot Widget -->
-    <div class="chatbot-fab" id="chatbotFab" onclick="toggleChatbot()">
-        <svg viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path>
-        </svg>
-    </div>
+        <!-- Tìm kiếm và Lọc -->
+        <div class="toolbar">
+            <input type="text" id="searchInput" class="form-control search-box" placeholder="Tìm kiếm theo mã hoặc tên chức danh..." oninput="renderTable()">
+            <select id="filterLevel" class="form-control" style="width: 200px;" onchange="renderTable()">
+                <option value="">Tất cả cấp bậc</option>
+                <option value="Intern/Fresher">Intern/Fresher</option>
+                <option value="Junior">Junior</option>
+                <option value="Middle">Middle</option>
+                <option value="Senior">Senior</option>
+                <option value="Lead/Manager">Lead/Manager</option>
+            </select>
+        </div>
 
-    <div class="chatbot-window" id="chatbotWindow">
-        <div class="chatbot-header">
-            <div>
-                <h3 style="margin-bottom: 2px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg> Trợ lý Tuyển dụng</h3>
-                <div style="font-size: 11px; opacity: 0.9;">Hotline hỗ trợ: 000887765414</div>
-            </div>
-            <button class="chatbot-close" onclick="toggleChatbot()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 6L6 18M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        <div class="chatbot-messages" id="chatbotMessages">
-            <div class="chat-msg bot">Xin chào! Tôi là Trợ lý Ảo. Tôi có thể giúp gì cho bạn hôm nay? (Hotline HT:
-                000887765414)</div>
-        </div>
-        <div class="chatbot-input-area">
-            <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Nhập tin nhắn..."
-                onkeypress="handleChatbotKeyPress(event)">
-            <button class="chatbot-send" onclick="sendChatbotMessage()">
-                <svg viewBox="0 0 24 24">
-                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
-                </svg>
-            </button>
-        </div>
-    </div>
-
-    <!-- Modal Đổi Mật Khẩu -->
-    <div id="changePasswordModal" class="modal">
-        <div class="modal-content" style="max-width: 400px; padding: 24px;">
-            <div class="modal-header"
-                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
-                <h2 style="font-size: 18px; color: #1e293b; margin: 0;">Đổi Mật Khẩu</h2>
-                <span class="close-modal" onclick="closeChangePasswordModal()"
-                    style="cursor: pointer; font-size: 24px; color: #94a3b8;">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="changePasswordForm">
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label
-                            style="display: block; margin-bottom: 8px; color: #475569; font-size: 14px; font-weight: 500;">Mật
-                            khẩu hiện tại</label>
-                        <input type="password" id="cp_current"
-                            style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;"
-                            required>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label
-                            style="display: block; margin-bottom: 8px; color: #475569; font-size: 14px; font-weight: 500;">Mật
-                            khẩu mới</label>
-                        <input type="password" id="cp_new" placeholder="Tối thiểu 8 ký tự, gồm cả chữ và số"
-                            style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;"
-                            required>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label
-                            style="display: block; margin-bottom: 8px; color: #475569; font-size: 14px; font-weight: 500;">Xác
-                            nhận mật khẩu mới</label>
-                        <input type="password" id="cp_confirm"
-                            style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;"
-                            required>
-                    </div>
-                    <div style="display:flex; justify-content:flex-end; gap:10px;">
-                        <button type="button" class="btn-secondary" onclick="closeChangePasswordModal()"
-                            style="padding: 10px 16px; background: #f1f5f9; color: #475569; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">Hủy</button>
-                        <button type="submit" class="btn-primary" id="cp_submit"
-                            style="padding: 10px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">Lưu
-                            thay đổi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <!-- Bảng Dữ liệu -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 60px;">STT</th>
+                    <th>Mã chức danh</th>
+                    <th>Tên chức danh</th>
+                    <th>Cấp bậc</th>
+                    <th style="width: 140px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="jobTableBody">
+            </tbody>
+        </table>
     </div>
 
     <script>
-        const ROLES_INFO = {
-            'ROLE_CANDIDATE': {
-                name: 'Ứng viên',
-                tasks: [
-                    { title: 'Danh sách Việc làm', link: '#' },
-                    { title: 'Nộp CV', link: '#' },
-                    { title: 'Theo dõi Hồ sơ', link: '#' },
-                    { title: 'Lịch phỏng vấn', link: '#' },
-                    { title: 'Phản hồi Offer', link: '#' }
-                ]
-            },
-            'ROLE_RECRUITER': {
-                name: 'Nhân viên tuyển dụng',
-                tasks: [
-                    { title: 'Sàng lọc CV', link: '#' },
-                    { title: 'Điều phối Pipeline', link: '#' },
-                    { title: 'Đặt lịch phỏng vấn', link: '#' },
-                    { title: 'Soạn Offer', link: '#' }
-                ]
-            },
-            'ROLE_HIRING_MANAGER': {
-                name: 'Trưởng bộ phận',
-                tasks: [
-                    { title: 'Tạo Yêu cầu Tuyển dụng', link: '#' },
-                    { title: 'Xem ứng viên bộ phận', link: '#' },
-                    { title: 'Quyết định tuyển', link: '#' }
-                ]
-            },
-            'ROLE_INTERVIEWER': {
-                name: 'Người phỏng vấn',
-                tasks: [
-                    { title: 'Xem lịch phỏng vấn', link: '#' },
-                    { title: 'Đọc CV ứng viên', link: '#' },
-                    { title: 'Nộp Phiếu Đánh giá', link: '#' }
-                ]
-            },
-            'ROLE_HR_MANAGER': {
-                name: 'Trưởng phòng Nhân sự',
-                tasks: [
-                    { title: 'Quản lý Phòng ban', link: 'departments.html' },
-                    { title: 'Quản lý Chức danh', link: 'job-titles.html' },
-                    { title: 'Danh mục Dữ liệu', link: 'master-data.html' },
-                    { title: 'Giám sát Vị trí', link: '#' },
-                    { title: 'Phân công Recruiter', link: '#' },
-                    { title: 'Theo dõi Ngân sách', link: '#' },
-                    { title: 'Báo cáo', link: '#' }
-                ]
-            },
-            'ROLE_APPROVER': {
-                name: 'Người duyệt',
-                tasks: [
-                    { title: 'Duyệt Yêu cầu Tuyển dụng', link: '#' },
-                    { title: 'Duyệt Offer vượt hạn mức', link: '#' }
-                ]
-            },
-            'ROLE_ADMIN': {
-                name: 'Quản trị hệ thống',
-                tasks: [
-                    { title: 'Quản lý Tài khoản', link: 'users.html' },
-                    { title: 'Danh mục dùng chung', link: '#' },
-                    { title: 'Nhật ký hệ thống', link: '#' }
-                ]
-            },
-            'ROLE_USER': { name: 'Người dùng hệ thống', tasks: [] }
-        };
+        let jobTitles = [
+            { code: "DEV_01", name: "Lập trình viên Frontend", level: "Junior" },
+            { code: "DEV_02", name: "Lập trình viên Backend", level: "Senior" },
+            { code: "PM_01", name: "Quản trị dự án (PM)", level: "Lead/Manager" }
+        ];
 
-        async function fetchUserInfo() {
-            const token = localStorage.getItem('accessToken');
-            if (!token) return logout(false);
+        function renderTable() {
+            const tbody = document.getElementById('jobTableBody');
+            const searchKeyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filterLevel = document.getElementById('filterLevel').value;
 
-            try {
-                const response = await fetch('/api/auth/me', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
+            tbody.innerHTML = '';
 
-                if (response.status === 401 || response.status === 403) {
-                    return logout(false);
-                }
+            const filteredData = jobTitles.filter(item => {
+                const matchesSearch = item.code.toLowerCase().includes(searchKeyword) || 
+                                      item.name.toLowerCase().includes(searchKeyword);
+                const matchesLevel = filterLevel === '' || item.level === filterLevel;
+                return matchesSearch && matchesLevel;
+            });
 
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    const user = data.data;
-                    document.getElementById('displayUsername').textContent = user.username;
-
-                    const userRoles = user.roles || ['ROLE_USER'];
-                    localStorage.setItem('userRoles', JSON.stringify(userRoles)); // Update local roles
-
-                    const roleNames = userRoles.map(r => ROLES_INFO[r] ? ROLES_INFO[r].name : r);
-                    document.getElementById('displayRoles').textContent = roleNames.join(', ');
-
-                    renderMenu(userRoles);
-                    renderDashboardContent(userRoles);
-                }
-            } catch (err) {
-                console.error("Lỗi lấy thông tin user", err);
-            }
-        }
-
-        function renderMenu(userRoles) {
-            const menuContainer = document.getElementById('sidebarMenu');
-            let html = `
-                <a class="menu-item active" href="dashboard.html">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                    Tổng quan Dashboard
-                </a>
-            `;
-
-            // Hiển thị TOÀN BỘ menu của tất cả các chức vụ
-            for (const [roleCode, roleInfo] of Object.entries(ROLES_INFO)) {
-                if (roleCode === 'ROLE_USER') continue; // Bỏ qua ROLE_USER rỗng
-
-                // Kiểm tra xem người dùng có quyền với nhóm này không
-                const hasAccess = userRoles.includes(roleCode) || userRoles.includes('ROLE_ADMIN');
-                const disabledClass = hasAccess ? '' : 'disabled';
-
-                if (roleInfo && roleInfo.tasks && roleInfo.tasks.length > 0) {
-                    html += `
-                        <div class="menu-group">
-                            <div class="menu-group-header" onclick="toggleMenu(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px 16px 8px 16px; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#94a3b8'">
-                                Nghiệp vụ ${roleInfo.name}
-                                <svg class="chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="transition: transform 0.2s; transform: rotate(-90deg);"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
-                            </div>
-                            <div class="menu-group-content" style="display: none;">
-                    `;
-
-                    roleInfo.tasks.forEach(task => {
-                        let action = '';
-                        if (hasAccess) {
-                            action = task.link && task.link !== '#'
-                                ? `href="${task.link}"`
-                                : `href="#" onclick="loadTaskView(event, '${task.title}', '${roleCode}')"`;
-                        } else {
-                            action = `href="javascript:void(0)" onclick="alert('Bạn không có quyền truy cập chức năng này.')"`;
-                        }
-
-                        html += `
-                                <a class="menu-item ${disabledClass}" ${action}>
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-                                    ${task.title}
-                                </a>
-                        `;
-                    });
-
-                    html += `
-                            </div>
-                        </div>
-                    `;
-                }
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-row">Không tìm thấy chức danh phù hợp</td></tr>`;
+                return;
             }
 
-            menuContainer.innerHTML = html;
+            filteredData.forEach((item, index) => {
+                const originalIndex = jobTitles.indexOf(item);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${item.code}</strong></td>
+                    <td>${item.name}</td>
+                    <td><span class="badge-level">${item.level}</span></td>
+                    <td>
+                        <button class="btn btn-warning" onclick="editJobTitle(${originalIndex})">Sửa</button>
+                        <button class="btn btn-danger" onclick="deleteJobTitle(${originalIndex})">Xóa</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
 
-        function toggleMenu(headerEl) {
-            const contentEl = headerEl.nextElementSibling;
-            const chevron = headerEl.querySelector('.chevron');
-            if (contentEl.style.display === 'none') {
-                contentEl.style.display = 'block';
-                chevron.style.transform = 'rotate(0deg)';
-                headerEl.style.color = '#2563eb'; // Giữ màu xanh khi mở
-                headerEl.onmouseout = null; // Tắt hover effect khi mở
+        function saveJobTitle(event) {
+            event.preventDefault();
+            const code = document.getElementById('titleCode').value.trim().toUpperCase();
+            const name = document.getElementById('titleName').value.trim();
+            const level = document.getElementById('titleLevel').value;
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+
+            if (editIndex === -1) {
+                if (jobTitles.some(item => item.code === code)) {
+                    alert('Mã chức danh này đã tồn tại!');
+                    return;
+                }
+                jobTitles.push({ code, name, level });
             } else {
-                contentEl.style.display = 'none';
-                chevron.style.transform = 'rotate(-90deg)';
-                headerEl.style.color = '#94a3b8'; // Trả về màu xám khi đóng
-                headerEl.onmouseout = function () { this.style.color = '#94a3b8'; };
+                jobTitles[editIndex] = { code, name, level };
+                document.getElementById('editIndex').value = "-1";
+                document.getElementById('btnSubmit').textContent = "Thêm chức danh";
+            }
+
+            document.getElementById('jobTitleForm').reset();
+            renderTable();
+        }
+
+        function editJobTitle(index) {
+            const item = jobTitles[index];
+            document.getElementById('titleCode').value = item.code;
+            document.getElementById('titleName').value = item.name;
+            document.getElementById('titleLevel').value = item.level;
+            document.getElementById('editIndex').value = index;
+            document.getElementById('btnSubmit').textContent = "Cập nhật";
+        }
+
+        function deleteJobTitle(index) {
+            if (confirm(`Bạn có chắc chắn muốn xóa chức danh "${jobTitles[index].name}" không?`)) {
+                jobTitles.splice(index, 1);
+                renderTable();
             }
         }
 
-        function loadTaskView(event, taskTitle, requiredRoleCode) {
-            event.preventDefault(); // Ngăn nhảy trang lên đầu
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            document.getElementById('pageTitle').textContent = taskTitle;
-            document.getElementById('pageTitle').style.textAlign = 'left';
-            document.getElementById('pageTitle').style.color = '#1e293b';
-            document.getElementById('pageTitle').style.fontSize = '26px';
-            const container = document.getElementById('pageContent');
-
-            // Check Access Permission
-            const userRoles = JSON.parse(localStorage.getItem('userRoles') || '[]');
-            const hasAccess = userRoles.includes(requiredRoleCode) || userRoles.includes('ROLE_ADMIN');
-
-            if (!hasAccess) {
-                container.innerHTML = `
-                    <div class="card-view" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 60px 20px;">
-                        <svg width="64" height="64" fill="none" stroke="#ef4444" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:16px;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                        <h2 style="color:#b91c1c; margin-bottom:8px;">Quyền truy cập bị từ chối</h2>
-                        <p style="color:#64748b; text-align:center;">Bạn không có quyền <strong>${ROLES_INFO[requiredRoleCode].name}</strong> để truy cập chức năng này.<br>Vui lòng liên hệ Quản trị viên nếu bạn cần được cấp quyền.</p>
-                    </div>
-                `;
-                return; // Dừng việc load form/table
-            }
-
-            let html = '';
-
-            // Generate highly specific UI based on taskTitle
-            switch (taskTitle) {
-                // --- ỨNG VIÊN ---
-                case 'Danh sách Việc làm':
-                    html = `
-                        <div class="card-view" style="padding: 0;">
-                            <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                                <h3 style="color: #1e293b;">Tuyển dụng đang mở</h3>
-                                <button class="btn-primary" onclick="loadPublicJobs()">Làm mới</button>
-                            </div>
-                            <table class="data-table">
-                                <thead><tr><th style="width: 50px;">ID</th><th>Chức danh</th><th>Yêu cầu</th><th>Lương</th><th>Thao tác</th></tr></thead>
-                                <tbody id="public_jobs_body">
-                                    <tr><td colspan="5" style="text-align:center">Đang tải dữ liệu...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                    setTimeout(loadPublicJobs, 100);
-                    break;
-                case 'Nộp CV':
-                    let todayStr = new Date().toLocaleDateString('vi-VN');
-                    let currentUserName = document.getElementById('displayUsername').textContent;
-                    html = `
-                        <div class="card-view">
-                            <h3 style="margin-bottom: 20px; color: #1e293b;">Nộp Hồ sơ Ứng tuyển</h3>
-                            <div class="form-group" style="display: flex; gap: 16px;">
-                                <div style="flex: 1;">
-                                    <label>Tên Ứng viên</label>
-                                    <input type="text" class="form-control" value="${currentUserName}" readonly style="background-color: #f1f5f9; color: #64748b; cursor: not-allowed;">
-                                </div>
-                                <div style="flex: 1;">
-                                    <label>Ngày nộp hồ sơ</label>
-                                    <input type="text" class="form-control" value="${todayStr}" readonly style="background-color: #f1f5f9; color: #64748b; cursor: not-allowed;">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>ID Vị trí tuyển dụng (Job Request ID)</label>
-                                <input type="number" id="app_jobId" class="form-control" placeholder="Nhập ID (Ví dụ: 1)">
-                            </div>
-                            <div class="form-group">
-                                <label>Tệp CV (PDF)</label>
-                                <input type="file" id="app_cvFile" class="form-control" accept="application/pdf">
-                            </div>
-                            <button class="btn-primary" onclick="submitApplication()">Nộp Hồ sơ vào hệ thống</button>
-                        </div>
-                    `;
-                    break;
-                case 'Theo dõi Hồ sơ':
-                    html = '<div id="myApplicationsContainer">Đang tải dữ liệu...</div>';
-                    setTimeout(loadMyApplications, 0);
-                    break;
-                case 'Lịch phỏng vấn':
-                    html = '<div id="candidateInterviewsContainer">Đang tải dữ liệu...</div>';
-                    setTimeout(loadCandidateInterviews, 0);
-                    break;
-                case 'Phản hồi Offer':
-                    html = renderTable('Danh sách Offer', ['Vị trí', 'Ngày nhận', 'Hạn chót', 'Trạng thái'], [
-                        ['Lập trình viên Frontend', '12/10/2026', '15/10/2026', '<button class="btn-primary" style="padding: 4px 10px; font-size:12px;">Xem & Phản hồi</button>']
-                    ]); break;
-
-                // --- RECRUITER ---
-                case 'Sàng lọc CV':
-                    html = `
-                        <div class="card-view">
-                            <h3 style="margin-bottom:20px; color:#1e293b;">Danh sách CV Ứng viên</h3>
-                            <div style="overflow-x:auto;">
-                                <table class="data-table" style="width:100%; text-align:left; border-collapse:collapse;">
-                                    <thead>
-                                        <tr style="border-bottom: 1px solid #e2e8f0; color:#64748b; font-size:12px; text-transform:uppercase;">
-                                            <th style="padding:12px;">Ứng viên</th>
-                                            <th style="padding:12px;">Vị trí ứng tuyển</th>
-                                            <th style="padding:12px;">Ngày nộp</th>
-                                            <th style="padding:12px;">Trạng thái</th>
-                                            <th style="padding:12px;">Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="app_table_body">
-                                        <tr><td colspan="5" style="text-align:center; padding:20px;">Đang tải dữ liệu...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    `;
-                    setTimeout(loadApplicationsForScreening, 100);
-                    break;
-                case 'Điều phối Pipeline':
-                    html = renderTable('Ứng viên đang xử lý', ['Ứng viên', 'Vị trí', 'Vòng hiện tại', 'Đánh giá'], [
-                        ['Lê Hoàng C', 'Frontend', 'Phỏng vấn vòng 1', 'Đang chờ KQ'],
-                        ['Phạm Văn D', 'DevOps', 'Offer', 'Đã chốt lương']
-                    ]); break;
-                case 'Đặt lịch phỏng vấn':
-                    html = '<div id="scheduleInterviewContainer">Đang tải biểu mẫu...</div>';
-                    setTimeout(loadScheduleInterviewForm, 0);
-                    break;
-                case 'Soạn Offer':
-                    html = renderForm('Soạn Thư mời nhận việc', ['Ứng viên', 'Mức lương cơ bản', 'Phụ cấp'], 'Quyết định bổ nhiệm (PDF)', 'Gửi Offer'); break;
-
-                // --- HIRING MANAGER ---
-                case 'Tạo Yêu cầu Tuyển dụng':
-                    html = `
-                        <div class="card-view">
-                            <h3 style="margin-bottom: 20px; color: #1e293b;">Phiếu Yêu cầu Tuyển dụng</h3>
-                            <div class="form-group">
-                                <label>Chức danh (Tiêu đề)</label>
-                                <input type="text" id="jr_title" class="form-control" placeholder="Ví dụ: Lập trình viên Java Senior">
-                            </div>
-                            <div class="form-group" style="display: flex; gap: 20px;">
-                                <div style="flex: 1;">
-                                    <label>Số lượng cần tuyển</label>
-                                    <input type="number" id="jr_headcount" class="form-control" placeholder="1">
-                                </div>
-                                <div style="flex: 1;">
-                                    <label>Lương tối thiểu (VND)</label>
-                                    <input type="number" id="jr_minSalary" class="form-control" placeholder="15000000">
-                                </div>
-                                <div style="flex: 1;">
-                                    <label>Lương tối đa (VND)</label>
-                                    <input type="number" id="jr_maxSalary" class="form-control" placeholder="30000000">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Mô tả công việc</label>
-                                <textarea id="jr_description" class="form-control" rows="3" placeholder="Nhập mô tả..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Yêu cầu kỹ năng</label>
-                                <textarea id="jr_requirements" class="form-control" rows="2" placeholder="Nhập yêu cầu..."></textarea>
-                            </div>
-                            <button class="btn-primary" onclick="submitJobRequest()">Gửi Yêu cầu lên Hệ thống</button>
-                        </div>
-                    `;
-                    break;
-                case 'Xem ứng viên bộ phận':
-                    html = renderTable('Ứng viên thuộc bộ phận IT', ['Ứng viên', 'Vị trí', 'Tiến độ', 'Kỹ năng chính'], [
-                        ['Nguyễn Văn A', 'Backend', 'Sàng lọc CV', 'Java, Spring'],
-                        ['Trần Thị B', 'Frontend', 'Phỏng vấn', 'React, CSS']
-                    ]); break;
-                case 'Quyết định tuyển':
-                    html = '<div id="hiringDecisionsContainer">Đang tải dữ liệu...</div>';
-                    setTimeout(loadHiringDecisions, 0);
-                    break;
-
-                // --- INTERVIEWER ---
-                case 'Xem lịch phỏng vấn':
-                    html = '<div id="interviewsContainer">Đang tải dữ liệu...</div>';
-                    setTimeout(loadMyInterviews, 0);
-                    break;
-                case 'Đọc CV ứng viên':
-                    html = '<div id="readCvContainer">Đang tải Kho CV...</div>';
-                    setTimeout(loadReadCVs, 0);
-                    break;
-                case 'Nộp Phiếu Đánh giá':
-                    html = renderForm('Đánh giá sau phỏng vấn', ['Chọn Ứng viên', 'Điểm chuyên môn (1-10)', 'Điểm thái độ (1-10)', 'Nhận xét chi tiết'], null, 'Nộp Đánh giá'); break;
-
-                // --- HR MANAGER ---
-                case 'Giám sát Vị trí':
-                    html = renderTable('Tình trạng các Vị trí Tuyển dụng', ['Vị trí', 'Phòng ban', 'Target', 'Đã tuyển'], [
-                        ['Java Developer', 'Phòng IT', '5', '2'],
-                        ['Sales Manager', 'Phòng Kinh doanh', '1', '0']
-                    ]); break;
-                case 'Phân công Recruiter':
-                    html = '<div id="assignRecruiterContainer">Đang tải dữ liệu...</div>';
-                    setTimeout(loadJobRequestsForAssignment, 0);
-                    break;
-                case 'Theo dõi Ngân sách':
-                    html = renderTable('Ngân sách Tuyển dụng 2026', ['Phòng ban', 'Ngân sách cấp', 'Đã chi', 'Còn lại'], [
-                        ['Phòng IT', '100,000,000đ', '45,000,000đ', '55,000,000đ'],
-                        ['Phòng Kinh doanh', '50,000,000đ', '10,000,000đ', '40,000,000đ']
-                    ]); break;
-                case 'Báo cáo':
-                    html = '<div id="reportContainer">Đang tải dữ liệu báo cáo...</div>';
-                    setTimeout(loadReportData, 0);
-                    break;
-
-                // --- APPROVER ---
-                case 'Duyệt Yêu cầu Tuyển dụng':
-                    html = `
-                        <div class="card-view" style="padding: 0;">
-                            <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                                <h3 style="color: #1e293b;">Yêu cầu Tuyển dụng chờ duyệt</h3>
-                                <button class="btn-primary" onclick="loadJobRequestsList()">Làm mới dữ liệu</button>
-                            </div>
-                            <table class="data-table">
-                                <thead><tr><th>Chức danh</th><th>SL/Lương</th><th>Người Yêu Cầu</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
-                                <tbody id="jr_table_body">
-                                    <tr><td colspan="5" style="text-align:center">Đang tải dữ liệu từ Server...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                    // Kích hoạt fetch API ngay lập tức
-                    setTimeout(loadJobRequestsList, 100);
-                    break;
-                case 'Duyệt Offer vượt hạn mức':
-                    html = `
-                        <div class="card-view" style="padding: 0;">
-                            <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                                <h3 style="color: #1e293b;">Offer cần phê duyệt đặc biệt</h3>
-                                <button class="btn-primary" onclick="loadPendingOffers()">Làm mới dữ liệu</button>
-                            </div>
-                            <table class="data-table">
-                                <thead><tr><th>Ứng viên</th><th>Vị trí</th><th>Mức lương đề xuất</th><th>Mức trần quy định</th><th>Thao tác</th></tr></thead>
-                                <tbody id="offer_table_body">
-                                    <tr><td colspan="5" style="text-align:center">Đang tải dữ liệu từ Server...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                    setTimeout(loadPendingOffers, 100);
-                    break;
-
-                // --- ADMIN ---
-                case 'Danh mục dùng chung':
-                    html = '<div id="categoriesContainer">Đang tải dữ liệu...</div>';
-                    setTimeout(loadSystemCategories, 0);
-                    break;
-                case 'Nhật ký hệ thống':
-                    html = '<div id="sysLogsContainer">Đang tải nhật ký...</div>';
-                    setTimeout(loadSystemLogs, 0);
-                    break;
-
-                default:
-                    html = renderChart(`Chức năng [${taskTitle}]`, 'Dữ liệu và biểu đồ đang được tổng hợp, vui lòng quay lại sau.');
-            }
-
-            container.innerHTML = html;
-        }
-
-        // Helper functions for UI generation
-        function renderForm(title, inputs, fileLabel, btnText) {
-            let formHtml = `<div class="card-view"><h3 style="margin-bottom: 20px; color: #1e293b;">${title}</h3>`;
-            inputs.forEach(input => {
-                formHtml += `<div class="form-group"><label>${input}</label><input type="text" class="form-control" placeholder="Nhập ${input.toLowerCase()}..."></div>`;
-            });
-            if (fileLabel) {
-                formHtml += `<div class="form-group"><label>${fileLabel}</label><input type="file" class="form-control" style="padding: 9px 16px;"></div>`;
-            }
-            formHtml += `<button class="btn-primary" onclick="alert('${btnText} thành công!')">${btnText}</button></div>`;
-            return formHtml;
-        }
-
-        function renderTable(title, headers, rows) {
-            let tableHtml = `
-                <div class="card-view" style="padding: 0;">
-                    <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="color: #1e293b;">${title}</h3>
-                        <input type="text" class="form-control" placeholder="Tìm kiếm..." style="width: 250px;">
-                    </div>
-                    <table class="data-table"><thead><tr>`;
-            headers.forEach(h => tableHtml += `<th>${h}</th>`);
-            tableHtml += `</tr></thead><tbody>`;
-            rows.forEach(r => {
-                tableHtml += `<tr>`;
-                r.forEach(td => tableHtml += `<td>${td}</td>`);
-                tableHtml += `</tr>`;
-            });
-            tableHtml += `</tbody></table></div>`;
-            return tableHtml;
-        }
-
-        function renderChart(title, desc) {
-            return `
-                <div class="card-view">
-                    <div style="text-align: center; padding: 40px 0;">
-                        <svg width="64" height="64" fill="none" stroke="#cbd5e1" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        <h3 style="color: #64748b; margin-bottom: 8px;">${title}</h3>
-                        <p style="color: #94a3b8;">${desc}</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderDashboardContent(userRoles) {
-            const tasksContainer = document.getElementById('tasksContainer');
-            // Cấu hình tasks mẫu hiển thị ở dashboard
-            const tasks = [
-                { title: 'Cập nhật hệ thống', desc: 'Bản vá mới đã được cài đặt vào lúc 12:00 PM.' }
-            ];
-
-            if (userRoles.includes('ROLE_USER') && userRoles.length === 1) {
-                tasksContainer.innerHTML = `<div style="grid-column: 1/-1; padding: 20px; border: 1px dashed #cbd5e1; text-align: center; color: #64748b;">Bạn chưa được phân quyền chức năng cụ thể nào. Xin liên hệ Quản trị viên.</div>`;
-                return;
-            }
-
-            let html = '';
-            tasks.forEach(task => {
-                html += `
-                    <div class="task-card">
-                        <div class="task-title">${task.title}</div>
-                        <div class="task-desc">${task.desc}</div>
-                    </div>
-                `;
-            });
-            tasksContainer.innerHTML = html;
-
-            // Tự động ẩn thanh chào mừng và thông báo sau 5 giây
-            setTimeout(() => {
-                const welcomeAlert = document.getElementById('welcomeAlert');
-                if (welcomeAlert) {
-                    welcomeAlert.style.opacity = '0';
-                    setTimeout(() => welcomeAlert.style.display = 'none', 500);
-                }
-            }, 5000);
-        }
-
-        document.addEventListener('DOMContentLoaded', fetchUserInfo);
-
-        function checkSession() {
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                window.location.href = 'login.html?session=expired';
-                return;
-            }
-
-            // Giải mã payload của JWT
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const expiry = payload.exp * 1000;
-                const now = Date.now();
-
-                // Nếu token còn sống nhưng sắp hết hạn (ví dụ dưới 5 phút), tự động gia hạn
-                if (expiry - now < 5 * 60 * 1000 && expiry > now) {
-                    refreshToken();
-                } else if (expiry < now) {
-                    refreshToken();
-                }
-            } catch (e) {
-                console.error('Lỗi khi kiểm tra token', e);
-            }
-        }
-
-        async function refreshToken() {
-            const rToken = localStorage.getItem('refreshToken');
-            if (!rToken) {
-                logout(false);
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/auth/refresh-token?refreshToken=' + encodeURIComponent(rToken), {
-                    method: 'POST'
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    localStorage.setItem('accessToken', data.data.token);
-                    if (data.data.refreshToken) {
-                        localStorage.setItem('refreshToken', data.data.refreshToken);
-                    }
-                    if (data.data.roles) {
-                        localStorage.setItem('userRoles', JSON.stringify(data.data.roles));
-                        renderDashboard();
-                    }
-                    console.log('Đã tự động gia hạn phiên');
-                } else {
-                    logout(false); // Token hết hạn thực sự
-                }
-            } catch (e) {
-                logout(false);
-            }
-        }
-
-        async function logout(manual = true) {
-            if (manual) {
-                const token = localStorage.getItem('accessToken');
-                if (token) {
-                    try {
-                        await fetch('/api/auth/logout', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': 'Bearer ' + token
-                            }
-                        });
-                    } catch (e) {
-                        console.error('Lỗi khi gọi API logout', e);
-                    }
-                }
-            }
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('userRoles');
-            window.location.href = manual ? 'login.html?action=logout' : 'login.html?session=expired';
-        }
-
-        document.getElementById('logoutBtn').addEventListener('click', () => logout(true));
-
-        // Kiểm tra session mỗi phút
-        setInterval(checkSession, 60000);
-        // Kiểm tra ngay khi tải trang
-        checkSession();
-
-        // ==========================================
-        // TÍCH HỢP API THẬT CHO JOB REQUEST
-        // ==========================================
-
-        async function submitJobRequest() {
-            const token = localStorage.getItem('accessToken');
-            const data = {
-                title: document.getElementById('jr_title').value,
-                headcount: document.getElementById('jr_headcount').value,
-                minSalary: document.getElementById('jr_minSalary').value,
-                maxSalary: document.getElementById('jr_maxSalary').value,
-                description: document.getElementById('jr_description').value,
-                requirements: document.getElementById('jr_requirements').value
-            };
-
-            if (!data.title) { alert('Vui lòng nhập chức danh!'); return; }
-
-            try {
-                const response = await fetch('http://localhost:8080/api/job-requests', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Đã tạo Yêu cầu Tuyển dụng thành công! Đang chờ phê duyệt.');
-                    document.getElementById('jr_title').value = '';
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Không thể kết nối đến server Backend.');
-            }
-        }
-
-        async function loadPublicJobs() {
-            const tbody = document.getElementById('public_jobs_body');
-            if (!tbody) return;
-
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/job-requests', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    tbody.innerHTML = '';
-                    // Only show APPROVED or OPEN jobs to candidates
-                    const openJobs = result.data.filter(req => req.status === 'APPROVED' || req.status === 'OPEN');
-
-                    if (openJobs.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Hiện tại chưa có vị trí nào đang tuyển.</td></tr>';
-                        return;
-                    }
-
-                    openJobs.forEach(req => {
-                        let actionHtml = `<button class="btn-primary" style="padding: 4px 10px; font-size:12px;" onclick="applyForJob(${req.id})">Nộp hồ sơ ngay</button>`;
-                        tbody.innerHTML += `
-                            <tr>
-                                <td style="text-align:center; font-weight:bold; color:#2563eb;">#${req.id}</td>
-                                <td><strong>${req.title}</strong></td>
-                                <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${req.requirements}">${req.requirements || 'Trao đổi khi phỏng vấn'}</td>
-                                <td>SL: ${req.headcount} <br> Lương: ${req.minSalary / 1000000}M - ${req.maxSalary / 1000000}M</td>
-                                <td>${actionHtml}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">${result.message}</td></tr>`;
-                }
-            } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Lỗi kết nối máy chủ</td></tr>';
-            }
-        }
-
-        function applyForJob(jobId) {
-            // Chuyển sang màn hình "Nộp CV"
-            const userRoles = JSON.parse(localStorage.getItem('userRoles') || '[]');
-            const candidateRoleCheck = userRoles.includes('ROLE_CANDIDATE') || userRoles.includes('ROLE_ADMIN') ? 'ROLE_CANDIDATE' : '';
-
-            // Tìm thẻ a chứa Nộp CV và kích hoạt
-            document.querySelectorAll('.menu-item').forEach(el => {
-                el.classList.remove('active');
-                if (el.textContent.trim() === 'Nộp CV') {
-                    el.classList.add('active');
-                }
-            });
-
-            // Gọi loadTaskView với event mock
-            const mockEvent = {
-                preventDefault: () => { },
-                currentTarget: document.createElement('div') // Fake target to prevent error
-            };
-            loadTaskView(mockEvent, 'Nộp CV', 'ROLE_CANDIDATE');
-
-            // Delay 100ms để đợi DOM render xong form
-            setTimeout(() => {
-                const jobIdInput = document.getElementById('app_jobId');
-                if (jobIdInput) {
-                    jobIdInput.value = jobId;
-                    jobIdInput.focus();
-                }
-            }, 100);
-        }
-
-        async function loadJobRequestsList() {
-            const tbody = document.getElementById('jr_table_body');
-            if (!tbody) return;
-
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/job-requests', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    tbody.innerHTML = '';
-                    if (result.data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Chưa có yêu cầu nào trong hệ thống.</td></tr>';
-                        return;
-                    }
-
-                    result.data.forEach(req => {
-                        let currentStatus = req.status || 'PENDING_APPROVAL';
-                        let statusHtml = currentStatus === 'APPROVED'
-                            ? '<span class="status-badge status-active">Đã duyệt</span>'
-                            : currentStatus === 'REJECTED'
-                                ? '<span class="status-badge status-locked">Từ chối</span>'
-                                : '<span class="status-badge status-pending">Chờ duyệt</span>';
-
-                        let actionHtml = (currentStatus === 'PENDING_APPROVAL' || currentStatus === 'PENDING' || currentStatus === 'DRAFT')
-                            ? `<button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#10b981;" onclick="approveJobRequest(${req.id}, true)">Phê duyệt</button>
-                               <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#ef4444;" onclick="approveJobRequest(${req.id}, false)">Từ chối</button>`
-                            : `<span style="color:#94a3b8; font-size:12px;">Không có thao tác</span>`;
-
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><strong>${req.title}</strong></td>
-                                <td>SL: ${req.headcount} <br> Lương: ${req.minSalary / 1000000}M - ${req.maxSalary / 1000000}M</td>
-                                <td>${req.hiringManagerName || 'Ẩn danh'}</td>
-                                <td>${statusHtml}</td>
-                                <td>${actionHtml}</td>
-                            </tr>
-                        `;
-                    });
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Lỗi kết nối Backend. Hãy chắc chắn Spring Boot đang chạy.</td></tr>';
-            }
-        }
-
-        async function approveJobRequest(id, isApproved) {
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch(`http://localhost:8080/api/job-requests/${id}/approve?isApproved=${isApproved}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    alert(result.message);
-                    loadJobRequestsList(); // Tải lại bảng
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Lỗi kết nối Backend.');
-            }
-        }
-
-        // ==========================================
-        // TÍCH HỢP API THẬT CHO APPLICATION (NỘP CV, SÀNG LỌC)
-        // ==========================================
-
-        async function submitApplication() {
-            const jobId = document.getElementById('app_jobId').value;
-            const fileInput = document.getElementById('app_cvFile');
-            if (!jobId) { alert('Vui lòng nhập ID Vị trí tuyển dụng!'); return; }
-
-            const formData = new FormData();
-            if (fileInput && fileInput.files.length > 0) {
-                formData.append('file', fileInput.files[0]);
-            }
-
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch(`http://localhost:8080/api/applications/${jobId}/apply`, {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + token },
-                    body: formData
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Nộp CV thành công! Hồ sơ của bạn đã được chuyển đến bộ phận Tuyển dụng.');
-                    document.getElementById('app_jobId').value = '';
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Lỗi kết nối Backend.');
-            }
-        }
-
-        async function loadApplicationsForScreening() {
-            const tbody = document.getElementById('app_table_body');
-            if (!tbody) return;
-
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/applications', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    tbody.innerHTML = '';
-                    if (!result.data || result.data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Chưa có hồ sơ nào nộp vào hệ thống.</td></tr>';
-                        return;
-                    }
-
-                    result.data.forEach(app => {
-                        let statusColor = app.status === 'APPLIED' ? '#f59e0b' : (app.status === 'REJECTED' ? '#ef4444' : '#10b981');
-                        let statusHtml = `<span style="color:${statusColor}; font-weight:600;">${app.status}</span>`;
-
-                        let actionHtml = app.status === 'APPLIED'
-                            ? `<button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#10b981;" onclick="updateApplicationStatus(${app.id}, 'SCREENING')">Đạt CV</button>
-                               <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#ef4444;" onclick="updateApplicationStatus(${app.id}, 'REJECTED')">Loại CV</button>`
-                            : `<span style="color:#94a3b8; font-size:12px;">Đã xử lý</span>`;
-
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><strong>${app.candidateName}</strong></td>
-                                <td>${app.jobTitle} (ID: ${app.jobRequestId})</td>
-                                <td>${new Date(app.appliedAt).toLocaleDateString('vi-VN')}</td>
-                                <td>${statusHtml}</td>
-                                <td>${actionHtml}</td>
-                            </tr>
-                        `;
-                    });
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Lỗi kết nối Backend.</td></tr>';
-            }
-        }
-
-        async function updateApplicationStatus(appId, newStatus) {
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch(`http://localhost:8080/api/applications/${appId}/status?status=${newStatus}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    alert(result.message);
-                    loadApplicationsForScreening(); // Tải lại bảng
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Lỗi kết nối Backend.');
-            }
-        }
-        // ========================== XEM LỊCH PHỎNG VẤN (CANDIDATE) ==========================
-        async function loadCandidateInterviews() {
-            const container = document.getElementById('candidateInterviewsContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/interviews/candidate', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    const rows = (data.data || []).map(i => {
-                        const date = i.scheduledAt ? new Date(i.scheduledAt).toLocaleString('vi-VN') : '';
-                        const type = (i.meetingLink && i.meetingLink.includes('meet.google.com')) ? 'Online (Google Meet)' : (i.location || 'Chưa xác định');
-                        const link = i.meetingLink ? `<a href="${i.meetingLink}" target="_blank" style="color: #2563eb; font-weight: 500;">Tham gia</a>` : 'Đang cập nhật';
-                        return [i.jobTitle, date, type, link];
-                    });
-                    if (rows.length === 0) rows.push(['Không có lịch phỏng vấn nào', '', '', '']);
-                    container.innerHTML = renderTable('Lịch phỏng vấn sắp tới', ['Vị trí', 'Thời gian', 'Hình thức', 'Link/Địa điểm'], rows);
-                } else {
-                    container.innerHTML = `<div style="color:red; padding:20px;">Lỗi: ${data.message}</div>`;
-                }
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        // ========================== XEM LỊCH PHỎNG VẤN ==========================
-        async function loadMyInterviews() {
-            const container = document.getElementById('interviewsContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/interviews/my', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    const rows = data.data.map(i => [
-                        i.candidateName || 'N/A',
-                        i.jobTitle || 'N/A',
-                        i.scheduledAt ? new Date(i.scheduledAt).toLocaleString() : 'Chưa xếp',
-                        `<a href="#" onclick="alert('Xem CV của ${i.candidateName}')">Xem CV</a>`
-                    ]);
-                    if (rows.length === 0) rows.push(['Không có dữ liệu', '', '', '']);
-                    container.innerHTML = renderTable('Lịch phỏng vấn của tôi', ['Ứng viên', 'Vị trí', 'Thời gian', 'Tài liệu'], rows);
-                } else {
-                    container.innerHTML = `<div style="color:red; padding:20px;">Lỗi: ${data.message}</div>`;
-                }
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        // ========================== ĐẶT LỊCH PHỎNG VẤN ==========================
-        async function loadScheduleInterviewForm() {
-            const container = document.getElementById('scheduleInterviewContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/applications', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await response.json();
-
-                let appOptions = '<option value="">-- Chọn Hồ sơ ứng viên --</option>';
-                if (response.ok && data.success) {
-                    data.data.forEach(app => {
-                        appOptions += `<option value="${app.id}">ID: ${app.id} | ${app.candidateName} - ${app.jobTitle}</option>`;
-                    });
-                }
-
-                container.innerHTML = `
-                    <div class="card-view">
-                        <h3 style="margin-bottom: 20px; color: #1e293b;">Lên lịch phỏng vấn</h3>
-                        <div class="form-group">
-                            <label>Chọn Hồ sơ Ứng viên</label>
-                            <select id="sched_appId" class="form-control" style="padding: 9px 16px;">
-                                ${appOptions}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Tên đăng nhập Người phỏng vấn (Interviewer)</label>
-                            <input type="text" id="sched_interviewer" class="form-control" placeholder="Nhập username của người phỏng vấn...">
-                        </div>
-                        <div class="form-group">
-                            <label>Thời gian (Ví dụ: YYYY-MM-DDTHH:mm)</label>
-                            <input type="datetime-local" id="sched_time" class="form-control" style="padding: 9px 16px;">
-                        </div>
-                        <button class="btn-primary" onclick="submitInterviewSchedule()">Gửi Lịch Mời</button>
-                    </div>
-                `;
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        async function submitInterviewSchedule() {
-            const appId = document.getElementById('sched_appId').value;
-            const interviewer = document.getElementById('sched_interviewer').value;
-            const timeStr = document.getElementById('sched_time').value;
-
-            if (!appId || !interviewer || !timeStr) {
-                alert('Vui lòng điền đầy đủ thông tin!');
-                return;
-            }
-
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/interviews', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        applicationId: appId,
-                        interviewerUsername: interviewer,
-                        scheduledAt: timeStr
-                    })
-                });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    alert('Lên lịch phỏng vấn thành công!');
-                    document.getElementById('sched_appId').value = '';
-                    document.getElementById('sched_interviewer').value = '';
-                    document.getElementById('sched_time').value = '';
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (error) {
-                alert('Lỗi kết nối Backend.');
-            }
-        }
-
-        // ========================== PHÂN CÔNG RECRUITER ==========================
-        async function loadJobRequestsForAssignment() {
-            const container = document.getElementById('assignRecruiterContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/job-requests', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    const rows = data.data.map(j => [
-                        j.title || 'N/A',
-                        j.recruiterName || '<span style="color:#ef4444;font-style:italic;">Chưa phân công</span>',
-                        j.recruiterName ? 'Đang thực hiện' :
-                            `<input type="text" id="recruiter_${j.id}" placeholder="Username Recruiter" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; margin-right: 8px;">
-                             <button class="btn-primary" style="padding: 4px 10px; font-size:12px;" onclick="assignRecruiter(${j.id})">Phân công</button>`
-                    ]);
-                    if (rows.length === 0) rows.push(['Không có Vị trí nào', '', '']);
-                    container.innerHTML = renderTable('Phân công công việc', ['Vị trí tuyển', 'Recruiter phụ trách', 'Trạng thái / Thao tác'], rows);
-                } else {
-                    container.innerHTML = `<div style="color:red; padding:20px;">Lỗi: ${data.message}</div>`;
-                }
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        async function assignRecruiter(jobId) {
-            const recruiterUsername = document.getElementById(`recruiter_${jobId}`).value;
-            if (!recruiterUsername) {
-                alert('Vui lòng nhập Username của Recruiter!');
-                return;
-            }
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch(`http://localhost:8080/api/job-requests/${jobId}/assign?recruiterUsername=${encodeURIComponent(recruiterUsername)}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    alert('Phân công thành công!');
-                    loadJobRequestsForAssignment(); // reload
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (err) {
-                alert('Lỗi kết nối Backend.');
-            }
-        }
-
-        // ========================== DANH MỤC DÙNG CHUNG ==========================
-        async function loadSystemCategories() {
-            const container = document.getElementById('categoriesContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/categories', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    const rows = data.data.map(c => [
-                        c.name,
-                        c.count,
-                        c.lastUpdated,
-                        `<button class="btn-primary" style="padding: 4px 10px; font-size:12px;" onclick="alert('Tính năng đang phát triển!')">Chỉnh sửa</button>`
-                    ]);
-                    if (rows.length === 0) rows.push(['Không có dữ liệu', '', '', '']);
-                    container.innerHTML = renderTable('Quản lý Danh mục', ['Loại danh mục', 'Số lượng mục', 'Cập nhật lần cuối', 'Thao tác'], rows);
-                } else {
-                    container.innerHTML = `<div style="color:red; padding:20px;">Lỗi: ${data.message}</div>`;
-                }
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        // ========================== QUYẾT ĐỊNH TUYỂN ==========================
-        async function loadHiringDecisions() {
-            const container = document.getElementById('hiringDecisionsContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/applications', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    // Lọc ra các hồ sơ cần được quyết định (có thể là trạng thái INTERVIEWED hoặc khác)
-                    // Ở đây mock tạm lấy tất cả ngoại trừ những người đã có Offer/Reject để Demo
-                    const pendingApps = data.data.filter(a => a.status !== 'OFFERED' && a.status !== 'HIRED' && a.status !== 'REJECTED');
-                    const rows = pendingApps.map(a => [
-                        a.candidateName || 'N/A',
-                        a.jobTitle || 'N/A',
-                        a.interviewScore || 'Đang cập nhật',
-                        `<button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#10b981;" onclick="makeHiringDecision(${a.id}, 'OFFERED')">Nhận việc</button> 
-                         <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#ef4444;" onclick="makeHiringDecision(${a.id}, 'REJECTED')">Từ chối</button>`
-                    ]);
-                    if (rows.length === 0) rows.push(['Không có ứng viên nào chờ quyết định', '', '', '']);
-                    container.innerHTML = renderTable('Ứng viên chờ quyết định', ['Ứng viên', 'Vị trí', 'Điểm phỏng vấn', 'Thao tác'], rows);
-                } else {
-                    container.innerHTML = `<div style="color:red; padding:20px;">Lỗi: ${data.message}</div>`;
-                }
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        async function makeHiringDecision(appId, decisionStatus) {
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch(`http://localhost:8080/api/applications/${appId}/status?status=${decisionStatus}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    alert('Đã cập nhật quyết định tuyển dụng thành công!');
-                    loadHiringDecisions(); // Tải lại danh sách
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (error) {
-                alert('Lỗi kết nối đến Backend.');
-            }
-        }
-
-        // ========================== THEO DÕI HỒ SƠ ==========================
-        async function loadMyApplications() {
-            const container = document.getElementById('myApplicationsContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/applications/my', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    const rows = data.data.map(a => {
-                        let statusHtml = '';
-                        if (a.status === 'APPLIED') statusHtml = '<span class="status-badge status-pending">Đã nộp</span>';
-                        else if (a.status === 'SCREENED') statusHtml = '<span class="status-badge status-active">Qua vòng CV</span>';
-                        else if (a.status === 'INTERVIEWED') statusHtml = '<span class="status-badge status-active">Đã phỏng vấn</span>';
-                        else if (a.status === 'OFFERED') statusHtml = '<span class="status-badge status-active">Được nhận (Offer)</span>';
-                        else if (a.status === 'REJECTED') statusHtml = '<span class="status-badge status-inactive">Bị từ chối</span>';
-                        else statusHtml = `<span class="status-badge status-pending">${a.status}</span>`;
-
-                        return [
-                            a.jobTitle || 'N/A',
-                            a.appliedAt ? new Date(a.appliedAt).toLocaleDateString() : 'N/A',
-                            statusHtml
-                        ];
-                    });
-                    if (rows.length === 0) rows.push(['Bạn chưa nộp hồ sơ nào', '', '']);
-                    container.innerHTML = renderTable('Tiến trình Hồ sơ', ['Vị trí', 'Ngày nộp', 'Trạng thái'], rows);
-                } else {
-                    container.innerHTML = `<div style="color:red; padding:20px;">Lỗi: ${data.message}</div>`;
-                }
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        // ========================== PHÊ DUYỆT OFFER ==========================
-        async function loadPendingOffers() {
-            const tbody = document.getElementById('offer_table_body');
-            if (!tbody) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/offers/pending', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    tbody.innerHTML = '';
-                    if (result.data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Không có Offer nào cần duyệt.</td></tr>';
-                        return;
-                    }
-                    result.data.forEach(offer => {
-                        let offered = offer.offeredSalary ? offer.offeredSalary.toLocaleString() + 'đ' : 'N/A';
-                        let max = offer.maxSalary ? offer.maxSalary.toLocaleString() + 'đ' : 'N/A';
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><strong>${offer.candidateName || 'N/A'}</strong></td>
-                                <td>${offer.jobTitle || 'N/A'}</td>
-                                <td>${offered}</td>
-                                <td>${max}</td>
-                                <td>
-                                    <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#10b981;" onclick="processOffer(${offer.id}, true)">Phê duyệt</button>
-                                    <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#ef4444;" onclick="processOffer(${offer.id}, false)">Từ chối</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Lỗi: ${result.message}</td></tr>`;
-                }
-            } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Lỗi kết nối Backend.</td></tr>`;
-            }
-        }
-
-        async function processOffer(id, isApproved) {
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch(`http://localhost:8080/api/offers/${id}/approve?isApproved=${isApproved}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    alert(result.message);
-                    loadPendingOffers();
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (error) {
-                alert('Lỗi kết nối Backend.');
-            }
-        }
-
-        // ========================== BÁO CÁO ==========================
-        async function loadReportData() {
-            const container = document.getElementById('reportContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                // Fetch cả ứng viên và yêu cầu tuyển dụng để thống kê
-                const [appRes, jobRes] = await Promise.all([
-                    fetch('http://localhost:8080/api/applications', { headers: { 'Authorization': 'Bearer ' + token } }),
-                    fetch('http://localhost:8080/api/job-requests', { headers: { 'Authorization': 'Bearer ' + token } })
-                ]);
-
-                let appData = [], jobData = [];
-                if (appRes.ok) { const json = await appRes.json(); appData = json.data || []; }
-                if (jobRes.ok) { const json = await jobRes.json(); jobData = json.data || []; }
-
-                // Tính toán thống kê
-                const totalJobs = jobData.length;
-                const totalApps = appData.length;
-                const statusCounts = { 'APPLIED': 0, 'SCREENING': 0, 'INTERVIEWED': 0, 'OFFERED': 0, 'REJECTED': 0 };
-
-                appData.forEach(app => {
-                    if (statusCounts[app.status] !== undefined) statusCounts[app.status]++;
-                    else statusCounts[app.status] = 1;
-                });
-
-                // Load Chart.js dynamically nếu chưa có
-                if (typeof Chart === 'undefined') {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-                    script.onload = () => renderReportUI(container, totalJobs, totalApps, statusCounts);
-                    document.head.appendChild(script);
-                } else {
-                    renderReportUI(container, totalJobs, totalApps, statusCounts);
-                }
-
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend: Không thể tải báo cáo.</div>`;
-            }
-        }
-
-        function renderReportUI(container, totalJobs, totalApps, statusCounts) {
-            container.innerHTML = `
-                <div class="card-view">
-                    <h3 style="margin-bottom: 20px; color: #1e293b;">Báo cáo Tuyển dụng Tổng quan</h3>
-                    <div style="display: flex; gap: 20px; margin-bottom: 30px;">
-                        <div style="flex: 1; background: #eff6ff; padding: 20px; border-radius: 12px; border: 1px solid #bfdbfe;">
-                            <div style="color: #3b82f6; font-size: 14px; font-weight: 600;">Tổng số Vị trí (Job Requests)</div>
-                            <div style="font-size: 32px; font-weight: 700; color: #1e3a8a; margin-top: 8px;">${totalJobs}</div>
-                        </div>
-                        <div style="flex: 1; background: #f0fdf4; padding: 20px; border-radius: 12px; border: 1px solid #bbf7d0;">
-                            <div style="color: #16a34a; font-size: 14px; font-weight: 600;">Tổng số Hồ sơ Ứng tuyển</div>
-                            <div style="font-size: 32px; font-weight: 700; color: #14532d; margin-top: 8px;">${totalApps}</div>
-                        </div>
-                        <div style="flex: 1; background: #fef2f2; padding: 20px; border-radius: 12px; border: 1px solid #fecaca;">
-                            <div style="color: #ef4444; font-size: 14px; font-weight: 600;">Hồ sơ bị từ chối</div>
-                            <div style="font-size: 32px; font-weight: 700; color: #7f1d1d; margin-top: 8px;">${statusCounts['REJECTED'] || 0}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: center; align-items: center; height: 350px;">
-                        <canvas id="recruitmentChart"></canvas>
-                    </div>
-                </div>
-            `;
-
-            // Vẽ biểu đồ
-            const ctx = document.getElementById('recruitmentChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Mới nộp (APPLIED)', 'Đang lọc (SCREENING)', 'Đã phỏng vấn (INTERVIEWED)', 'Đã chốt (OFFERED)', 'Bị loại (REJECTED)'],
-                    datasets: [{
-                        label: 'Số lượng hồ sơ',
-                        data: [
-                            statusCounts['APPLIED'] || 0,
-                            statusCounts['SCREENING'] || 0,
-                            statusCounts['INTERVIEWED'] || 0,
-                            statusCounts['OFFERED'] || 0,
-                            statusCounts['REJECTED'] || 0
-                        ],
-                        backgroundColor: [
-                            '#f59e0b', // APPLIED (Cam)
-                            '#3b82f6', // SCREENING (Xanh dương)
-                            '#8b5cf6', // INTERVIEWED (Tím)
-                            '#10b981', // OFFERED (Xanh lá)
-                            '#ef4444'  // REJECTED (Đỏ)
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right' }
-                    }
-                }
-            });
-        }
-
-        // ========================== NHẬT KÝ HỆ THỐNG ==========================
-        async function loadSystemLogs() {
-            const container = document.getElementById('sysLogsContainer');
-            if (!container) return;
-            try {
-                const token = localStorage.getItem('accessToken');
-                const res = await fetch('http://localhost:8080/api/system-logs', { headers: { 'Authorization': 'Bearer ' + token } });
-                const json = await res.json();
-                if (res.ok) {
-                    const rows = (json.data || []).map(log => {
-                        const date = new Date(log.timestamp).toLocaleString('vi-VN');
-                        return `<tr><td>${date}</td><td>${log.username}</td><td>${log.action}</td><td>${log.ipAddress}</td></tr>`;
-                    }).join('');
-                    container.innerHTML = `
-                        <div class="card-view">
-                            <h3 style="margin-bottom: 20px;">System Logs</h3>
-                            <table class="table">
-                                <thead><tr><th>THỜI GIAN</th><th>USER</th><th>HÀNH ĐỘNG</th><th>IP</th></tr></thead>
-                                <tbody>${rows || '<tr><td colspan="4" style="text-align:center;">Chưa có dữ liệu</td></tr>'}</tbody>
-                            </table>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = `<div style="color:red; padding:20px;">Lỗi: ${json.message}</div>`;
-                }
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        // ========================== QUẢN LÝ CV (SÀNG LỌC & ĐỌC CV) ==========================
-        async function loadReadCVs() {
-            const container = document.getElementById('readCvContainer');
-            if (!container) return;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const res = await fetch('http://localhost:8080/api/applications', { headers: { 'Authorization': 'Bearer ' + token } });
-                const json = await res.json();
-                if (res.ok) {
-                    const rows = (json.data || []).map(app => {
-                        const date = app.appliedAt ? new Date(app.appliedAt).toLocaleDateString('vi-VN') : '';
-                        const cvAction = app.cvUrl ? `window.open('${app.cvUrl}', '_blank')` : `alert('Ứng viên chưa tải lên CV')`;
-                        const actionBtn = `<button onclick="${cvAction}" class="btn-primary" style="padding:4px 8px; font-size:12px;">Tải CV PDF</button>`;
-                        return `<tr><td>${app.candidateName}</td><td>${app.jobTitle}</td><td>${date}</td><td><span class="status-badge ${app.status.toLowerCase()}">${app.status}</span></td><td>${actionBtn}</td></tr>`;
-                    }).join('');
-                    container.innerHTML = `
-                        <div class="card-view">
-                            <h3 style="margin-bottom: 20px;">Kho CV đã được nộp</h3>
-                            <table class="table">
-                                <thead><tr><th>ỨNG VIÊN</th><th>VỊ TRÍ</th><th>NGÀY NỘP</th><th>TRẠNG THÁI</th><th>ĐỌC CV</th></tr></thead>
-                                <tbody>${rows || '<tr><td colspan="5" style="text-align:center;">Chưa có CV nào</td></tr>'}</tbody>
-                            </table>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = `<div style="color:red; padding:20px;">Lỗi: ${json.message}</div>`;
-                }
-            } catch (e) {
-                container.innerHTML = `<div style="color:red; padding:20px;">Lỗi kết nối Backend.</div>`;
-            }
-        }
-
-        // ========================== CHATBOT LOGIC ==========================
-        function toggleChatbot() {
-            const win = document.getElementById('chatbotWindow');
-            win.classList.toggle('open');
-            if (win.classList.contains('open')) {
-                document.getElementById('chatbotInput').focus();
-            }
-        }
-
-        function handleChatbotKeyPress(e) {
-            if (e.key === 'Enter') sendChatbotMessage();
-        }
-
-        function sendChatbotMessage() {
-            const input = document.getElementById('chatbotInput');
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            appendChatMessage(msg, 'user');
-            input.value = '';
-
-            // Show typing indicator
-            const msgsContainer = document.getElementById('chatbotMessages');
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.id = 'chatbotTyping';
-            typingDiv.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-            msgsContainer.appendChild(typingDiv);
-            msgsContainer.scrollTop = msgsContainer.scrollHeight;
-
-            // Simulate bot response after 1s
-            setTimeout(() => {
-                const typing = document.getElementById('chatbotTyping');
-                if (typing) typing.remove();
-
-                let botReply = "Dạ, tôi chưa hiểu rõ ý của bạn. Bạn có thể hỏi tôi về các tính năng như Tuyển dụng, Lịch phỏng vấn, Duyệt Offer, hoặc thông tin liên hệ hỗ trợ ạ.";
-                const lowerMsg = msg.toLowerCase();
-
-                if (lowerMsg.includes('xin chào') || lowerMsg.includes('hi') || lowerMsg.includes('hello')) {
-                    botReply = "Chào bạn ạ! Chúc bạn một ngày làm việc thật nhiều năng lượng. Tôi có thể hỗ trợ gì cho công việc của bạn hôm nay?";
-                } else if (lowerMsg.includes('chức năng') || lowerMsg.includes('làm được gì') || lowerMsg.includes('giúp gì')) {
-                    botReply = "Dạ, tôi có thể hướng dẫn bạn sử dụng các tính năng trên hệ thống như:\n- Tạo và duyệt Yêu cầu Tuyển dụng\n- Phân công Recruiter\n- Duyệt Offer vượt hạn mức\n- Quản lý lịch phỏng vấn\nBạn cần hỗ trợ cụ thể về tính năng nào ạ?";
-                } else if (lowerMsg.includes('hotline') || lowerMsg.includes('số điện thoại') || lowerMsg.includes('liên hệ') || lowerMsg.includes('hỗ trợ')) {
-                    botReply = "Dạ, bạn có thể liên hệ trực tiếp với bộ phận hỗ trợ kỹ thuật qua Hotline: 000887765414 ạ. Đội ngũ luôn sẵn lòng hỗ trợ bạn 24/7.";
-                } else if (lowerMsg.includes('cảm ơn') || lowerMsg.includes('thanks') || lowerMsg.includes('thank you')) {
-                    botReply = "Dạ không có gì ạ. Rất vui vì đã có thể giúp ích cho bạn. Nếu cần thêm hỗ trợ gì, bạn cứ nhắn tôi nhé!";
-                } else if (lowerMsg.includes('tuyển dụng') || lowerMsg.includes('yêu cầu')) {
-                    botReply = "Dạ, để xử lý Yêu cầu Tuyển dụng, bạn có thể vào mục 'Tạo Yêu cầu Tuyển dụng' nếu bạn là Trưởng bộ phận. Nếu bạn là HR, hãy vào 'Phân công Recruiter' ạ.";
-                } else if (lowerMsg.includes('duyệt') && lowerMsg.includes('offer')) {
-                    botReply = "Dạ, để duyệt Offer vượt hạn mức, bạn hãy chọn menu 'Duyệt Offer vượt hạn mức' ở thanh bên trái, sau đó nhấn 'Phê duyệt' hoặc 'Từ chối' nhé. Hệ thống sẽ tự động gửi email cho ứng viên.";
-                } else if (lowerMsg.includes('phỏng vấn')) {
-                    botReply = "Dạ, Lịch phỏng vấn được quản lý bởi Recruiter. Nếu bạn là Người phỏng vấn, hãy xem mục 'Xem lịch phỏng vấn' để lấy link Meet ạ.";
-                }
-
-                appendChatMessage(botReply, 'bot');
-            }, 1000);
-        }
-
-        function appendChatMessage(text, sender) {
-            const container = document.getElementById('chatbotMessages');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'chat-msg ' + sender;
-            msgDiv.textContent = text;
-            container.appendChild(msgDiv);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        document.getElementById('changePasswordForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const cp_current = document.getElementById('cp_current').value;
-            const cp_new = document.getElementById('cp_new').value;
-            const cp_confirm = document.getElementById('cp_confirm').value;
-
-            if (cp_new !== cp_confirm) {
-                alert("Mật khẩu xác nhận không khớp!");
-                return;
-            }
-
-            const btn = document.getElementById('cp_submit');
-            btn.disabled = true;
-            btn.innerText = "Đang xử lý...";
-
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch('http://localhost:8080/api/auth/change-password', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        currentPassword: cp_current,
-                        newPassword: cp_new,
-                        confirmPassword: cp_confirm
-                    })
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    alert("Đổi mật khẩu thành công! Chuyển hướng sau 2s...");
-                    setTimeout(() => {
-                        localStorage.removeItem('accessToken');
-                        localStorage.removeItem('refreshToken');
-                        localStorage.removeItem('userRoles');
-                        window.location.href = 'login.html?session=changed';
-                    }, 2000);
-                } else {
-                    let msg = data.message || "Đổi mật khẩu thất bại";
-                    if (data.errors && Object.keys(data.errors).length > 0) {
-                        msg = Object.values(data.errors)[0];
-                    }
-                    alert(msg);
-                    btn.disabled = false;
-                    btn.innerText = "Lưu thay đổi";
-                }
-            } catch (error) {
-                alert("Lỗi kết nối");
-                btn.disabled = false;
-                btn.innerText = "Lưu thay đổi";
-            }
-        });
-
-        function openChangePasswordModal() {
-            document.getElementById('changePasswordForm').reset();
-            document.getElementById('cp_submit').disabled = false;
-            document.getElementById('cp_submit').innerText = "Lưu thay đổi";
-            document.getElementById('changePasswordModal').style.display = 'block';
-        }
-
-        function closeChangePasswordModal() {
-            document.getElementById('changePasswordModal').style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        window.addEventListener('click', function (event) {
-            if (event.target == document.getElementById('changePasswordModal')) {
-                closeChangePasswordModal();
-            }
-        });
-    </script>
-    <script>
-        // Idle timeout script (30 seconds)
-        (function () {
-            let idleTime = 0;
-            const maxIdleTime = 30; // seconds
-
-            function resetTimer() {
-                idleTime = 0;
-            }
-
-            document.addEventListener('mousemove', resetTimer);
-            document.addEventListener('keypress', resetTimer);
-            document.addEventListener('scroll', resetTimer);
-            document.addEventListener('click', resetTimer);
-
-            setInterval(function () {
-                idleTime++;
-                if (idleTime >= maxIdleTime) {
-                    if (typeof logout === 'function') {
-                        logout(false);
-                    } else {
-                        localStorage.removeItem('accessToken');
-                        localStorage.removeItem('refreshToken');
-                        window.location.href = 'login.html?session=expired';
-                    }
-                }
-            }, 1000); // 1 second
-        })();
-    </script>
-    <!-- Thêm Modal Thêm chức danh -->
-    <div id="addDeptModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 30px; border-radius: 8px; width: 400px; max-width: 90%;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <h3 style="margin: 0;">Thêm chức danh mới</h3>
-                <span onclick="closeAddModal()" style="cursor: pointer; font-size: 20px;">&times;</span>
-            </div>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>Tên chức danh</label>
-                <input type="text" id="jobName" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>Mô tả</label>
-                <input type="text" id="jobDesc" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                <button onclick="closeAddModal()" style="padding: 8px 16px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer;">Hủy</button>
-                <button onclick="createJobTitle()" style="padding: 8px 16px; border: none; background: #3b82f6; color: white; border-radius: 4px; cursor: pointer;">Lưu</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        async function fetchJobTitles() {
-            try {
-                const token = localStorage.getItem('accessToken');
-                const response = await fetch('/api/job-titles', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const res = await response.json();
-                if (res.success) {
-                    const container = document.getElementById('jobTitleContainer');
-                    if (res.data.length === 0) {
-                        container.innerHTML = '<p>Chưa có chức danh nào.</p>';
-                    } else {
-                        container.innerHTML = renderList(res.data);
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetching job titles:", error);
-            }
-        }
-
-        function renderList(jobTitles) {
-            let html = '<ul style="list-style-type: none; padding: 0;">';
-            for (let job of jobTitles) {
-                let badge = job.status === 'ACTIVE' ? '<span style="color: green; font-size:12px;">[Hoạt động]</span>' : '<span style="color: red; font-size:12px;">[Ngừng áp dụng]</span>';
-                html += `<li style="margin: 10px 0;">
-                    <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
-                        <strong>${job.name}</strong> ${badge}
-                        <p style="font-size: 14px; color: #64748b; margin-top: 5px;">${job.description || ''}</p>
-                        <div style="margin-top: 10px; font-size: 12px;">
-                            <a href="#" style="color:#ef4444;" onclick="deleteJob(${job.id})">Xóa/Vô hiệu hóa</a>
-                        </div>
-                    </div>
-                </li>`;
-            }
-            html += '</ul>';
-            return html;
-        }
-
-        async function deleteJob(id) {
-            if(!confirm('Bạn có chắc chắn muốn xóa chức danh này?')) return;
-            const token = localStorage.getItem('accessToken');
-            const res = await fetch(`/api/job-titles/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            alert(data.message);
-            fetchJobTitles();
-        }
-
-        // Mở Modal
-        function openAddModal() {
-            document.getElementById('addDeptModal').style.display = 'flex';
-        }
-
-        // Đóng Modal
-        function closeAddModal() {
-            document.getElementById('addDeptModal').style.display = 'none';
-            document.getElementById('jobName').value = '';
-            document.getElementById('jobDesc').value = '';
-        }
-
-        // Gọi API Tạo chức danh
-        async function createJobTitle() {
-            const name = document.getElementById('jobName').value;
-            const desc = document.getElementById('jobDesc').value;
-            if(!name) { alert('Vui lòng nhập tên chức danh'); return; }
-
-            const token = localStorage.getItem('accessToken');
-            const res = await fetch('/api/job-titles', {
-                method: 'POST',
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify({ name: name, description: desc })
-            });
-            const data = await res.json();
-            if(data.success) {
-                alert('Tạo chức danh thành công!');
-                closeAddModal();
-                fetchJobTitles(); // Load lại
-            } else {
-                alert(data.message || 'Có lỗi xảy ra');
-            }
-        }
-
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchJobTitles();
-        });
+        renderTable();
     </script>
 </body>
-
 </html>
