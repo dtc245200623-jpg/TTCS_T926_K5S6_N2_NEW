@@ -109,8 +109,21 @@ public class AuthController {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .roles(user.getRoles())
+                .fullName(user.getFullName())
+                .department(user.getDepartment())
+                .phone(user.getPhone())
+                .jobTitle(user.getJobTitle())
                 .build();
         return ResponseEntity.ok(ApiResponse.success("Lấy thông tin người dùng thành công", response));
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<com.example.auth.dto.UserResponse>> updateProfile(
+            Authentication authentication,
+            @Valid @RequestBody com.example.auth.dto.UpdateProfileRequest request) {
+        String currentUsername = authentication.getName();
+        com.example.auth.dto.UserResponse response = authService.updateProfile(currentUsername, request);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật hồ sơ thành công", response));
     }
 
     @PostMapping("/forgot-password")

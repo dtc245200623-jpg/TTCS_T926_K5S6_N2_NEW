@@ -727,6 +727,7 @@
                 tasks: [
                     { title: 'Quản lý Phòng ban', link: 'departments.html' },
                     { title: 'Quản lý Chức danh', link: 'job-titles.html' },
+                    { title: 'Chuỗi Cấp duyệt Tuyển dụng', link: 'master-data.html?tab=rules' },
                     { title: 'Danh mục Dữ liệu', link: 'master-data.html' },
                     { title: 'Giám sát Vị trí', link: '#' },
                     { title: 'Phân công Recruiter', link: '#' },
@@ -2246,8 +2247,16 @@
                 <span onclick="closeAddModal()" style="cursor: pointer; font-size: 20px;">&times;</span>
             </div>
             <div class="form-group" style="margin-bottom: 15px;">
-                <label>Tên chức danh</label>
+                <label>Mã chức danh (*)</label>
+                <input type="text" id="jobCode" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Tên chức danh (*)</label>
                 <input type="text" id="jobName" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Cấp bậc</label>
+                <input type="text" id="jobLevel" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;" placeholder="VD: Nhân viên, Trưởng phòng...">
             </div>
             <div class="form-group" style="margin-bottom: 15px;">
                 <label>Mô tả</label>
@@ -2287,9 +2296,11 @@
                 let badge = job.status === 'ACTIVE' ? '<span style="color: green; font-size:12px;">[Hoạt động]</span>' : '<span style="color: red; font-size:12px;">[Ngừng áp dụng]</span>';
                 html += `<li style="margin: 10px 0;">
                     <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
-                        <strong>${job.name}</strong> ${badge}
+                        <strong>[${job.code || 'N/A'}] ${job.name}</strong> ${badge}
+                        <div style="font-size: 13px; color: #334155; margin-top: 4px;">Cấp bậc: <strong>${job.level || 'Chưa cập nhật'}</strong></div>
                         <p style="font-size: 14px; color: #64748b; margin-top: 5px;">${job.description || ''}</p>
-                        <div style="margin-top: 10px; font-size: 12px;">
+                        <div style="margin-top: 10px; font-size: 12px; display: flex; gap: 15px;">
+                            <a href="#" style="color:#2563eb;" onclick="openMappingModal(${job.id}, '${job.name}')">Ánh xạ Khung Năng Lực</a>
                             <a href="#" style="color:#ef4444;" onclick="deleteJob(${job.id})">Xóa/Vô hiệu hóa</a>
                         </div>
                     </div>
@@ -2319,15 +2330,19 @@
         // Đóng Modal
         function closeAddModal() {
             document.getElementById('addDeptModal').style.display = 'none';
+            document.getElementById('jobCode').value = '';
             document.getElementById('jobName').value = '';
+            document.getElementById('jobLevel').value = '';
             document.getElementById('jobDesc').value = '';
         }
 
         // Gọi API Tạo chức danh
         async function createJobTitle() {
+            const code = document.getElementById('jobCode').value;
             const name = document.getElementById('jobName').value;
+            const level = document.getElementById('jobLevel').value;
             const desc = document.getElementById('jobDesc').value;
-            if(!name) { alert('Vui lòng nhập tên chức danh'); return; }
+            if(!code || !name) { alert('Vui lòng nhập Mã và Tên chức danh'); return; }
 
             const token = localStorage.getItem('accessToken');
             const res = await fetch('/api/job-titles', {
@@ -2336,7 +2351,7 @@
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json' 
                 },
-                body: JSON.stringify({ name: name, description: desc })
+                body: JSON.stringify({ code: code, name: name, level: level, description: desc })
             });
             const data = await res.json();
             if(data.success) {
@@ -2352,6 +2367,104 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchJobTitles();
         });
+    </script>
+    <!-- Modal Ánh xạ Khung Năng Lực -->
+    <div id="mappingModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 8px; width: 500px; max-width: 90%;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="margin: 0;">Ánh xạ Năng lực - <span id="mapJobName" style="color: #2563eb;"></span></h3>
+                <span onclick="closeMappingModal()" style="cursor: pointer; font-size: 20px;">&times;</span>
+            </div>
+            <input type="hidden" id="mapJobId">
+            <div id="competencyList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px;">
+                <!-- Checkboxes loaded here -->
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button onclick="closeMappingModal()" style="padding: 8px 16px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer;">Hủy</button>
+                <button onclick="saveMapping()" style="padding: 8px 16px; border: none; background: #3b82f6; color: white; border-radius: 4px; cursor: pointer;">Lưu Ánh Xạ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentJobCompetencies = [];
+
+        async function openMappingModal(jobId, jobName) {
+            document.getElementById('mapJobId').value = jobId;
+            document.getElementById('mapJobName').textContent = jobName;
+            document.getElementById('mappingModal').style.display = 'flex';
+            document.getElementById('competencyList').innerHTML = 'Đang tải danh sách năng lực...';
+            
+            try {
+                const token = localStorage.getItem('accessToken');
+                
+                // First get all competencies
+                const resComp = await fetch('/api/master-data/competencies', { headers: { 'Authorization': `Bearer ${token}` } });
+                const dataComp = await resComp.json();
+                
+                // Then get current job title to see existing mapped competencies
+                const resJob = await fetch('/api/job-titles', { headers: { 'Authorization': `Bearer ${token}` } });
+                const dataJob = await resJob.json();
+                
+                if(dataComp.success && dataJob.success) {
+                    const allComps = dataComp.data;
+                    const job = dataJob.data.find(j => j.id === jobId);
+                    currentJobCompetencies = job && job.competencies ? job.competencies.map(c => c.id) : [];
+                    
+                    let html = '';
+                    if(allComps.length === 0) {
+                        html = '<p style="color: #64748b;">Chưa có Khung năng lực nào trong hệ thống. Vui lòng thêm trong Quản lý Dữ liệu.</p>';
+                    } else {
+                        allComps.forEach(comp => {
+                            const isChecked = currentJobCompetencies.includes(comp.id) ? 'checked' : '';
+                            html += `
+                            <div style="margin-bottom: 8px; display: flex; align-items: center;">
+                                <input type="checkbox" id="comp_${comp.id}" value="${comp.id}" class="comp-checkbox" ${isChecked} style="margin-right: 8px;">
+                                <label for="comp_${comp.id}" style="cursor: pointer;">${comp.name}</label>
+                            </div>
+                            `;
+                        });
+                    }
+                    document.getElementById('competencyList').innerHTML = html;
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('competencyList').innerHTML = 'Lỗi tải dữ liệu.';
+            }
+        }
+
+        function closeMappingModal() {
+            document.getElementById('mappingModal').style.display = 'none';
+        }
+
+        async function saveMapping() {
+            const jobId = document.getElementById('mapJobId').value;
+            const checkboxes = document.querySelectorAll('.comp-checkbox:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            
+            const token = localStorage.getItem('accessToken');
+            try {
+                const res = await fetch(`/api/job-titles/${jobId}/competencies`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(selectedIds)
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert('Ánh xạ thành công!');
+                    closeMappingModal();
+                    fetchJobTitles();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi kết nối');
+            }
+        }
     </script>
 </body>
 

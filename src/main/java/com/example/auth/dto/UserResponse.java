@@ -15,4 +15,6 @@ public class UserResponse {
     private java.time.LocalDateTime createdAt;
     private String fullName;
     private String department;
+    private String phone;
+    private String jobTitle;
 }

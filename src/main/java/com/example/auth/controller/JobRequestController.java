@@ -24,8 +24,14 @@ public class JobRequestController {
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách thành công", jobRequestService.getAllJobRequests()));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('HIRING_MANAGER', 'APPROVER', 'HR_MANAGER', 'ADMIN', 'RECRUITER', 'INTERVIEWER')")
+    public ResponseEntity<ApiResponse<JobRequestDto>> getJobRequestById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success("Lấy thông tin yêu cầu tuyển dụng thành công", jobRequestService.getJobRequestById(id)));
+    }
+
     @PostMapping
-    @PreAuthorize("hasAnyRole('HIRING_MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('HIRING_MANAGER', 'HR_MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<JobRequestDto>> createJobRequest(
             @RequestBody JobRequestDto dto,
             Authentication authentication) {
@@ -34,12 +40,13 @@ public class JobRequestController {
     }
 
     @PutMapping("/{id}/approve")
-    @PreAuthorize("hasAnyRole('APPROVER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('APPROVER', 'HR_MANAGER', 'HIRING_MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<JobRequestDto>> approveJobRequest(
             @PathVariable Long id,
             @RequestParam boolean isApproved,
+            @RequestParam(required = false) String comments,
             Authentication authentication) {
-        JobRequestDto updated = jobRequestService.approveOrReject(id, isApproved, authentication.getName());
+        JobRequestDto updated = jobRequestService.approveOrRejectStep(id, isApproved, comments, authentication.getName());
         String action = isApproved ? "Phê duyệt" : "Từ chối";
         return ResponseEntity.ok(ApiResponse.success(action + " yêu cầu thành công", updated));
     }

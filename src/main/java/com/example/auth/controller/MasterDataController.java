@@ -16,6 +16,8 @@ import java.util.Optional;
 import com.example.auth.repository.SalaryRangeRepository;
 import com.example.auth.repository.CompetencyRepository;
 import com.example.auth.repository.InterviewQuestionRepository;
+import com.example.auth.repository.EvaluationCriteriaRepository;
+import com.example.auth.entity.EvaluationCriteria;
 
 @RestController
 @RequestMapping("/api/master-data")
@@ -27,6 +29,8 @@ public class MasterDataController {
     private CompetencyRepository competencyRepo;
     @Autowired
     private InterviewQuestionRepository questionRepo;
+    @Autowired
+    private EvaluationCriteriaRepository criteriaRepo;
 
     // --- SALARY RANGES ---
     @GetMapping("/salary-ranges")
@@ -71,6 +75,31 @@ public class MasterDataController {
         competencyRepo.save(item);
         return ResponseEntity.ok(ApiResponse.success("Deleted", null));
     }
+
+    // --- EVALUATION CRITERIA ---
+    @GetMapping("/competencies/{competencyId}/criteria")
+    public ResponseEntity<?> getCriteriaForCompetency(@PathVariable Long competencyId) {
+        return ResponseEntity.ok(ApiResponse.success("Success", criteriaRepo.findByCompetencyId(competencyId)));
+    }
+
+    @PostMapping("/competencies/{competencyId}/criteria")
+    public ResponseEntity<?> addCriteria(@PathVariable Long competencyId, @RequestBody EvaluationCriteria req) {
+        Optional<Competency> compOpt = competencyRepo.findById(competencyId);
+        if (compOpt.isEmpty()) return ResponseEntity.badRequest().body(ApiResponse.error("Không tìm thấy năng lực"));
+        
+        if(req.getName() == null) return ResponseEntity.badRequest().body(ApiResponse.error("Thiếu tên tiêu chí"));
+        
+        req.setCompetency(compOpt.get());
+        return ResponseEntity.ok(ApiResponse.success("Created", criteriaRepo.save(req)));
+    }
+
+    @DeleteMapping("/criteria/{id}")
+    public ResponseEntity<?> deleteCriteria(@PathVariable Long id) {
+        if (!criteriaRepo.existsById(id)) return ResponseEntity.badRequest().body(ApiResponse.error("Không tìm thấy tiêu chí"));
+        criteriaRepo.deleteById(id);
+        return ResponseEntity.ok(ApiResponse.success("Deleted", null));
+    }
+
 
     // --- INTERVIEW QUESTIONS ---
     @GetMapping("/questions")

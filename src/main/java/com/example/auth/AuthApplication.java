@@ -105,4 +105,53 @@ public class AuthApplication {
                 }
             };
         }
+
+        @Bean
+        public CommandLineRunner initApprovalRules(com.example.auth.repository.ApprovalRuleRepository ruleRepo,
+                                                  com.example.auth.repository.DepartmentRepository deptRepo) {
+            return args -> {
+                if (deptRepo.count() == 0) {
+                    com.example.auth.entity.Department d1 = new com.example.auth.entity.Department();
+                    d1.setName("Phòng Công nghệ Thông tin");
+                    d1.setDescription("Bộ phận kỹ thuật & phát triển phần mềm");
+                    d1.setStatus("ACTIVE");
+                    deptRepo.save(d1);
+
+                    com.example.auth.entity.Department d2 = new com.example.auth.entity.Department();
+                    d2.setName("Phòng Nhân sự");
+                    d2.setDescription("Bộ phận nhân sự và tuyển dụng");
+                    d2.setStatus("ACTIVE");
+                    deptRepo.save(d2);
+
+                    com.example.auth.entity.Department d3 = new com.example.auth.entity.Department();
+                    d3.setName("Phòng Kinh doanh");
+                    d3.setDescription("Bộ phận kinh doanh & phát triển thị trường");
+                    d3.setStatus("ACTIVE");
+                    deptRepo.save(d3);
+                    System.out.println(">>> Đã khởi tạo 3 phòng ban mẫu");
+                }
+
+                if (ruleRepo.count() == 0) {
+                    com.example.auth.entity.ApprovalRule rule = com.example.auth.entity.ApprovalRule.builder()
+                            .name("Quy trình duyệt tuyển dụng tiêu chuẩn (Hạn mức 25M)")
+                            .minSalary(0.0)
+                            .maxSalary(25000000.0)
+                            .overThresholdRole("ROLE_APPROVER")
+                            .isActive(true)
+                            .steps(new java.util.ArrayList<>())
+                            .build();
+
+                    com.example.auth.entity.ApprovalRuleStep step1 = com.example.auth.entity.ApprovalRuleStep.builder()
+                            .rule(rule)
+                            .stepOrder(1)
+                            .stepName("Trưởng phòng Nhân sự")
+                            .approverRole("ROLE_HR_MANAGER")
+                            .build();
+
+                    rule.getSteps().add(step1);
+                    ruleRepo.save(rule);
+                    System.out.println(">>> Đã khởi tạo chuỗi cấp duyệt mẫu: " + rule.getName());
+                }
+            };
+        }
 }

@@ -243,4 +243,36 @@ public class AuthServiceImpl implements AuthService {
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
     }
+
+    @Override
+    @Transactional
+    public com.example.auth.dto.UserResponse updateProfile(String username, com.example.auth.dto.UpdateProfileRequest request) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getPhone() != null) {
+            user.setPhone(request.getPhone());
+        }
+        if (request.getJobTitle() != null) {
+            user.setJobTitle(request.getJobTitle());
+        }
+        
+        userRepository.save(user);
+        
+        return com.example.auth.dto.UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .roles(user.getRoles())
+                .isLocked(user.getIsLocked() != null && user.getIsLocked())
+                .createdAt(user.getCreatedAt())
+                .fullName(user.getFullName())
+                .department(user.getDepartment())
+                .phone(user.getPhone())
+                .jobTitle(user.getJobTitle())
+                .build();
+    }
 }

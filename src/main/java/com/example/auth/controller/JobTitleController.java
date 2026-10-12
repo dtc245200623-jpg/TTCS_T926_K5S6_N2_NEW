@@ -18,6 +18,9 @@ public class JobTitleController {
     @Autowired
     private JobTitleRepository jobTitleRepository;
 
+    @Autowired
+    private com.example.auth.repository.CompetencyRepository competencyRepository;
+
     @GetMapping
     public ResponseEntity<?> getAllJobTitles() {
         List<JobTitle> list = jobTitleRepository.findAll();
@@ -29,13 +32,36 @@ public class JobTitleController {
         if (request.getName() == null || request.getName().isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Tên chức danh không được để trống"));
         }
+        if (request.getCode() == null || request.getCode().isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Mã chức danh không được để trống"));
+        }
 
         JobTitle jobTitle = new JobTitle();
+        jobTitle.setCode(request.getCode());
         jobTitle.setName(request.getName());
+        jobTitle.setLevel(request.getLevel());
         jobTitle.setDescription(request.getDescription());
         jobTitleRepository.save(jobTitle);
 
         return ResponseEntity.ok(ApiResponse.success("Tạo chức danh thành công", jobTitle));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateJobTitle(@PathVariable Long id, @RequestBody JobTitleRequest request) {
+        Optional<JobTitle> optional = jobTitleRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Không tìm thấy chức danh"));
+        }
+        
+        JobTitle jobTitle = optional.get();
+        if (request.getName() != null) jobTitle.setName(request.getName());
+        if (request.getCode() != null) jobTitle.setCode(request.getCode());
+        if (request.getLevel() != null) jobTitle.setLevel(request.getLevel());
+        if (request.getDescription() != null) jobTitle.setDescription(request.getDescription());
+        
+        jobTitleRepository.save(jobTitle);
+        
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật chức danh thành công", jobTitle));
     }
 
     @DeleteMapping("/{id}")
@@ -53,9 +79,25 @@ public class JobTitleController {
         return ResponseEntity.ok(ApiResponse.success("Đã vô hiệu hóa chức danh", null));
     }
 
+    @PostMapping("/{id}/competencies")
+    public ResponseEntity<?> mapCompetencies(@PathVariable Long id, @RequestBody java.util.List<Long> competencyIds) {
+        Optional<JobTitle> optional = jobTitleRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Không tìm thấy chức danh"));
+        }
+        JobTitle jobTitle = optional.get();
+        java.util.List<com.example.auth.entity.Competency> competencies = competencyRepository.findAllById(competencyIds);
+        jobTitle.setCompetencies(new java.util.HashSet<>(competencies));
+        jobTitleRepository.save(jobTitle);
+        
+        return ResponseEntity.ok(ApiResponse.success("Ánh xạ khung năng lực thành công", jobTitle));
+    }
+
     @Data
     static class JobTitleRequest {
+        private String code;
         private String name;
+        private String level;
         private String description;
     }
 }

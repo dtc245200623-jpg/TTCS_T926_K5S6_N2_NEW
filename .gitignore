@@ -151,3 +151,6 @@ target/
 .idea/
 .vscode/
 apache-maven-*/
+
+# Uploads
+FE/uploads/

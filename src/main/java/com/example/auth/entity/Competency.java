@@ -22,6 +22,9 @@ public class Competency {
     @Column(length = 2000)
     private String description;
 
+    @OneToMany(mappedBy = "competency", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<EvaluationCriteria> criteria = new java.util.ArrayList<>();
+
     @Column(nullable = false)
     private String status = "ACTIVE"; 
 

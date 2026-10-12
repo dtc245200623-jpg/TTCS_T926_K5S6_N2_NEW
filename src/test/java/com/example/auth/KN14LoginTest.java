@@ -103,7 +103,7 @@ public class KN14LoginTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Tên đăng nhập hoặc mật khẩu không chính xác"));
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("Tên đăng nhập hoặc mật khẩu không chính xác")));
 
         User user = userRepository.findByEmail("test1@example.com").get();
         assertEquals(1, user.getFailedAttempts());

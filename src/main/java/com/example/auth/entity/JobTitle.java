@@ -17,13 +17,27 @@ public class JobTitle {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    private String code;
+
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Column(name = "job_level")
+    private String level;
 
     @Column(length = 1000)
     private String description;
 
     @Column(nullable = false)
     private String status = "ACTIVE"; // ACTIVE, INACTIVE
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "job_title_competencies",
+        joinColumns = @JoinColumn(name = "job_title_id"),
+        inverseJoinColumns = @JoinColumn(name = "competency_id")
+    )
+    private java.util.Set<Competency> competencies = new java.util.HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

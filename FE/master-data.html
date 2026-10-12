@@ -593,6 +593,7 @@
                     <button id="btn-salary" class="tab-btn" onclick="showTab('salary')" style="padding: 10px 20px; border: none; background: #3b82f6; color: white; border-radius: 4px; cursor: pointer;">Dải lương</button>
                     <button id="btn-competency" class="tab-btn" onclick="showTab('competency')" style="padding: 10px 20px; border: none; background: #64748b; color: white; border-radius: 4px; cursor: pointer;">Khung năng lực</button>
                     <button id="btn-question" class="tab-btn" onclick="showTab('question')" style="padding: 10px 20px; border: none; background: #64748b; color: white; border-radius: 4px; cursor: pointer;">Câu hỏi phỏng vấn</button>
+                    <button id="btn-approval-chain" class="tab-btn" onclick="showTab('approval-chain')" style="padding: 10px 20px; border: none; background: #64748b; color: white; border-radius: 4px; cursor: pointer;">Chuỗi cấp duyệt</button>
                 </div>
 
                 <div id="pageContent" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -735,6 +736,7 @@
                     { title: 'Quản lý Phòng ban', link: 'departments.html' },
                     { title: 'Quản lý Chức danh', link: 'job-titles.html' },
                     { title: 'Danh mục Dữ liệu', link: 'master-data.html' },
+                    { title: 'Chuỗi Cấp duyệt Tuyển dụng', link: '#' },
                     { title: 'Giám sát Vị trí', link: '#' },
                     { title: 'Phân công Recruiter', link: '#' },
                     { title: 'Theo dõi Ngân sách', link: '#' },
@@ -2276,6 +2278,92 @@
         </div>
     </div>
 
+    <!-- Modal Tiêu chí đánh giá -->
+    <div id="modalCriteria" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 8px; width: 500px; max-width: 90%;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="margin: 0;">Tiêu chí đánh giá - <span id="critCompName" style="color: #2563eb;"></span></h3>
+                <span onclick="closeModal('modalCriteria')" style="cursor: pointer; font-size: 20px;">&times;</span>
+            </div>
+            <input type="hidden" id="critCompId">
+            <div id="criteriaList" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px;">
+                <!-- Criteria list loads here -->
+            </div>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 6px;">
+                <h4 style="margin-top: 0; margin-bottom: 10px;">Thêm tiêu chí mới</h4>
+                <div class="form-group" style="margin-bottom: 10px;"><label>Tên tiêu chí (*)</label><input type="text" id="critName" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+                <div class="form-group" style="margin-bottom: 10px;"><label>Mô tả</label><input type="text" id="critDesc" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+                <div class="form-group" style="margin-bottom: 15px;"><label>Trọng số (Mặc định: 1.0)</label><input type="number" step="0.1" id="critWeight" value="1.0" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button onclick="addCriteria()" style="padding: 8px 16px; border: none; background: #10b981; color: white; border-radius: 4px; cursor: pointer;">Thêm</button>
+                </div>
+    <!-- Modal Khai báo Chuỗi Cấp Duyệt (KN-210) -->
+    <div id="modalApprovalRule" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 25px 30px; border-radius: 12px; width: 680px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                <h3 style="margin: 0; color: #1e3a8a; font-size: 20px;">Khai báo Chuỗi Cấp duyệt</h3>
+                <span onclick="closeModal('modalApprovalRule')" style="cursor: pointer; font-size: 24px; color: #94a3b8;">&times;</span>
+            </div>
+
+            <div id="ruleValidationAlert" style="display: none; background: #fee2e2; border: 1px solid #f87171; color: #b91c1c; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; font-weight: 500;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="font-weight: 600; font-size: 13px; color: #334155;">Tên chuỗi cấp duyệt (*)</label>
+                <input type="text" id="ar_name" placeholder="Ví dụ: Chuỗi duyệt phòng IT - Hạn mức 25M" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="font-weight: 600; font-size: 13px; color: #334155;">Phòng ban áp dụng</label>
+                    <select id="ar_departmentId" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                        <option value="">-- Tất cả phòng ban (Chung) --</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: 600; font-size: 13px; color: #334155;">Hạn mức lương đề xuất (VND) (*)</label>
+                    <input type="number" id="ar_maxSalary" placeholder="Ví dụ: 25000000" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px; background: #fffbeb; padding: 12px; border-radius: 8px; border: 1px solid #fde68a;">
+                <label style="font-weight: 600; font-size: 13px; color: #92400e;">⚡ Cấp duyệt bổ sung khi VƯỢT HẠN MỨC:</label>
+                <div style="font-size: 12px; color: #b45309; margin-bottom: 6px;">Nếu yêu cầu tuyển dụng có mức lương > hạn mức trên, hệ thống sẽ tự động thêm cấp duyệt này vào cuối chuỗi.</div>
+                <select id="ar_overThresholdRole" style="width: 100%; padding: 8px; border: 1px solid #fcd34d; border-radius: 6px; box-sizing: border-box; background: white;">
+                    <option value="ROLE_APPROVER">Ban Giám đốc (Người duyệt - ROLE_APPROVER)</option>
+                    <option value="ROLE_HR_MANAGER">Trưởng phòng Nhân sự (ROLE_HR_MANAGER)</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label style="font-weight: 700; font-size: 14px; color: #1e293b;">Các cấp duyệt tuần tự (Bắt buộc tối thiểu 1 cấp):</label>
+                    <button type="button" onclick="addRuleStepRow()" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">+ Thêm cấp duyệt</button>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                        <tr style="background: #f1f5f9; text-align: left; color: #475569;">
+                            <th style="padding: 8px; width: 60px;">Cấp</th>
+                            <th style="padding: 8px;">Tên bước duyệt</th>
+                            <th style="padding: 8px;">Vai trò người duyệt</th>
+                            <th style="padding: 8px; width: 50px;">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ruleStepsTableBody">
+                        <!-- Dynamic step rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <button type="button" onclick="closeModal('modalApprovalRule')" style="padding: 10px 18px; border: 1px solid #cbd5e1; background: #f8fafc; color: #475569; border-radius: 6px; cursor: pointer; font-weight: 500;">Hủy</button>
+                <button type="button" onclick="saveApprovalRule()" style="padding: 10px 22px; border: none; background: #2563eb; color: white; border-radius: 6px; cursor: pointer; font-weight: 600;">Lưu chuỗi cấp duyệt</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
     <script>
         let currentTab = 'salary';
 
@@ -2287,6 +2375,7 @@
             if (tab === 'salary') document.getElementById('tabTitle').innerText = 'Quản lý Dải lương';
             if (tab === 'competency') document.getElementById('tabTitle').innerText = 'Quản lý Khung năng lực';
             if (tab === 'question') document.getElementById('tabTitle').innerText = 'Ngân hàng Câu hỏi phỏng vấn';
+            if (tab === 'approval-chain') document.getElementById('tabTitle').innerText = 'Khai báo Chuỗi cấp duyệt';
             
             fetchData();
         }
@@ -2297,6 +2386,7 @@
             if (currentTab === 'salary') endpoint = '/api/master-data/salary-ranges';
             if (currentTab === 'competency') endpoint = '/api/master-data/competencies';
             if (currentTab === 'question') endpoint = '/api/master-data/questions';
+            if (currentTab === 'approval-chain') endpoint = '/api/approval-rules';
 
             try {
                 const response = await fetch(endpoint, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -2310,22 +2400,53 @@
 
                 let html = '<ul style="list-style-type: none; padding: 0;">';
                 for (let item of res.data) {
-                    let badge = item.status === 'ACTIVE' ? '<span style="color: green; font-size:12px;">[Hoạt động]</span>' : '<span style="color: red; font-size:12px;">[Ngừng áp dụng]</span>';
+                    let badge = item.status === 'ACTIVE' || item.isActive !== false ? '<span style="color: green; font-size:12px;">[Hoạt động]</span>' : '<span style="color: red; font-size:12px;">[Ngừng áp dụng]</span>';
                     
                     let content = '';
                     if (currentTab === 'salary') {
                         content = `<strong>Chức danh: ${item.jobTitleName}</strong><br><span style="color:#64748b;font-size:14px;">Lương Min: ${item.minSalary} | Lương Max: ${item.maxSalary}</span>`;
                     } else if (currentTab === 'competency') {
                         content = `<strong>${item.name}</strong><br><span style="color:#64748b;font-size:14px;">Mô tả: ${item.description || ''}</span>`;
+                        content += `<br><div style="margin-top: 8px;"><a href="#" style="color:#2563eb; font-size: 13px;" onclick="openCriteriaModal(${item.id}, '${item.name}')">Quản lý tiêu chí đánh giá</a></div>`;
+                    } else if (currentTab === 'approval-chain') {
+                        let deptName = item.departmentName || 'Tất cả phòng ban (Chung)';
+                        let maxSalStr = item.maxSalary ? (item.maxSalary / 1000000) + 'M VND' : 'Không giới hạn';
+                        let stepsBadge = '';
+                        if (item.steps && item.steps.length > 0) {
+                            stepsBadge = item.steps.map(s => {
+                                let roleText = s.approverRole === 'ROLE_HIRING_MANAGER' ? 'Trưởng bộ phận' :
+                                               s.approverRole === 'ROLE_HR_MANAGER' ? 'Trưởng phòng NS' :
+                                               s.approverRole === 'ROLE_APPROVER' ? 'Ban Giám đốc' : s.approverRole;
+                                return `<span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; display: inline-block;"><strong>Cấp ${s.stepOrder}:</strong> ${s.stepName} (<em>${roleText}</em>)</span>`;
+                            }).join(' <span style="color:#94a3b8;">➔</span> ');
+                        } else {
+                            stepsBadge = '<span style="color:#ef4444; font-size:12px;">(Không có cấp duyệt nào khớp)</span>';
+                        }
+
+                        let overRoleText = item.overThresholdRole === 'ROLE_HR_MANAGER' ? 'Trưởng phòng NS' : 'Ban Giám đốc (Người duyệt)';
+                        let overBadge = `<span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-size: 11px;">Tự động thêm: ${overRoleText}</span>`;
+
+                        content = `
+                            <div style="font-size: 15px; font-weight: 700; color: #1e3a8a;">${item.name}</div>
+                            <div style="font-size: 13px; color: #475569; margin: 4px 0;">
+                                Phòng ban: <strong>${deptName}</strong> | Hạn mức lương: <strong style="color: #059669;">${maxSalStr}</strong>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 13px;">
+                                <span style="font-weight: 600; color: #334155;">Chuỗi duyệt:</span> ${stepsBadge}
+                            </div>
+                            <div style="margin-top: 6px;">
+                                <span style="font-weight: 600; font-size: 12px; color: #64748b;">Khi vượt hạn mức:</span> ${overBadge}
+                            </div>
+                        `;
                     } else {
                         content = `<strong>Q: ${item.questionContent}</strong><br><span style="color:#64748b;font-size:14px;">Gợi ý trả lời: ${item.suggestedAnswer || ''}</span>`;
                     }
 
                     html += `<li style="margin: 10px 0;">
-                        <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
-                            ${content} ${badge}
-                            <div style="margin-top: 10px; font-size: 12px;">
-                                <a href="#" style="color:#ef4444;" onclick="deleteData(${item.id})">Xóa/Vô hiệu hóa</a>
+                        <div style="border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #f8fafc;">
+                            ${content} <span style="float: right;">${badge}</span>
+                            <div style="margin-top: 10px; font-size: 12px; clear: both;">
+                                <a href="#" style="color:#ef4444; text-decoration: none; font-weight: 500;" onclick="deleteData(${item.id})">Xóa / Vô hiệu hóa</a>
                             </div>
                         </div>
                     </li>`;
@@ -2338,12 +2459,13 @@
         }
 
         async function deleteData(id) {
-            if(!confirm('Bạn có chắc chắn muốn vô hiệu hóa bản ghi này?')) return;
+            if(!confirm('Bạn có chắc chắn muốn xóa/vô hiệu hóa bản ghi này?')) return;
             const token = localStorage.getItem('accessToken');
             let endpoint = '';
             if (currentTab === 'salary') endpoint = `/api/master-data/salary-ranges/${id}`;
             if (currentTab === 'competency') endpoint = `/api/master-data/competencies/${id}`;
             if (currentTab === 'question') endpoint = `/api/master-data/questions/${id}`;
+            if (currentTab === 'approval-chain') endpoint = `/api/approval-rules/${id}`;
 
             await fetch(endpoint, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
             fetchData();
@@ -2353,6 +2475,157 @@
             if (currentTab === 'salary') document.getElementById('modalSalary').style.display = 'flex';
             if (currentTab === 'competency') document.getElementById('modalCompetency').style.display = 'flex';
             if (currentTab === 'question') document.getElementById('modalQuestion').style.display = 'flex';
+            if (currentTab === 'approval-chain') openApprovalRuleModal();
+        }
+
+        let currentRuleSteps = [];
+
+        async function openApprovalRuleModal() {
+            document.getElementById('ruleValidationAlert').style.display = 'none';
+            document.getElementById('ar_name').value = '';
+            document.getElementById('ar_maxSalary').value = '25000000';
+            document.getElementById('ar_overThresholdRole').value = 'ROLE_APPROVER';
+            
+            const token = localStorage.getItem('accessToken');
+            try {
+                const res = await fetch('/api/departments/flat', { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                const deptSelect = document.getElementById('ar_departmentId');
+                deptSelect.innerHTML = '<option value="">-- Tất cả phòng ban (Chung) --</option>';
+                if (data.data) {
+                    data.data.forEach(d => {
+                        deptSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+                    });
+                }
+            } catch (e) { console.error(e); }
+
+            currentRuleSteps = [
+                { stepOrder: 1, stepName: 'Cấp 1: Trưởng phòng Nhân sự', approverRole: 'ROLE_HR_MANAGER' },
+                { stepOrder: 2, stepName: 'Cấp 2: Ban Giám đốc (Người duyệt)', approverRole: 'ROLE_APPROVER' }
+            ];
+            renderRuleStepsTable();
+            document.getElementById('modalApprovalRule').style.display = 'flex';
+        }
+
+        function renderRuleStepsTable() {
+            const tbody = document.getElementById('ruleStepsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (currentRuleSteps.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #ef4444; padding: 10px;">Chưa có cấp duyệt nào! Hệ thống yêu cầu ít nhất 1 cấp.</td></tr>';
+                return;
+            }
+
+            currentRuleSteps.forEach((s, idx) => {
+                tbody.innerHTML += `
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 8px; font-weight: bold; color: #2563eb; text-align: center;">#${idx + 1}</td>
+                        <td style="padding: 8px;">
+                            <input type="text" value="${s.stepName || ''}" onchange="updateStepName(${idx}, this.value)" style="width: 95%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                        </td>
+                        <td style="padding: 8px;">
+                            <select onchange="updateStepRole(${idx}, this.value)" style="width: 95%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                <option value="ROLE_HIRING_MANAGER" ${s.approverRole === 'ROLE_HIRING_MANAGER' ? 'selected' : ''}>Trưởng bộ phận (ROLE_HIRING_MANAGER)</option>
+                                <option value="ROLE_HR_MANAGER" ${s.approverRole === 'ROLE_HR_MANAGER' ? 'selected' : ''}>Trưởng phòng Nhân sự (ROLE_HR_MANAGER)</option>
+                                <option value="ROLE_APPROVER" ${s.approverRole === 'ROLE_APPROVER' ? 'selected' : ''}>Ban Giám đốc (ROLE_APPROVER)</option>
+                            </select>
+                        </td>
+                        <td style="padding: 8px; text-align: center;">
+                            <button type="button" onclick="removeRuleStepRow(${idx})" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 16px; font-weight: bold;" title="Xóa">&times;</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateStepName(idx, val) {
+            if (currentRuleSteps[idx]) currentRuleSteps[idx].stepName = val;
+        }
+
+        function updateStepRole(idx, val) {
+            if (currentRuleSteps[idx]) currentRuleSteps[idx].approverRole = val;
+        }
+
+        function addRuleStepRow() {
+            const nextOrder = currentRuleSteps.length + 1;
+            currentRuleSteps.push({
+                stepOrder: nextOrder,
+                stepName: 'Cấp ' + nextOrder + ': Phê duyệt',
+                approverRole: 'ROLE_APPROVER'
+            });
+            renderRuleStepsTable();
+        }
+
+        function removeRuleStepRow(idx) {
+            currentRuleSteps.splice(idx, 1);
+            currentRuleSteps.forEach((s, i) => s.stepOrder = i + 1);
+            renderRuleStepsTable();
+        }
+
+        async function saveApprovalRule() {
+            const alertBox = document.getElementById('ruleValidationAlert');
+            alertBox.style.display = 'none';
+
+            const name = document.getElementById('ar_name').value.trim();
+            const deptId = document.getElementById('ar_departmentId').value;
+            const maxSalary = parseFloat(document.getElementById('ar_maxSalary').value);
+            const overRole = document.getElementById('ar_overThresholdRole').value;
+
+            // KN-222 Validation: Cấu hình sai bị chặn lưu
+            if (!name) {
+                alertBox.textContent = 'Cấu hình sai: Tên chuỗi cấp duyệt không được để trống!';
+                alertBox.style.display = 'block';
+                return;
+            }
+            if (isNaN(maxSalary) || maxSalary <= 0) {
+                alertBox.textContent = 'Cấu hình sai: Hạn mức lương đề xuất phải lớn hơn 0!';
+                alertBox.style.display = 'block';
+                return;
+            }
+            if (!currentRuleSteps || currentRuleSteps.length === 0) {
+                alertBox.textContent = 'Cấu hình sai (không có cấp duyệt nào khớp) bị chặn lưu: Chuỗi phê duyệt phải có ít nhất 1 cấp duyệt!';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            const payload = {
+                name: name,
+                departmentId: deptId ? parseInt(deptId) : null,
+                minSalary: 0,
+                maxSalary: maxSalary,
+                overThresholdRole: overRole,
+                isActive: true,
+                steps: currentRuleSteps.map((s, i) => ({
+                    stepOrder: i + 1,
+                    stepName: s.stepName,
+                    approverRole: s.approverRole
+                }))
+            };
+
+            const token = localStorage.getItem('accessToken');
+            try {
+                const res = await fetch('/api/approval-rules', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (res.ok && result.success) {
+                    alert('Khai báo chuỗi cấp duyệt thành công!');
+                    closeModal('modalApprovalRule');
+                    fetchData();
+                } else {
+                    alertBox.textContent = 'Lỗi lưu cấu hình: ' + (result.message || 'Không thể lưu');
+                    alertBox.style.display = 'block';
+                }
+            } catch (e) {
+                console.error(e);
+                alertBox.textContent = 'Lỗi kết nối máy chủ.';
+                alertBox.style.display = 'block';
+            }
         }
         function closeModal(id) { 
             document.getElementById(id).style.display = 'none'; 
@@ -2405,6 +2678,92 @@
             });
             closeModal('modalQuestion');
             fetchData();
+        }
+
+        async function openCriteriaModal(compId, compName) {
+            document.getElementById('critCompId').value = compId;
+            document.getElementById('critCompName').textContent = compName;
+            document.getElementById('modalCriteria').style.display = 'flex';
+            loadCriteriaList(compId);
+        }
+
+        async function loadCriteriaList(compId) {
+            const container = document.getElementById('criteriaList');
+            container.innerHTML = 'Đang tải...';
+            try {
+                const token = localStorage.getItem('accessToken');
+                const res = await fetch(`/api/master-data/competencies/${compId}/criteria`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.data.length === 0) {
+                        container.innerHTML = '<span style="color: #64748b;">Chưa có tiêu chí nào.</span>';
+                    } else {
+                        let html = '';
+                        data.data.forEach(c => {
+                            html += `
+                            <div style="border-bottom: 1px solid #e2e8f0; padding: 8px 0; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${c.name}</strong> <span style="color: #3b82f6; font-size: 12px;">(Trọng số: ${c.weight})</span>
+                                    <div style="font-size: 13px; color: #64748b;">${c.description || ''}</div>
+                                </div>
+                                <button onclick="deleteCriteria(${c.id}, ${compId})" style="background: none; border: none; color: #ef4444; cursor: pointer;" title="Xóa">&times;</button>
+                            </div>
+                            `;
+                        });
+                        container.innerHTML = html;
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = 'Lỗi kết nối';
+            }
+        }
+
+        async function addCriteria() {
+            const compId = document.getElementById('critCompId').value;
+            const name = document.getElementById('critName').value;
+            const desc = document.getElementById('critDesc').value;
+            const weight = document.getElementById('critWeight').value;
+
+            if (!name) return alert('Vui lòng nhập tên tiêu chí');
+
+            const token = localStorage.getItem('accessToken');
+            try {
+                const res = await fetch(`/api/master-data/competencies/${compId}/criteria`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, description: desc, weight: weight || 1.0 })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('critName').value = '';
+                    document.getElementById('critDesc').value = '';
+                    document.getElementById('critWeight').value = '1.0';
+                    loadCriteriaList(compId);
+                } else {
+                    alert(data.message || 'Lỗi thêm tiêu chí');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi kết nối');
+            }
+        }
+
+        async function deleteCriteria(criteriaId, compId) {
+            if (!confirm('Bạn có chắc muốn xóa tiêu chí này?')) return;
+            const token = localStorage.getItem('accessToken');
+            try {
+                await fetch(`/api/master-data/criteria/${criteriaId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadCriteriaList(compId);
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi kết nối');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => { fetchData(); });

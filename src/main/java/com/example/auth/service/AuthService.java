@@ -45,4 +45,9 @@ public interface AuthService {
      * Đặt lại mật khẩu bằng mã OTP
      */
     void resetPasswordWithOtp(com.example.auth.dto.ResetPasswordWithOtpRequest request);
+
+    /**
+     * Cập nhật hồ sơ cá nhân
+     */
+    com.example.auth.dto.UserResponse updateProfile(String username, com.example.auth.dto.UpdateProfileRequest request);
 }

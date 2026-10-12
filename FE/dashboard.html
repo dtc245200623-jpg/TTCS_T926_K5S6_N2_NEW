@@ -541,6 +541,27 @@
                 transform: scale(1);
             }
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: none;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 
@@ -567,6 +588,15 @@
                     <div class="user-name" id="displayUsername">Đang tải...</div>
                     <div class="user-role-badge" id="displayRoles">...</div>
                 </div>
+                <button title="Hồ sơ cá nhân"
+                    style="background: none; border: none; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center; padding: 8px;"
+                    onclick="openProfileModal()" onmouseover="this.style.color='#2563eb'"
+                    onmouseout="this.style.color='#64748b'">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </button>
                 <button title="Đổi mật khẩu"
                     style="background: none; border: none; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center; padding: 8px;"
                     onclick="openChangePasswordModal()" onmouseover="this.style.color='#2563eb'"
@@ -685,6 +715,148 @@
         </div>
     </div>
 
+    <!-- Modal Hồ sơ cá nhân -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; padding: 24px;">
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="font-size: 18px; color: #1e293b; margin: 0;">Hồ sơ cá nhân</h2>
+                <span class="close-modal" onclick="closeProfileModal()"
+                    style="cursor: pointer; font-size: 24px; color: #94a3b8;">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 8px; color: #475569; font-size: 14px; font-weight: 500;">Email (Không thể thay đổi)</label>
+                        <input type="text" id="prof_email" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background-color: #e2e8f0;" readonly>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 8px; color: #475569; font-size: 14px; font-weight: 500;">Phòng ban (Không thể thay đổi)</label>
+                        <input type="text" id="prof_department" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background-color: #e2e8f0;" readonly>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 8px; color: #475569; font-size: 14px; font-weight: 500;">Họ và tên</label>
+                        <input type="text" id="prof_fullName" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 8px; color: #475569; font-size: 14px; font-weight: 500;">Số điện thoại</label>
+                        <input type="text" id="prof_phone" placeholder="VD: 0912345678" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; color: #475569; font-size: 14px; font-weight: 500;">Chức danh hiển thị</label>
+                        <input type="text" id="prof_jobTitle" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:10px;">
+                        <button type="button" class="btn-secondary" onclick="closeProfileModal()"
+                            style="padding: 10px 16px; background: #f1f5f9; color: #475569; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">Hủy</button>
+                        <button type="submit" class="btn-primary" id="prof_submit"
+                            style="padding: 10px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Khai báo Chuỗi Cấp Duyệt (KN-210) -->
+    <div id="modalApprovalRule" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 25px 30px; border-radius: 12px; width: 680px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                <h3 style="margin: 0; color: #1e3a8a; font-size: 20px;">Khai báo Chuỗi Cấp duyệt</h3>
+                <span onclick="closeModal('modalApprovalRule')" style="cursor: pointer; font-size: 24px; color: #94a3b8;">&times;</span>
+            </div>
+
+            <div id="ruleValidationAlert" style="display: none; background: #fee2e2; border: 1px solid #f87171; color: #b91c1c; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; font-weight: 500;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="font-weight: 600; font-size: 13px; color: #334155;">Tên chuỗi cấp duyệt (*)</label>
+                <input type="text" id="ar_name" placeholder="Ví dụ: Chuỗi duyệt phòng IT - Hạn mức 25M" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="font-weight: 600; font-size: 13px; color: #334155;">Phòng ban áp dụng</label>
+                    <select id="ar_departmentId" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                        <option value="">-- Tất cả phòng ban (Chung) --</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: 600; font-size: 13px; color: #334155;">Hạn mức lương đề xuất (VND) (*)</label>
+                    <input type="number" id="ar_maxSalary" placeholder="Ví dụ: 25000000" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px; background: #fffbeb; padding: 12px; border-radius: 8px; border: 1px solid #fde68a;">
+                <label style="font-weight: 600; font-size: 13px; color: #92400e;">⚡ Cấp duyệt bổ sung khi VƯỢT HẠN MỨC:</label>
+                <div style="font-size: 12px; color: #b45309; margin-bottom: 6px;">Nếu yêu cầu tuyển dụng có mức lương > hạn mức trên, hệ thống sẽ tự động thêm cấp duyệt này vào cuối chuỗi.</div>
+                <select id="ar_overThresholdRole" style="width: 100%; padding: 8px; border: 1px solid #fcd34d; border-radius: 6px; box-sizing: border-box; background: white;">
+                    <option value="ROLE_APPROVER">Ban Giám đốc (Người duyệt - ROLE_APPROVER)</option>
+                    <option value="ROLE_HR_MANAGER">Trưởng phòng Nhân sự (ROLE_HR_MANAGER)</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label style="font-weight: 700; font-size: 14px; color: #1e293b;">Các cấp duyệt tuần tự (Bắt buộc tối thiểu 1 cấp):</label>
+                    <button type="button" onclick="addRuleStepRow()" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">+ Thêm cấp duyệt</button>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                        <tr style="background: #f1f5f9; text-align: left; color: #475569;">
+                            <th style="padding: 8px; width: 60px;">Cấp</th>
+                            <th style="padding: 8px;">Tên bước duyệt</th>
+                            <th style="padding: 8px;">Vai trò người duyệt</th>
+                            <th style="padding: 8px; width: 50px;">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ruleStepsTableBody">
+                        <!-- Dynamic step rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <button type="button" onclick="closeModal('modalApprovalRule')" style="padding: 10px 18px; border: 1px solid #cbd5e1; background: #f8fafc; color: #475569; border-radius: 6px; cursor: pointer; font-weight: 500;">Hủy</button>
+                <button type="button" onclick="saveApprovalRule()" style="padding: 10px 22px; border: none; background: #2563eb; color: white; border-radius: 6px; cursor: pointer; font-weight: 600;">Lưu chuỗi cấp duyệt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Xem Chi tiết Chuỗi duyệt & Phê duyệt (KN-235) -->
+    <div id="modalJobRequestApprovalDetail" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 25px 30px; border-radius: 12px; width: 720px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                <div>
+                    <h3 id="jra_modal_title" style="margin: 0; color: #1e3a8a; font-size: 20px;">Chi tiết Yêu cầu Tuyển dụng</h3>
+                    <div id="jra_modal_meta" style="font-size: 13px; color: #64748b; margin-top: 4px;"></div>
+                </div>
+                <span onclick="closeModal('modalJobRequestApprovalDetail')" style="cursor: pointer; font-size: 24px; color: #94a3b8;">&times;</span>
+            </div>
+
+
+            <div style="margin-bottom: 24px;">
+                <h4 style="color: #1e293b; margin-bottom: 12px; font-size: 15px;">Tiến trình Chuỗi phê duyệt:</h4>
+                <div id="jra_steps_timeline" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; background: #f8fafc;">
+                    <!-- Stepper items -->
+                </div>
+            </div>
+
+            <div id="jra_action_box" style="background: #f1f5f9; padding: 16px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 16px;">
+                <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #1e293b;">Ý kiến & Thẩm quyền phê duyệt cấp hiện tại:</h4>
+                <textarea id="jra_comments" placeholder="Nhập ý kiến phê duyệt hoặc lý do từ chối (tuỳ chọn)..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px;" rows="2"></textarea>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" id="btn_jra_reject" onclick="executeApproval(false)" style="padding: 10px 20px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Từ chối yêu cầu</button>
+                    <button type="button" id="btn_jra_approve" onclick="executeApproval(true)" style="padding: 10px 24px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Đồng ý Phê duyệt Cấp này</button>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button type="button" onclick="closeModal('modalJobRequestApprovalDetail')" style="padding: 8px 18px; border: 1px solid #cbd5e1; background: white; color: #475569; border-radius: 6px; cursor: pointer;">Đóng</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const ROLES_INFO = {
             'ROLE_CANDIDATE': {
@@ -727,6 +899,8 @@
                 tasks: [
                     { title: 'Quản lý Phòng ban', link: 'departments.html' },
                     { title: 'Quản lý Chức danh', link: 'job-titles.html' },
+                    { title: 'Chuỗi Cấp duyệt Tuyển dụng', link: '#' },
+                    { title: 'Phê duyệt Yêu cầu Tuyển dụng', link: '#' },
                     { title: 'Danh mục Dữ liệu', link: 'master-data.html' },
                     { title: 'Giám sát Vị trí', link: '#' },
                     { title: 'Phân công Recruiter', link: '#' },
@@ -987,36 +1161,46 @@
                 case 'Tạo Yêu cầu Tuyển dụng':
                     html = `
                         <div class="card-view">
-                            <h3 style="margin-bottom: 20px; color: #1e293b;">Phiếu Yêu cầu Tuyển dụng</h3>
+                            <h3 style="margin-bottom: 20px; color: #1e3a8a; font-size: 20px;">Phiếu Yêu cầu Tuyển dụng</h3>
                             <div class="form-group">
-                                <label>Chức danh (Tiêu đề)</label>
+                                <label style="font-weight:600; color:#334155;">Chức danh (Tiêu đề) (*)</label>
                                 <input type="text" id="jr_title" class="form-control" placeholder="Ví dụ: Lập trình viên Java Senior">
                             </div>
                             <div class="form-group" style="display: flex; gap: 20px;">
                                 <div style="flex: 1;">
-                                    <label>Số lượng cần tuyển</label>
-                                    <input type="number" id="jr_headcount" class="form-control" placeholder="1">
+                                    <label style="font-weight:600; color:#334155;">Phòng ban (*)</label>
+                                    <select id="jr_deptId" class="form-control" onchange="previewApprovalChain()">
+                                        <option value="">-- Đang tải phòng ban... --</option>
+                                    </select>
                                 </div>
                                 <div style="flex: 1;">
-                                    <label>Lương tối thiểu (VND)</label>
-                                    <input type="number" id="jr_minSalary" class="form-control" placeholder="15000000">
-                                </div>
-                                <div style="flex: 1;">
-                                    <label>Lương tối đa (VND)</label>
-                                    <input type="number" id="jr_maxSalary" class="form-control" placeholder="30000000">
+                                    <label style="font-weight:600; color:#334155;">Số lượng cần tuyển (*)</label>
+                                    <input type="number" id="jr_headcount" class="form-control" placeholder="1" value="1">
                                 </div>
                             </div>
+                            <div class="form-group" style="display: flex; gap: 20px;">
+                                <div style="flex: 1;">
+                                    <label style="font-weight:600; color:#334155;">Lương tối thiểu (VND)</label>
+                                    <input type="number" id="jr_minSalary" class="form-control" placeholder="15000000" value="15000000">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="font-weight:600; color:#334155;">Lương tối đa / Đề xuất (VND) (*)</label>
+                                    <input type="number" id="jr_maxSalary" class="form-control" placeholder="30000000" value="30000000">
+                                </div>
+                            </div>
+
                             <div class="form-group">
-                                <label>Mô tả công việc</label>
+                                <label style="font-weight:600; color:#334155;">Mô tả công việc</label>
                                 <textarea id="jr_description" class="form-control" rows="3" placeholder="Nhập mô tả..."></textarea>
                             </div>
                             <div class="form-group">
-                                <label>Yêu cầu kỹ năng</label>
+                                <label style="font-weight:600; color:#334155;">Yêu cầu kỹ năng</label>
                                 <textarea id="jr_requirements" class="form-control" rows="2" placeholder="Nhập yêu cầu..."></textarea>
                             </div>
-                            <button class="btn-primary" onclick="submitJobRequest()">Gửi Yêu cầu lên Hệ thống</button>
+                            <button id="btn_submit_job_request" class="btn-primary" onclick="submitJobRequest()">Gửi Yêu cầu lên Hệ thống</button>
                         </div>
                     `;
+                    setTimeout(initJobRequestForm, 100);
                     break;
                 case 'Xem ứng viên bộ phận':
                     html = renderTable('Ứng viên thuộc bộ phận IT', ['Ứng viên', 'Vị trí', 'Tiến độ', 'Kỹ năng chính'], [
@@ -1041,6 +1225,21 @@
                     html = renderForm('Đánh giá sau phỏng vấn', ['Chọn Ứng viên', 'Điểm chuyên môn (1-10)', 'Điểm thái độ (1-10)', 'Nhận xét chi tiết'], null, 'Nộp Đánh giá'); break;
 
                 // --- HR MANAGER ---
+                case 'Chuỗi Cấp duyệt Tuyển dụng':
+                    html = `
+                        <div class="card-view" style="padding: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div>
+                                    <h3 style="color: #1e3a8a; margin: 0; font-size: 20px;">Khai báo Chuỗi Cấp duyệt Tuyển dụng</h3>
+                                    <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Cấu hình chuỗi cấp duyệt theo phòng ban và mức lương đề xuất (Tự động thêm cấp khi vượt hạn mức).</p>
+                                </div>
+                                <button class="btn-primary" onclick="openApprovalRuleModal()">+ Khai báo Chuỗi duyệt mới</button>
+                            </div>
+                            <div id="approvalRulesListContainer">Đang tải danh sách chuỗi cấp duyệt...</div>
+                        </div>
+                    `;
+                    setTimeout(loadApprovalRulesInDashboard, 100);
+                    break;
                 case 'Giám sát Vị trí':
                     html = renderTable('Tình trạng các Vị trí Tuyển dụng', ['Vị trí', 'Phòng ban', 'Target', 'Đã tuyển'], [
                         ['Java Developer', 'Phòng IT', '5', '2'],
@@ -1060,23 +1259,35 @@
                     setTimeout(loadReportData, 0);
                     break;
 
-                // --- APPROVER ---
+                // --- APPROVER / HR MANAGER ---
+                case 'Phê duyệt Yêu cầu Tuyển dụng':
                 case 'Duyệt Yêu cầu Tuyển dụng':
                     html = `
                         <div class="card-view" style="padding: 0;">
                             <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                                <h3 style="color: #1e293b;">Yêu cầu Tuyển dụng chờ duyệt</h3>
+                                <div>
+                                    <h3 style="color: #1e3a8a; margin: 0; font-size: 18px;">Yêu cầu Tuyển dụng & Chuỗi Phê duyệt</h3>
+                                    <span style="font-size: 12px; color: #64748b;">Xem tiến trình các cấp duyệt và thực hiện phê duyệt / từ chối theo thẩm quyền</span>
+                                </div>
                                 <button class="btn-primary" onclick="loadJobRequestsList()">Làm mới dữ liệu</button>
                             </div>
                             <table class="data-table">
-                                <thead><tr><th>Chức danh</th><th>SL/Lương</th><th>Người Yêu Cầu</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>Chức danh & Phòng ban</th>
+                                        <th>SL & Lương</th>
+                                        <th>Người Yêu Cầu</th>
+                                        <th>Tiến trình Chuỗi duyệt</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="jr_table_body">
-                                    <tr><td colspan="5" style="text-align:center">Đang tải dữ liệu từ Server...</td></tr>
+                                    <tr><td colspan="6" style="text-align:center">Đang tải dữ liệu từ Server...</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     `;
-                    // Kích hoạt fetch API ngay lập tức
                     setTimeout(loadJobRequestsList, 100);
                     break;
                 case 'Duyệt Offer vượt hạn mức':
@@ -1280,21 +1491,51 @@
         // TÍCH HỢP API THẬT CHO JOB REQUEST
         // ==========================================
 
+        // ==========================================
+        // TÍCH HỢP CHUỖI CẤP DUYỆT TUYỂN DỤNG (KN-210)
+        // ==========================================
+
+        let activeJobRequestForApproval = null;
+        let currentRuleSteps = [];
+
+        async function initJobRequestForm() {
+            const token = localStorage.getItem('accessToken');
+            const deptSelect = document.getElementById('jr_deptId');
+            if (deptSelect) {
+                try {
+                    const res = await fetch('/api/departments/flat', { headers: { 'Authorization': 'Bearer ' + token } });
+                    const data = await res.json();
+                    deptSelect.innerHTML = '<option value="">-- Chọn phòng ban --</option>';
+                    if (data.data) {
+                        data.data.forEach(d => {
+                            deptSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+                        });
+                    }
+                } catch (e) {
+                    console.error('Lỗi tải phòng ban', e);
+                }
+            }
+        }
+
         async function submitJobRequest() {
             const token = localStorage.getItem('accessToken');
+            const deptIdVal = document.getElementById('jr_deptId')?.value;
             const data = {
-                title: document.getElementById('jr_title').value,
-                headcount: document.getElementById('jr_headcount').value,
-                minSalary: document.getElementById('jr_minSalary').value,
-                maxSalary: document.getElementById('jr_maxSalary').value,
+                title: document.getElementById('jr_title').value.trim(),
+                departmentId: deptIdVal ? parseInt(deptIdVal) : null,
+                headcount: parseInt(document.getElementById('jr_headcount').value) || 1,
+                minSalary: parseFloat(document.getElementById('jr_minSalary').value) || 0,
+                maxSalary: parseFloat(document.getElementById('jr_maxSalary').value) || 0,
                 description: document.getElementById('jr_description').value,
                 requirements: document.getElementById('jr_requirements').value
             };
 
-            if (!data.title) { alert('Vui lòng nhập chức danh!'); return; }
+            if (!data.title) { alert('Vui lòng nhập chức danh tuyển dụng!'); return; }
+            if (!data.departmentId) { alert('Vui lòng chọn phòng ban!'); return; }
+            if (data.maxSalary <= 0) { alert('Vui lòng nhập mức lương đề xuất hợp lệ!'); return; }
 
             try {
-                const response = await fetch('http://localhost:8080/api/job-requests', {
+                const response = await fetch('/api/job-requests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1303,11 +1544,13 @@
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-                if (response.ok) {
-                    alert('Đã tạo Yêu cầu Tuyển dụng thành công! Đang chờ phê duyệt.');
+                if (response.ok && result.success) {
+                    alert('Đã gửi Yêu cầu Tuyển dụng thành công! Yêu cầu đang được chuyển đến cấp phê duyệt tương ứng.');
                     document.getElementById('jr_title').value = '';
+                    document.getElementById('jr_description').value = '';
+                    document.getElementById('jr_requirements').value = '';
                 } else {
-                    alert('Lỗi: ' + result.message);
+                    alert('Không thể lưu: ' + (result.message || 'Lỗi không xác định'));
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -1315,74 +1558,224 @@
             }
         }
 
-        async function loadPublicJobs() {
-            const tbody = document.getElementById('public_jobs_body');
-            if (!tbody) return;
+        async function loadApprovalRulesInDashboard() {
+            const container = document.getElementById('approvalRulesListContainer');
+            if (!container) return;
 
             const token = localStorage.getItem('accessToken');
             try {
-                const response = await fetch('http://localhost:8080/api/job-requests', {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    tbody.innerHTML = '';
-                    // Only show APPROVED or OPEN jobs to candidates
-                    const openJobs = result.data.filter(req => req.status === 'APPROVED' || req.status === 'OPEN');
-
-                    if (openJobs.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Hiện tại chưa có vị trí nào đang tuyển.</td></tr>';
+                const res = await fetch('/api/approval-rules', { headers: { 'Authorization': 'Bearer ' + token } });
+                const result = await res.json();
+                if (res.ok && result.data) {
+                    if (result.data.length === 0) {
+                        container.innerHTML = '<div style="padding:20px; text-align:center; color:#64748b;">Chưa có cấu hình chuỗi cấp duyệt nào. Nhấn nút trên để thêm mới.</div>';
                         return;
                     }
 
-                    openJobs.forEach(req => {
-                        let actionHtml = `<button class="btn-primary" style="padding: 4px 10px; font-size:12px;" onclick="applyForJob(${req.id})">Nộp hồ sơ ngay</button>`;
-                        tbody.innerHTML += `
-                            <tr>
-                                <td style="text-align:center; font-weight:bold; color:#2563eb;">#${req.id}</td>
-                                <td><strong>${req.title}</strong></td>
-                                <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${req.requirements}">${req.requirements || 'Trao đổi khi phỏng vấn'}</td>
-                                <td>SL: ${req.headcount} <br> Lương: ${req.minSalary / 1000000}M - ${req.maxSalary / 1000000}M</td>
-                                <td>${actionHtml}</td>
-                            </tr>
+                    let html = '<div style="display:flex; flex-direction:column; gap:16px;">';
+                    result.data.forEach(rule => {
+                        let deptName = rule.departmentName || 'Tất cả phòng ban (Chung)';
+                        let maxSalStr = rule.maxSalary ? (rule.maxSalary / 1000000).toLocaleString() + 'M VND' : 'Không giới hạn';
+                        let stepsBadges = '';
+
+                        if (rule.steps && rule.steps.length > 0) {
+                            stepsBadges = rule.steps.map(s => {
+                                let rName = s.approverRole === 'ROLE_HIRING_MANAGER' ? 'Trưởng bộ phận' :
+                                            s.approverRole === 'ROLE_HR_MANAGER' ? 'Trưởng phòng NS' :
+                                            s.approverRole === 'ROLE_APPROVER' ? 'Ban Giám đốc' : s.approverRole;
+                                return `<span style="background:#e0f2fe; color:#0369a1; padding:4px 10px; border-radius:6px; font-size:12px;"><strong>Cấp ${s.stepOrder}:</strong> ${s.stepName} (<em>${rName}</em>)</span>`;
+                            }).join(' <span style="color:#94a3b8; font-weight:bold;">➔</span> ');
+                        } else {
+                            stepsBadges = '<span style="color:#ef4444; font-size:12px;">(Chưa có bước duyệt nào)</span>';
+                        }
+
+                        let overRoleName = rule.overThresholdRole === 'ROLE_HR_MANAGER' ? 'Trưởng phòng NS' : 'Ban Giám đốc (Người duyệt)';
+
+                        html += `
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px;">
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                    <div>
+                                        <h4 style="margin:0 0 6px 0; color:#1e3a8a; font-size:16px;">${rule.name}</h4>
+                                        <div style="font-size:13px; color:#475569;">
+                                            Phòng ban: <strong>${deptName}</strong> | Hạn mức lương: <strong style="color:#059669;">${maxSalStr}</strong>
+                                        </div>
+                                    </div>
+                                    <button onclick="deleteApprovalRule(${rule.id})" style="background:#fee2e2; color:#ef4444; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;">Xóa cấu hình</button>
+                                </div>
+                                <div style="margin-top:12px; font-size:13px;">
+                                    <div style="font-weight:600; color:#334155; margin-bottom:6px;">Chuỗi cấp duyệt:</div>
+                                    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px;">${stepsBadges}</div>
+                                </div>
+                                <div style="margin-top:10px; font-size:12px; color:#b45309; background:#fffbeb; padding:6px 10px; border-radius:6px; display:inline-block;">
+                                    ⚡ <strong>Khi vượt hạn mức:</strong> Tự động thêm cấp duyệt <strong>${overRoleName}</strong>
+                                </div>
+                            </div>
                         `;
                     });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">${result.message}</td></tr>`;
+                    html += '</div>';
+                    container.innerHTML = html;
                 }
-            } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Lỗi kết nối máy chủ</td></tr>';
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<div style="color:red; padding:10px;">Lỗi tải danh sách chuỗi duyệt.</div>';
             }
         }
 
-        function applyForJob(jobId) {
-            // Chuyển sang màn hình "Nộp CV"
-            const userRoles = JSON.parse(localStorage.getItem('userRoles') || '[]');
-            const candidateRoleCheck = userRoles.includes('ROLE_CANDIDATE') || userRoles.includes('ROLE_ADMIN') ? 'ROLE_CANDIDATE' : '';
+        async function deleteApprovalRule(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa cấu hình chuỗi duyệt này?')) return;
+            const token = localStorage.getItem('accessToken');
+            try {
+                await fetch(`/api/approval-rules/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+                loadApprovalRulesInDashboard();
+            } catch (e) { console.error(e); }
+        }
 
-            // Tìm thẻ a chứa Nộp CV và kích hoạt
-            document.querySelectorAll('.menu-item').forEach(el => {
-                el.classList.remove('active');
-                if (el.textContent.trim() === 'Nộp CV') {
-                    el.classList.add('active');
+        async function openApprovalRuleModal() {
+            document.getElementById('ruleValidationAlert').style.display = 'none';
+            document.getElementById('ar_name').value = '';
+            document.getElementById('ar_maxSalary').value = '25000000';
+            document.getElementById('ar_overThresholdRole').value = 'ROLE_APPROVER';
+            
+            const token = localStorage.getItem('accessToken');
+            try {
+                const res = await fetch('/api/departments/flat', { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                const deptSelect = document.getElementById('ar_departmentId');
+                deptSelect.innerHTML = '<option value="">-- Tất cả phòng ban (Chung) --</option>';
+                if (data.data) {
+                    data.data.forEach(d => {
+                        deptSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+                    });
                 }
+            } catch (e) { console.error(e); }
+
+            currentRuleSteps = [
+                { stepOrder: 1, stepName: 'Cấp 1: Trưởng phòng Nhân sự', approverRole: 'ROLE_HR_MANAGER' },
+                { stepOrder: 2, stepName: 'Cấp 2: Ban Giám đốc (Người duyệt)', approverRole: 'ROLE_APPROVER' }
+            ];
+            renderRuleStepsTable();
+            document.getElementById('modalApprovalRule').style.display = 'flex';
+        }
+
+        function renderRuleStepsTable() {
+            const tbody = document.getElementById('ruleStepsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (currentRuleSteps.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #ef4444; padding: 10px;">Chưa có cấp duyệt nào! Hệ thống yêu cầu ít nhất 1 cấp.</td></tr>';
+                return;
+            }
+
+            currentRuleSteps.forEach((s, idx) => {
+                tbody.innerHTML += `
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 8px; font-weight: bold; color: #2563eb; text-align: center;">#${idx + 1}</td>
+                        <td style="padding: 8px;">
+                            <input type="text" value="${s.stepName || ''}" onchange="updateStepName(${idx}, this.value)" style="width: 95%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                        </td>
+                        <td style="padding: 8px;">
+                            <select onchange="updateStepRole(${idx}, this.value)" style="width: 95%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                <option value="ROLE_HIRING_MANAGER" ${s.approverRole === 'ROLE_HIRING_MANAGER' ? 'selected' : ''}>Trưởng bộ phận (ROLE_HIRING_MANAGER)</option>
+                                <option value="ROLE_HR_MANAGER" ${s.approverRole === 'ROLE_HR_MANAGER' ? 'selected' : ''}>Trưởng phòng Nhân sự (ROLE_HR_MANAGER)</option>
+                                <option value="ROLE_APPROVER" ${s.approverRole === 'ROLE_APPROVER' ? 'selected' : ''}>Ban Giám đốc (ROLE_APPROVER)</option>
+                            </select>
+                        </td>
+                        <td style="padding: 8px; text-align: center;">
+                            <button type="button" onclick="removeRuleStepRow(${idx})" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 16px; font-weight: bold;" title="Xóa">&times;</button>
+                        </td>
+                    </tr>
+                `;
             });
+        }
 
-            // Gọi loadTaskView với event mock
-            const mockEvent = {
-                preventDefault: () => { },
-                currentTarget: document.createElement('div') // Fake target to prevent error
+        function updateStepName(idx, val) {
+            if (currentRuleSteps[idx]) currentRuleSteps[idx].stepName = val;
+        }
+
+        function updateStepRole(idx, val) {
+            if (currentRuleSteps[idx]) currentRuleSteps[idx].approverRole = val;
+        }
+
+        function addRuleStepRow() {
+            const nextOrder = currentRuleSteps.length + 1;
+            currentRuleSteps.push({
+                stepOrder: nextOrder,
+                stepName: 'Cấp ' + nextOrder + ': Phê duyệt',
+                approverRole: 'ROLE_APPROVER'
+            });
+            renderRuleStepsTable();
+        }
+
+        function removeRuleStepRow(idx) {
+            currentRuleSteps.splice(idx, 1);
+            currentRuleSteps.forEach((s, i) => s.stepOrder = i + 1);
+            renderRuleStepsTable();
+        }
+
+        async function saveApprovalRule() {
+            const alertBox = document.getElementById('ruleValidationAlert');
+            alertBox.style.display = 'none';
+
+            const name = document.getElementById('ar_name').value.trim();
+            const deptId = document.getElementById('ar_departmentId').value;
+            const maxSalary = parseFloat(document.getElementById('ar_maxSalary').value);
+            const overRole = document.getElementById('ar_overThresholdRole').value;
+
+            // KN-222 Validation: Cấu hình sai bị chặn lưu
+            if (!name) {
+                alertBox.textContent = 'Cấu hình sai: Tên chuỗi cấp duyệt không được để trống!';
+                alertBox.style.display = 'block';
+                return;
+            }
+            if (isNaN(maxSalary) || maxSalary <= 0) {
+                alertBox.textContent = 'Cấu hình sai: Hạn mức lương đề xuất phải lớn hơn 0!';
+                alertBox.style.display = 'block';
+                return;
+            }
+            if (!currentRuleSteps || currentRuleSteps.length === 0) {
+                alertBox.textContent = 'Cấu hình sai (không có cấp duyệt nào khớp) bị chặn lưu: Chuỗi phê duyệt phải có ít nhất 1 cấp duyệt!';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            const payload = {
+                name: name,
+                departmentId: deptId ? parseInt(deptId) : null,
+                minSalary: 0,
+                maxSalary: maxSalary,
+                overThresholdRole: overRole,
+                isActive: true,
+                steps: currentRuleSteps.map((s, i) => ({
+                    stepOrder: i + 1,
+                    stepName: s.stepName,
+                    approverRole: s.approverRole
+                }))
             };
-            loadTaskView(mockEvent, 'Nộp CV', 'ROLE_CANDIDATE');
 
-            // Delay 100ms để đợi DOM render xong form
-            setTimeout(() => {
-                const jobIdInput = document.getElementById('app_jobId');
-                if (jobIdInput) {
-                    jobIdInput.value = jobId;
-                    jobIdInput.focus();
+            const token = localStorage.getItem('accessToken');
+            try {
+                const res = await fetch('/api/approval-rules', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (res.ok && result.success) {
+                    alert('Khai báo chuỗi cấp duyệt thành công!');
+                    closeModal('modalApprovalRule');
+                    loadApprovalRulesInDashboard();
+                } else {
+                    alertBox.textContent = 'Bị chặn lưu: ' + (result.message || 'Không thể lưu');
+                    alertBox.style.display = 'block';
                 }
-            }, 100);
+            } catch (e) {
+                console.error(e);
+                alertBox.textContent = 'Lỗi kết nối máy chủ.';
+                alertBox.style.display = 'block';
+            }
         }
 
         async function loadJobRequestsList() {
@@ -1391,35 +1784,60 @@
 
             const token = localStorage.getItem('accessToken');
             try {
-                const response = await fetch('http://localhost:8080/api/job-requests', {
+                const response = await fetch('/api/job-requests', {
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
                 const result = await response.json();
                 if (response.ok) {
                     tbody.innerHTML = '';
-                    if (result.data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Chưa có yêu cầu nào trong hệ thống.</td></tr>';
+                    if (!result.data || result.data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Chưa có yêu cầu nào trong hệ thống.</td></tr>';
                         return;
                     }
 
                     result.data.forEach(req => {
                         let currentStatus = req.status || 'PENDING_APPROVAL';
                         let statusHtml = currentStatus === 'APPROVED'
-                            ? '<span class="status-badge status-active">Đã duyệt</span>'
+                            ? '<span class="status-badge status-active">Đã duyệt hoàn tất</span>'
                             : currentStatus === 'REJECTED'
-                                ? '<span class="status-badge status-locked">Từ chối</span>'
-                                : '<span class="status-badge status-pending">Chờ duyệt</span>';
+                                ? '<span class="status-badge status-locked">Đã từ chối</span>'
+                                : '<span class="status-badge status-pending">Đang duyệt chuỗi</span>';
 
-                        let actionHtml = (currentStatus === 'PENDING_APPROVAL' || currentStatus === 'PENDING' || currentStatus === 'DRAFT')
-                            ? `<button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#10b981;" onclick="approveJobRequest(${req.id}, true)">Phê duyệt</button>
-                               <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#ef4444;" onclick="approveJobRequest(${req.id}, false)">Từ chối</button>`
-                            : `<span style="color:#94a3b8; font-size:12px;">Không có thao tác</span>`;
+                        // Render stepper badges (KN-235: Snapshot steps)
+                        let stepsProgressHtml = '';
+                        if (req.approvalSteps && req.approvalSteps.length > 0) {
+                            stepsProgressHtml = req.approvalSteps.map(s => {
+                                let badgeColor = s.status === 'APPROVED' ? '#dcfce7; color:#15803d; border-color:#86efac;' :
+                                                 s.status === 'PENDING' ? '#fef3c7; color:#b45309; border-color:#fde047; font-weight:bold;' :
+                                                 s.status === 'REJECTED' ? '#fee2e2; color:#b91c1c; border-color:#fca5a5;' :
+                                                 '#f1f5f9; color:#64748b; border-color:#e2e8f0;';
+                                let icon = s.status === 'APPROVED' ? '✓ ' :
+                                           s.status === 'PENDING' ? '⏳ ' :
+                                           s.status === 'REJECTED' ? '✕ ' : '';
+
+                                return `<span style="background:${badgeColor} border:1px solid; padding:2px 6px; border-radius:4px; font-size:11px; margin-right:3px; display:inline-block;">${icon}Cấp ${s.stepOrder}</span>`;
+                            }).join('');
+                        } else {
+                            stepsProgressHtml = '<span style="color:#94a3b8; font-size:12px;">Chưa có chuỗi duyệt</span>';
+                        }
+
+                        if (req.isOverBudget) {
+                            stepsProgressHtml += ` <span style="background:#fee2e2; color:#b91c1c; font-size:10px; font-weight:bold; padding:2px 4px; border-radius:3px;">Vượt hạn mức</span>`;
+                        }
+
+                        let actionHtml = `<button class="btn-primary" style="padding: 5px 12px; font-size:12px;" onclick="openJobRequestApprovalModal(${req.id})">Xem & Phê duyệt</button>`;
+
+                        let deptName = req.departmentName || 'Chưa phân phòng';
 
                         tbody.innerHTML += `
                             <tr>
-                                <td><strong>${req.title}</strong></td>
-                                <td>SL: ${req.headcount} <br> Lương: ${req.minSalary / 1000000}M - ${req.maxSalary / 1000000}M</td>
+                                <td>
+                                    <strong>${req.title}</strong>
+                                    <div style="font-size:12px; color:#64748b;">${deptName}</div>
+                                </td>
+                                <td>SL: <strong>${req.headcount}</strong><br><span style="font-size:12px; color:#059669;">${(req.maxSalary / 1000000).toLocaleString()}M VND</span></td>
                                 <td>${req.hiringManagerName || 'Ẩn danh'}</td>
+                                <td>${stepsProgressHtml}</td>
                                 <td>${statusHtml}</td>
                                 <td>${actionHtml}</td>
                             </tr>
@@ -1428,28 +1846,141 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Lỗi kết nối Backend. Hãy chắc chắn Spring Boot đang chạy.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red; padding:20px;">Lỗi kết nối Backend.</td></tr>';
             }
         }
 
-        async function approveJobRequest(id, isApproved) {
+        async function openJobRequestApprovalModal(jobId) {
             const token = localStorage.getItem('accessToken');
             try {
-                const response = await fetch(`http://localhost:8080/api/job-requests/${id}/approve?isApproved=${isApproved}`, {
+                const res = await fetch(`/api/job-requests/${jobId}`, { headers: { 'Authorization': 'Bearer ' + token } });
+                const result = await res.json();
+                if (!res.ok || !result.data) {
+                    alert('Không thể tải chi tiết yêu cầu: ' + (result.message || ''));
+                    return;
+                }
+
+                const job = result.data;
+                activeJobRequestForApproval = job;
+
+                document.getElementById('jra_modal_title').textContent = job.title;
+                document.getElementById('jra_modal_meta').innerHTML = `
+                    Phòng ban: <strong>${job.departmentName || 'Chung'}</strong> | SL cần tuyển: <strong>${job.headcount}</strong> | Lương đề xuất: <strong style="color:#059669;">${(job.maxSalary/1000000).toLocaleString()}M VND</strong> | Người tạo: <strong>${job.hiringManagerName}</strong>
+                `;
+
+
+                // Render Timeline (KN-235)
+                const timelineContainer = document.getElementById('jra_steps_timeline');
+                let timelineHtml = '<div style="display:flex; flex-direction:column; gap:12px;">';
+
+                let currentPendingStep = null;
+                const userRoles = JSON.parse(localStorage.getItem('userRoles') || '[]');
+
+                job.approvalSteps.forEach(s => {
+                    let isPending = s.status === 'PENDING';
+                    if (isPending) currentPendingStep = s;
+
+                    let statusBadge = s.status === 'APPROVED' ? '<span style="color:#15803d; font-weight:bold;">✓ Đã phê duyệt</span>' :
+                                      s.status === 'PENDING' ? '<span style="color:#b45309; font-weight:bold; background:#fef3c7; padding:2px 8px; border-radius:4px;">⏳ Đang chờ duyệt</span>' :
+                                      s.status === 'REJECTED' ? '<span style="color:#b91c1c; font-weight:bold;">✕ Đã từ chối</span>' :
+                                      '<span style="color:#94a3b8;">Chờ lượt sau</span>';
+
+                    let roleText = s.approverRole === 'ROLE_HIRING_MANAGER' ? 'Trưởng bộ phận' :
+                                   s.approverRole === 'ROLE_HR_MANAGER' ? 'Trưởng phòng Nhân sự' :
+                                   s.approverRole === 'ROLE_APPROVER' ? 'Ban Giám đốc (Người duyệt)' : s.approverRole;
+
+                    let approverInfo = s.approverFullName ? `<div style="font-size:12px; color:#475569; margin-top:2px;">Người duyệt: <strong>${s.approverFullName}</strong> (${s.approverUsername}) ${s.actionAt ? '- ' + new Date(s.actionAt).toLocaleString('vi-VN') : ''}</div>` : '';
+                    let commentsInfo = s.comments ? `<div style="font-size:12px; color:#334155; margin-top:4px; background:white; padding:6px 10px; border-radius:4px; border:1px solid #e2e8f0;">Ý kiến: <em>"${s.comments}"</em></div>` : '';
+
+                    timelineHtml += `
+                        <div style="background:white; border:1px solid ${isPending ? '#f59e0b' : '#e2e8f0'}; border-radius:8px; padding:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <span style="font-weight:700; color:#1e293b;">Cấp ${s.stepOrder}: ${s.stepName}</span>
+                                    <span style="font-size:12px; color:#64748b; margin-left:8px;">[Vai trò: <strong>${roleText}</strong>]</span>
+                                    ${s.isOverThreshold ? '<span style="background:#fee2e2; color:#b91c1c; font-size:10px; font-weight:bold; padding:2px 4px; border-radius:3px; margin-left:6px;">Vượt hạn mức</span>' : ''}
+                                </div>
+                                <div>${statusBadge}</div>
+                            </div>
+                            ${approverInfo}
+                            ${commentsInfo}
+                        </div>
+                    `;
+                });
+                timelineHtml += '</div>';
+                timelineContainer.innerHTML = timelineHtml;
+
+                // Action box: Check if current user has role to approve currentPendingStep
+                const actionBox = document.getElementById('jra_action_box');
+
+                if (currentPendingStep && (userRoles.includes('ROLE_ADMIN') || userRoles.includes(currentPendingStep.approverRole))) {
+                    actionBox.style.display = 'block';
+                    actionBox.innerHTML = `
+                        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #1e293b;">Ý kiến & Thẩm quyền phê duyệt cấp hiện tại (${currentPendingStep.stepName}):</h4>
+                        <textarea id="jra_comments" placeholder="Nhập ý kiến phê duyệt hoặc lý do từ chối (tuỳ chọn)..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; margin-bottom: 12px;" rows="2"></textarea>
+                        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                            <button type="button" id="btn_jra_reject" onclick="executeApproval(false)" style="padding: 10px 20px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Từ chối yêu cầu</button>
+                            <button type="button" id="btn_jra_approve" onclick="executeApproval(true)" style="padding: 10px 24px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Đồng ý Phê duyệt Cấp này</button>
+                        </div>
+                    `;
+                } else if (currentPendingStep) {
+                    let reqRoleName = currentPendingStep.approverRole === 'ROLE_HR_MANAGER' ? 'Trưởng phòng Nhân sự' :
+                                      currentPendingStep.approverRole === 'ROLE_APPROVER' ? 'Ban Giám đốc (Người duyệt)' : currentPendingStep.approverRole;
+                    actionBox.style.display = 'block';
+                    actionBox.innerHTML = `
+                        <div style="color:#64748b; font-size:13px; text-align:center; padding:10px;">
+                            Cấp hiện tại (${currentPendingStep.stepName}) đang chờ duyệt bởi vai trò <strong>${reqRoleName}</strong>. Bạn không có thẩm quyền duyệt cấp này.
+                        </div>
+                    `;
+                } else {
+                    actionBox.style.display = 'block';
+                    actionBox.innerHTML = `
+                        <div style="color:#15803d; font-size:13px; text-align:center; padding:10px; font-weight:600;">
+                            Yêu cầu này đã hoàn tất toàn bộ quy trình phê duyệt (${job.status === 'APPROVED' ? 'Đã duyệt' : 'Đã từ chối'}).
+                        </div>
+                    `;
+                }
+
+                document.getElementById('modalJobRequestApprovalDetail').style.display = 'flex';
+            } catch (e) {
+                console.error(e);
+                alert('Lỗi tải thông tin yêu cầu.');
+            }
+        }
+
+        async function executeApproval(isApproved) {
+            if (!activeJobRequestForApproval) return;
+
+            const comments = document.getElementById('jra_comments')?.value || '';
+            const actionText = isApproved ? 'phê duyệt' : 'từ chối';
+            if (!confirm(`Bạn có chắc chắn muốn ${actionText} cấp duyệt này?`)) return;
+
+            const token = localStorage.getItem('accessToken');
+            try {
+                let url = `/api/job-requests/${activeJobRequestForApproval.id}/approve?isApproved=${isApproved}`;
+                if (comments) url += `&comments=${encodeURIComponent(comments)}`;
+
+                const res = await fetch(url, {
                     method: 'PUT',
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
-                const result = await response.json();
-                if (response.ok) {
-                    alert(result.message);
-                    loadJobRequestsList(); // Tải lại bảng
+                const result = await res.json();
+                if (res.ok && result.success) {
+                    alert(result.message || 'Xử lý thành công!');
+                    closeModal('modalJobRequestApprovalDetail');
+                    loadJobRequestsList();
                 } else {
-                    alert('Lỗi: ' + result.message);
+                    alert('Lỗi: ' + (result.message || 'Không thể thực hiện'));
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Lỗi kết nối Backend.');
+            } catch (e) {
+                console.error(e);
+                alert('Lỗi kết nối máy chủ.');
             }
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
         }
 
         // ==========================================
@@ -2202,10 +2733,86 @@
             document.getElementById('changePasswordModal').style.display = 'none';
         }
 
+        function openProfileModal() {
+            const token = localStorage.getItem('accessToken');
+            fetch('http://localhost:8080/api/auth/me', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.data) {
+                    const user = data.data;
+                    document.getElementById('prof_email').value = user.email || '';
+                    document.getElementById('prof_department').value = user.department || '';
+                    document.getElementById('prof_fullName').value = user.fullName || '';
+                    document.getElementById('prof_phone').value = user.phone || '';
+                    document.getElementById('prof_jobTitle').value = user.jobTitle || '';
+                    document.getElementById('profileModal').style.display = 'block';
+                } else {
+                    alert("Không thể tải thông tin hồ sơ");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Lỗi kết nối");
+            });
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('prof_submit');
+            btn.disabled = true;
+            btn.innerText = "Đang xử lý...";
+            
+            const reqBody = {
+                fullName: document.getElementById('prof_fullName').value,
+                phone: document.getElementById('prof_phone').value,
+                jobTitle: document.getElementById('prof_jobTitle').value
+            };
+            
+            const token = localStorage.getItem('accessToken');
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/profile', {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(reqBody)
+                });
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert(data.message || "Cập nhật hồ sơ thành công");
+                    closeProfileModal();
+                    // Update header if needed
+                    document.getElementById('displayUsername').textContent = data.data.fullName || data.data.username;
+                } else {
+                    let msg = data.message || "Cập nhật thất bại";
+                    if (data.errors && Object.keys(data.errors).length > 0) {
+                        msg = Object.values(data.errors)[0];
+                    }
+                    alert(msg);
+                }
+            } catch(err) {
+                alert("Lỗi kết nối");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Lưu thay đổi";
+            }
+        });
+
         // Close modal when clicking outside
         window.addEventListener('click', function (event) {
             if (event.target == document.getElementById('changePasswordModal')) {
                 closeChangePasswordModal();
+            }
+            if (event.target == document.getElementById('profileModal')) {
+                closeProfileModal();
             }
         });
     </script>
