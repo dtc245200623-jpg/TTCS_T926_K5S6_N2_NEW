@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>Cơ hội nghề nghiệp</title>
+  <link rel="stylesheet" href="careers.css">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="careers.html">Cơ hội nghề nghiệp</a><a href="index.html">Đăng nhập nhân viên</a></header>
+  <main>
+    <section class="hero"><p class="eyebrow">TÌM KIẾM CƠ HỘI</p><h1>Vị trí đang tuyển</h1><p>Khám phá công việc phù hợp và gửi hồ sơ trực tuyến.</p></section>
+    <section id="jobList" class="job-list" aria-live="polite"><p class="notice">Đang tải vị trí tuyển dụng…</p></section>
+    <section id="applicationPanel" class="panel" hidden>
+      <div class="panel-heading"><div><p class="eyebrow">ỨNG TUYỂN</p><h2 id="selectedJobTitle"></h2></div><button id="closeApplication" class="secondary" type="button">Đóng</button></div>
+      <form id="applicationForm" class="form-grid">
+        <input type="hidden" name="jobId" id="jobId">
+        <label>Họ và tên<input name="fullName" maxlength="160" required></label>
+        <label>Email<input name="email" type="email" maxlength="254" required></label>
+        <label>Số điện thoại<input name="phone" type="tel" maxlength="40"></label>
+        <label>Nguồn giới thiệu (nếu có)<input name="referralSource" maxlength="100" placeholder="Ví dụ: Nhân viên giới thiệu"></label>
+        <label class="wide">Thư giới thiệu<textarea name="coverLetter" rows="4" maxlength="3000"></textarea></label>
+        <label class="wide">CV (PDF hoặc DOCX, tối đa 5 MB)<input name="resume" type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label>
+        <button id="submitApplication" class="primary" type="submit">Gửi hồ sơ</button>
+      </form>
+    </section>
+    <section class="panel tracking-panel">
+      <p class="eyebrow">TRA CỨU HỒ SƠ</p><h2>Theo dõi ứng tuyển</h2>
+      <form id="trackingForm" class="tracking-form"><label for="trackingCode">Mã tra cứu</label><input id="trackingCode" required pattern="[a-fA-F0-9]{32}" placeholder="Mã được cấp sau khi gửi hồ sơ"><button class="secondary" type="submit">Tra cứu</button></form>
+      <div id="trackingResult" class="tracking-result" aria-live="polite"></div>
+    </section>
+  </main>
+  <script src="careers.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+    <title>Cơ hội nội bộ – Tuyển dụng</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="employee.css">
+</head>
+<body>
+    <header class="employee-header">
+        <a class="employee-brand" href="employee.html"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span><small>Hệ thống</small><strong>Tuyển dụng nội bộ</strong></span></a>
+        <nav><a class="active" href="#opportunities">Cơ hội nội bộ</a><a href="#myApplications">Đơn ứng tuyển của tôi</a><a href="dashboard.html">Bảng điều khiển</a><a href="processing.html">Xử lý hồ sơ</a><a href="evaluation.html">Đánh giá ứng viên</a><a href="onboarding.html">Nhận việc</a></nav>
+        <div class="user-menu"><span id="employeeName">Nhân viên</span><button class="employee-avatar" id="logoutButton" type="button" title="Đăng xuất">NV</button></div>
+    </header>
+
+    <main class="employee-main">
+        <section class="employee-hero">
+            <div class="hero-copy"><span class="hero-tag"><span></span>CƠ HỘI DÀNH CHO NHÂN VIÊN</span><h1>Bước tiếp theo<br>trong sự nghiệp của bạn.</h1><p>Khám phá cơ hội mới trong công ty, ứng tuyển bằng tài khoản nội bộ và theo dõi hồ sơ ngay tại đây.</p><a class="hero-link" href="#opportunities">Khám phá vị trí đang tuyển <b>↓</b></a></div>
+            <div class="hero-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-card"><span class="art-spark">✦</span><span class="art-line line-long"></span><span class="art-line"></span><span class="art-chip">Cơ hội mới</span></div><span class="art-star star-one">✦</span><span class="art-star star-two">✳</span></div>
+        </section>
+
+        <div class="notice" id="employeeNotice" role="status" aria-live="polite"></div>
+
+        <section class="opportunity-section" id="opportunities">
+            <div class="section-top"><div><p class="section-kicker">PHÁT TRIỂN CÙNG CHÚNG TÔI</p><h2>Vị trí đang tuyển</h2><p class="section-description">Tìm vai trò phù hợp với kỹ năng và mục tiêu tiếp theo của bạn.</p></div><div class="job-count"><strong id="jobCount">—</strong><span>cơ hội</span></div></div>
+            <div class="filter-bar"><label class="search-box"><span>⌕</span><input id="searchJobs" type="search" placeholder="Tìm theo tên vị trí hoặc phòng ban" autocomplete="off"></label><label class="department-filter"><span>Phòng ban</span><select id="departmentFilter"><option value="">Tất cả phòng ban</option></select></label></div>
+            <div class="job-grid" id="jobList"><div class="loading-state">Đang tải cơ hội nội bộ…</div></div>
+        </section>
+
+        <section class="applications-section" id="myApplications">
+            <div class="section-top"><div><p class="section-kicker">THEO DÕI TIẾN ĐỘ</p><h2>Đơn ứng tuyển của tôi</h2><p class="section-description">Cập nhật trạng thái hồ sơ của bạn theo từng vị trí.</p></div><a class="text-link" href="#opportunities">Xem vị trí đang tuyển <span>→</span></a></div>
+            <div class="applications-card" id="applicationList"><div class="loading-state">Đang tải hồ sơ ứng tuyển…</div></div>
+        </section>
+        <footer class="employee-footer"><span class="footer-mark">✳</span><span>Phát triển sự nghiệp từ bên trong.</span><a href="dashboard.html">Hệ thống tuyển dụng nội bộ</a></footer>
+    </main>
+
+    <script src="session.js"></script>
+    <script src="access-control.js"></script>
+    <script src="employee.js"></script>
+</body>
+</html>

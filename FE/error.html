@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Thông báo lỗi – Hệ thống Tuyển dụng Nội bộ</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="error.css" />
+  </head>
+
+  <body>
+    <main class="error-page">
+      <section class="error-card" aria-labelledby="error-title">
+        <!-- Icon lỗi -->
+        <div class="error-icon" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+
+        <!-- Nội dung thông báo -->
+        <div class="error-content">
+          <p class="error-label">Thông báo</p>
+
+          <h1 id="error-title">Đã xảy ra lỗi</h1>
+
+          <p class="error-message">
+            Rất tiếc, trang bạn đang truy cập không thể được hiển thị. Vui lòng
+            kiểm tra lại quyền truy cập hoặc thử lại sau.
+          </p>
+        </div>
+
+        <!--
+          Khu vực hành động.
+          KN-40 sẽ xử lý nút điều hướng tại đây.
+        -->
+        <div id="error-actions" class="error-actions"></div>
+      </section>
+    </main>
+  </body>
+</html>

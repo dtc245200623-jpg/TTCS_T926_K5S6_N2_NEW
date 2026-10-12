@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+    <title>Bảng điều khiển – Tuyển dụng nội bộ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" href="dashboard.html" aria-label="Trang chủ">
+                <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+                <span><small>Hệ thống</small><strong>Tuyển dụng nội bộ</strong></span>
+            </a>
+            <div class="nav-label">KHÔNG GIAN LÀM VIỆC</div>
+            <nav class="nav-list" aria-label="Điều hướng chính">
+                <a class="nav-link active" id="navOverview" href="#recruitmentWorkspace"><span class="nav-icon">▦</span>Tổng quan</a>
+                <a class="nav-link" id="navCandidates" href="#recruitmentWorkspace"><span class="nav-icon">♙</span>Ứng viên</a>
+                <a class="nav-link" id="navPipeline" href="#recruitmentWorkspace"><span class="nav-icon">⇄</span>Pipeline</a>
+                <a class="nav-link" id="navReports" href="#recruitmentWorkspace" data-workspace-view="reports"><span class="nav-icon">▤</span>Báo cáo tuyển dụng</a>
+                <a class="nav-link" id="navOperations" href="operations.html"><span class="nav-icon">⚙</span>Danh mục & yêu cầu</a>
+                <a class="nav-link" href="careers.html"><span class="nav-icon">↗</span>Cổng ứng tuyển công khai</a>
+                <a class="nav-link" href="processing.html"><span class="nav-icon">✓</span>Xử lý hồ sơ & phỏng vấn</a>
+                <a class="nav-link" href="onboarding.html"><span class="nav-icon">＋</span>Nhận việc & onboarding</a>
+                <a class="nav-link" href="employee.html"><span class="nav-icon">⌕</span>Cổng nhân viên</a>
+                <a class="nav-link" href="evaluation.html"><span class="nav-icon">✓</span>Đánh giá ứng viên</a>
+                <a class="nav-link" href="accounts.html"><span class="nav-icon">◇</span>Hồ sơ & quản lý tài khoản</a>
+            </nav>
+            <div class="sidebar-note"><span class="note-icon">i</span><p>Tạo vị trí, quản lý ứng viên và theo dõi tiến độ tuyển dụng tại đây.</p></div>
+            <div class="sidebar-bottom"><span class="status-dot"></span><span>Backend <strong id="connectionLabel">Đang kết nối…</strong></span></div>
+        </aside>
+
+        <main class="main-area" id="overview">
+            <header class="topbar">
+                <div class="breadcrumbs">Không gian làm việc <span>/</span> <strong>Tổng quan</strong></div>
+                <div class="top-actions"><span class="today" id="todayLabel"></span><button class="avatar" id="avatarButton" type="button" aria-label="Tài khoản">?</button></div>
+            </header>
+            <section class="content">
+                <div class="welcome-row">
+                    <div><p class="eyebrow">BẢNG ĐIỀU KHIỂN</p><h1>Xin chào, <span id="welcomeName">bạn</span> <span class="wave">👋</span></h1><p class="subtitle">Chào mừng bạn quay lại. Đây là không gian làm việc của bạn.</p></div>
+                    <div class="session-chip"><span class="live-dot"></span>Phiên đăng nhập đang hoạt động</div>
+                </div>
+                <div class="alert" id="pageAlert" role="status" aria-live="polite"></div>
+                <section class="stat-grid" aria-label="Tình trạng tài khoản">
+                    <article class="stat-card"><div class="stat-top"><span>Tài khoản</span><span class="stat-icon blue">♙</span></div><strong id="statUsername">—</strong><small>Đã xác thực với máy chủ</small></article>
+                    <article class="stat-card"><div class="stat-top"><span>Vai trò</span><span class="stat-icon violet">◇</span></div><strong id="statRole">—</strong><small>Quyền truy cập hiện tại</small></article>
+                    <article class="stat-card"><div class="stat-top"><span>Trạng thái API</span><span class="stat-icon green">↗</span></div><strong id="statApi">Đang kiểm tra</strong><small id="apiDetail">Đang xác minh phiên làm việc</small></article>
+                </section>
+
+                <section class="workspace-panel" id="recruitmentWorkspace">
+                    <div class="workspace-head"><div><p class="eyebrow">QUY TRÌNH TUYỂN DỤNG</p><h2>Quản lý tuyển dụng</h2><p class="workspace-description">Tạo vị trí, thêm ứng viên, đưa vào pipeline và cập nhật tiến độ trên backend.</p></div><button class="primary-button" id="newRecordButton" type="button">＋ <span id="newRecordLabel">Tạo vị trí</span></button></div>
+                    <div class="workflow-toolbar"><div class="workflow-tabs" role="tablist" aria-label="Phân hệ tuyển dụng"><button class="workflow-tab active" data-view="jobs" type="button">Vị trí tuyển dụng</button><button class="workflow-tab" data-view="candidates" type="button">Ứng viên</button><button class="workflow-tab" data-view="applications" type="button">Hồ sơ ứng tuyển</button><button class="workflow-tab" data-view="pipeline" type="button">Pipeline</button><button class="workflow-tab" data-view="reports" type="button">Báo cáo</button></div><button class="refresh-button" id="refreshWorkspace" type="button">↻ Làm mới</button></div>
+                    <p class="workspace-hint" id="workspaceHint">Các vị trí tuyển dụng đang mở.</p>
+                    <div class="workflow-content" id="workflowContent" aria-live="polite"><p class="loading-line">Đang tải dữ liệu từ backend…</p></div>
+                </section>
+
+                <dialog class="record-dialog" id="recordDialog"><form id="recordForm" method="dialog"><div class="dialog-head"><div><p class="eyebrow">HỆ THỐNG TUYỂN DỤNG</p><h2 id="dialogTitle">Tạo mới</h2></div><button class="dialog-close" id="closeDialog" type="button" aria-label="Đóng">×</button></div><div class="dialog-fields" id="dialogFields"></div><div class="dialog-actions"><button class="quiet-button" id="cancelDialog" type="button">Hủy</button><button class="primary-button" id="saveRecordButton" type="submit">Lưu</button></div></form></dialog>
+
+                <div class="bottom-grid">
+                    <section class="panel" id="account"><div class="panel-heading"><div><h2>Tài khoản của tôi</h2><p>Thông tin được tải trực tiếp từ backend.</p></div><span class="verified">✓ Đã xác thực</span></div><div class="profile-row"><div class="profile-avatar" id="profileAvatar">?</div><div><strong id="profileName">Đang tải…</strong><p id="profileEmail">—</p></div></div><dl class="detail-list"><div><dt>Tên đăng nhập</dt><dd id="detailUsername">—</dd></div><div><dt>Vai trò</dt><dd id="detailRole">—</dd></div><div><dt>Ngày tạo tài khoản</dt><dd id="detailCreated">—</dd></div></dl></section>
+                    <section class="panel" id="security"><div class="panel-heading"><div><h2>Bảo mật tài khoản</h2><p>Quản lý mật khẩu và các phiên đăng nhập.</p></div><span class="security-icon">⌑</span></div><form id="passwordForm" class="password-form"><label>Mật khẩu hiện tại<input id="currentPassword" type="password" autocomplete="current-password" required></label><div class="field-pair"><label>Mật khẩu mới<input id="newPassword" type="password" minlength="8" autocomplete="new-password" required></label><label>Xác nhận mật khẩu<input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required></label></div><div class="form-footer"><small>Tối thiểu 8 ký tự, gồm chữ cái và chữ số.</small><button class="primary-button" id="changePasswordButton" type="submit">Cập nhật mật khẩu</button></div></form><div class="revoke-row"><div><strong>Đăng xuất khỏi mọi thiết bị</strong><p>Thu hồi tất cả phiên đăng nhập đang hoạt động.</p></div><button class="quiet-button" id="revokeButton" type="button">Thu hồi phiên</button></div></section>
+                </div>
+                <footer>Hệ thống Tuyển dụng Nội bộ <span>•</span> Kết nối an toàn qua API</footer>
+            </section>
+        </main>
+    </div>
+    <script src="session.js"></script>
+    <script src="access-control.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>Nhận việc & Onboarding – Tuyển dụng nội bộ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="onboarding.css?v=2">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="dashboard.html"><span class="brand-mark">✦</span><span><small>HỆ THỐNG</small><strong>Tuyển dụng nội bộ</strong></span></a>
+    <nav aria-label="Điều hướng hệ thống"><a href="dashboard.html">Tổng quan</a><a href="processing.html">Xử lý hồ sơ</a><a href="evaluation.html">Đánh giá ứng viên</a><a class="active" href="onboarding.html">Nhận việc</a><a href="employee.html">Cổng nhân viên</a></nav>
+    <div class="user-chip"><i></i><span id="userLabel">Đang đăng nhập</span></div>
+  </header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">OFFER & ONBOARDING</p><h1>Tiếp nhận nhân sự mới</h1><p>Theo dõi việc ứng viên chấp nhận offer, mức lương thống nhất, ngày bắt đầu và các bước chuẩn bị đi làm.</p></div><button class="button secondary" id="refreshButton" type="button">↻ Làm mới</button></section>
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+    <section class="summary" aria-label="Tổng quan nhận việc"><article><span>Chờ xác nhận offer</span><strong id="pendingCount">—</strong></article><article><span>Đã xác nhận nhận việc</span><strong id="hiredCount">—</strong></article><article><span>Đã hoàn tất checklist</span><strong id="completeCount">—</strong></article></section>
+    <section class="panel"><div class="panel-head"><div><h2>Danh sách tiếp nhận</h2><p>Chỉ hồ sơ đã đến bước offer mới có thể xác nhận nhận việc.</p></div><label class="filter">Lọc<select id="stageFilter"><option value="ALL">Tất cả</option><option value="OFFER">Chờ xác nhận</option><option value="HIRED">Đang onboarding</option></select></label></div><div id="recordList" class="record-list"><div class="empty">Đang tải danh sách…</div></div></section>
+    <footer><a href="dashboard.html">← Quay lại bảng điều khiển</a><span>Dữ liệu nhận việc được lưu cùng hồ sơ ứng tuyển.</span></footer>
+  </main>
+  <script src="session.js"></script><script src="access-control.js"></script><script src="onboarding.js?v=2"></script>
+</body>
+</html>

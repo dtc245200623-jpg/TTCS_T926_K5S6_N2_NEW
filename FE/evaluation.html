@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng điều khiển Tuyển dụng - Phiếu đánh giá ứng viên</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3">
+    <style>
+        body {
+            background-color: #f8fafc;
+            min-height: 100vh;
+            color: #0f172a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header Navigation */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-brand-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .nav-brand-title h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .nav-brand-title p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Session Status Badge in Header */
+        .session-status-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f1f5f9;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .pulse-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background-color: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .session-status-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .nav-user-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1d4ed8;
+        }
+
+        .btn-outline-danger {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-outline-danger:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .btn-outline-secondary {
+            background: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Main Workspace Content */
+        .workspace {
+            max-width: 960px;
+            margin: 32px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .draft-banner {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #92400e;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .card-eval {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            padding: 32px;
+        }
+
+        .candidate-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 28px;
+        }
+
+        .candidate-info h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .candidate-info p {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .badge-position {
+            background: #e0e7ff;
+            color: #3730a3;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 999px;
+        }
+
+        .badge-position select {
+            display: block;
+            margin-top: 5px;
+            max-width: 300px;
+            padding: 7px 10px;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            background: #fff;
+            color: #1e1b4b;
+            font: inherit;
+        }
+
+        .eval-section {
+            margin-bottom: 24px;
+        }
+
+        .eval-section label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .rating-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .rating-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rating-btn:hover, .rating-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        textarea.eval-comments {
+            width: 100%;
+            height: 120px;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            resize: vertical;
+        }
+
+        textarea.eval-comments:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .auto-save-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative background shapes (đồng bộ style với trang Đăng nhập) -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Top Header -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="nav-brand-logo">ATS</div>
+            <div class="nav-brand-title">
+                <h3>Tuyển dụng Nội bộ</h3>
+                <p>Quản lý Phiên & Đánh giá ứng viên</p>
+            </div>
+        </div>
+
+        <div class="nav-user-actions" aria-label="Điều hướng hệ thống">
+            <a class="btn-outline-secondary" href="dashboard.html">Tổng quan</a>
+            <a class="btn-outline-secondary" href="processing.html">Xử lý hồ sơ</a>
+            <a class="btn-outline-secondary" href="onboarding.html">Nhận việc</a>
+            <a class="btn-outline-secondary" href="employee.html">Cổng nhân viên</a>
+        </div>
+
+        <!-- Trạng thái phiên gia hạn tự động -->
+        <div class="session-status-container" id="sessionStatusBox">
+            <div class="pulse-dot" id="sessionPulse"></div>
+            <span class="session-status-text" id="sessionStatusText">Phiên hoạt động – Tự động gia hạn</span>
+        </div>
+
+        <div class="nav-user-actions">
+            <div class="user-pill" id="userPill">
+                👤 <span id="usernameDisplay">Recruiter</span>
+            </div>
+
+            <button type="button" class="btn-outline-secondary" id="btnTestExpire" title="Mô phỏng server hủy token 401">
+                🧪 Giả lập Hết hạn (401)
+            </button>
+
+            <button type="button" class="btn-outline-danger" id="btnLogout">
+                Đăng xuất
+            </button>
+
+            <button type="button" class="btn-outline-danger" id="btnRevokeAll" title="Đăng xuất khỏi tất cả thiết bị">
+                Thu hồi tất cả thiết bị
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+
+        <!-- Banner thông báo bản nháp tự động lưu -->
+        <div class="draft-banner" id="draftBanner" style="display: none;">
+            <span>📌 <strong>Bản nháp tự động:</strong> Đã tự động khôi phục dữ liệu bạn đang nhập dở trước đó.</span>
+            <button type="button" id="btnClearDraft" style="background:none; border:none; color:#92400e; cursor:pointer; text-decoration:underline; font-size:13px; font-weight:600;">Xóa bản nháp</button>
+        </div>
+
+        <div class="card-eval">
+            <div class="candidate-header">
+                <div class="candidate-info">
+                    <h2>Phiếu Đánh giá Phỏng vấn</h2>
+                    <p>Hồ sơ ứng tuyển: <strong id="candidateLabel">Đang tải danh sách hồ sơ…</strong></p>
+                </div>
+                <label class="badge-position" for="applicationSelect">Chọn hồ sơ
+                    <select id="applicationSelect" aria-label="Chọn hồ sơ cần đánh giá"><option value="">Đang tải…</option></select>
+                </label>
+            </div>
+
+            <form id="evaluationForm" onsubmit="return false;">
+
+                <!-- 1. Kỹ năng chuyên môn -->
+                <div class="eval-section">
+                    <label>1. Kiến thức Chuyên môn & Java/Spring Boot (1 - 5)</label>
+                    <div class="rating-group" data-criterion="skill">
+                        <button type="button" class="rating-btn" data-val="1">1</button>
+                        <button type="button" class="rating-btn" data-val="2">2</button>
+                        <button type="button" class="rating-btn" data-val="3">3</button>
+                        <button type="button" class="rating-btn" data-val="4">4</button>
+                        <button type="button" class="rating-btn" data-val="5">5</button>
+                    </div>
+                </div>
+
+                <!-- 2. Tư duy thuật toán -->
+                <div class="eval-section">
+                    <label>2. Tư duy Thuật toán & Giải quyết vấn đề (1 - 5)</label>
+                    <div class="rating-group" data-criterion="problem_solving">
+                        <button type="button" class="rating-btn" data-val="1">1</button>
+                        <button type="button" class="rating-btn" data-val="2">2</button>
+                        <button type="button" class="rating-btn" data-val="3">3</button>
+                        <button type="button" class="rating-btn" data-val="4">4</button>
+                        <button type="button" class="rating-btn" data-val="5">5</button>
+                    </div>
+                </div>
+
+                <!-- 3. Nhận xét chi tiết -->
+                <div class="eval-section">
+                    <label for="evalComments">3. Nhận xét Chi tiết & Ưu/Nhược điểm</label>
+                    <textarea id="evalComments" class="eval-comments" placeholder="Nhập nhận xét chi tiết về ứng viên (Dữ liệu sẽ được tự động lưu nháp liên tục khi bạn gõ)..."></textarea>
+                </div>
+
+                <!-- 4. Lương đề xuất & Kết luận -->
+                <div class="form-row">
+                    <div class="eval-section">
+                        <label for="salaryOffer">4. Mức lương đề xuất (VND)</label>
+                        <input type="text" id="salaryOffer" class="form-input" placeholder="Ví dụ: 35.000.000 VND">
+                    </div>
+
+                    <div class="eval-section">
+                        <label for="finalDecision">5. Quyết định Tuyển dụng</label>
+                        <select id="finalDecision" class="form-select">
+                            <option value="">-- Chọn kết quả --</option>
+                            <option value="PASS">Đạt (Khuyến nghị Offer)</option>
+                            <option value="CONSIDER">Cần cân nhắc thêm</option>
+                            <option value="FAIL">Không đạt</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <div class="auto-save-status">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        <span id="autoSaveText">Dữ liệu được tự động lưu nháp liên tục</span>
+                    </div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <button type="button" class="btn-outline-secondary" id="btnManualSave">Lưu nháp thủ công</button>
+                        <button type="button" class="btn-primary" id="btnSubmitEval" style="width: auto; padding: 0 24px;">Hoàn tất & Nộp đánh giá</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <script src="session.js"></script>
+    <script src="access-control.js"></script>
+    <script src="evaluation.js"></script>
+</body>
+</html>

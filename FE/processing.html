@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7fb"><title>Xử lý hồ sơ – Tuyển dụng nội bộ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="processing.css">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="dashboard.html"><span class="brand-mark">✦</span><span><small>HỆ THỐNG</small><strong>Tuyển dụng nội bộ</strong></span></a><nav><a href="dashboard.html">Bảng điều khiển</a><a class="active" href="processing.html">Xử lý hồ sơ</a><a href="onboarding.html">Nhận việc</a><a href="evaluation.html">Đánh giá ứng viên</a><a href="employee.html">Cổng nhân viên</a></nav><div class="user-chip"><i></i><span id="userLabel">Đang đăng nhập</span></div></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">QUY TRÌNH TUYỂN DỤNG</p><h1>Tiếp nhận & xử lý hồ sơ</h1><p class="muted">Duyệt hồ sơ ứng tuyển, sắp lịch phỏng vấn và cập nhật kết quả ngay tại đây.</p></div><button id="refreshButton" class="button secondary">↻ Làm mới</button></section>
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+    <section class="stats"><article><span>Tổng hồ sơ</span><strong id="totalCount">—</strong></article><article><span>Chờ duyệt</span><strong id="pendingCount">—</strong></article><article><span>Đang phỏng vấn</span><strong id="interviewCount">—</strong></article><article><span>Đã tiếp nhận</span><strong id="hiredCount">—</strong></article></section>
+    <section class="panel"><div class="panel-heading"><div><h2>Danh sách hồ sơ</h2><p>Chọn trạng thái để duyệt hoặc từ chối hồ sơ; đặt lịch cho ứng viên được mời phỏng vấn.</p></div><div class="filters"><input id="searchInput" type="search" placeholder="Tìm ứng viên, email, vị trí…" aria-label="Tìm hồ sơ"><select id="stageFilter" aria-label="Lọc theo trạng thái"><option value="ALL">Tất cả trạng thái</option><option value="NEW">Chờ duyệt</option><option value="SCREENING">Đang xét duyệt</option><option value="INTERVIEW">Phỏng vấn</option><option value="OFFER">Đề nghị nhận việc</option><option value="HIRED">Đã tiếp nhận</option><option value="REJECTED">Từ chối</option></select></div></div><div id="applicationList" class="application-list"><div class="loading">Đang tải hồ sơ…</div></div></section>
+    <footer><a href="dashboard.html">← Quay lại bảng điều khiển</a><span>Hồ sơ được lưu trực tiếp trên backend.</span></footer>
+  </main>
+  <script src="session.js"></script><script src="access-control.js"></script><script src="processing.js"></script>
+</body>
+</html>

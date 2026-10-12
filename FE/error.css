@@ -1,0 +1,218 @@
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+
+  --text-navy: #1e3a8a;
+  --text-gray: #64748b;
+  --text-light: #94a3b8;
+
+  --bg-page: #f4f7fb;
+  --bg-card: #ffffff;
+
+  --border-color: #e2e8f0;
+
+  --error: #ef4444;
+  --error-bg: #fee2e2;
+
+  --shadow-main: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+
+  background-color: var(--bg-page);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-navy);
+}
+
+/* Trang lỗi */
+
+.error-page {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* Trang trí nền */
+
+.error-page::before,
+.error-page::after {
+  content: "";
+
+  position: absolute;
+
+  border-radius: 50%;
+
+  background-color: #dbeafe;
+
+  opacity: 0.6;
+
+  z-index: 0;
+}
+
+.error-page::before {
+  width: 420px;
+  height: 420px;
+
+  top: -180px;
+  left: -160px;
+}
+
+.error-page::after {
+  width: 520px;
+  height: 520px;
+
+  right: -220px;
+  bottom: -240px;
+}
+
+/* Card lỗi */
+
+.error-card {
+  width: 100%;
+  max-width: 620px;
+
+  background-color: var(--bg-card);
+
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+
+  box-shadow: var(--shadow-main);
+
+  padding: 48px 40px;
+
+  text-align: center;
+
+  position: relative;
+  z-index: 1;
+}
+
+/* Icon */
+
+.error-icon {
+  width: 72px;
+  height: 72px;
+
+  margin: 0 auto 24px;
+
+  border-radius: 50%;
+
+  background-color: var(--error-bg);
+  color: var(--error);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+/* Nội dung */
+
+.error-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.error-label {
+  margin-bottom: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--error);
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.error-content h1 {
+  margin-bottom: 12px;
+
+  font-size: 32px;
+  line-height: 1.25;
+
+  font-weight: 800;
+
+  color: var(--text-navy);
+}
+
+.error-message {
+  font-size: 15px;
+  line-height: 1.6;
+
+  color: var(--text-gray);
+}
+
+/*
+ * Khu vực dành cho hành động.
+ *
+ * KN-40 sẽ bổ sung nút điều hướng tại đây.
+ */
+
+.error-actions {
+  margin-top: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+  .error-page {
+    padding: 16px;
+  }
+
+  .error-card {
+    padding: 36px 24px;
+
+    border-radius: 16px;
+  }
+
+  .error-icon {
+    width: 64px;
+    height: 64px;
+
+    margin-bottom: 20px;
+  }
+
+  .error-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .error-content h1 {
+    font-size: 26px;
+  }
+
+  .error-message {
+    font-size: 14px;
+  }
+}

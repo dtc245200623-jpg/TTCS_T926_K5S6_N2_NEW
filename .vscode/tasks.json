@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start ATS backend",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$listener = Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue; if (-not $listener) { $backend = Start-Process -FilePath $env:ComSpec -ArgumentList '/c','mvn spring-boot:run' -WorkingDirectory '${workspaceFolder}' -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $env:TEMP 'ats_backend.log') -RedirectStandardError (Join-Path $env:TEMP 'ats_backend_error.log'); $deadline = (Get-Date).AddSeconds(120); do { Start-Sleep -Milliseconds 500; $listener = Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue; if ($backend.HasExited -and -not $listener) { throw 'Maven backend exited before opening port 8080.' } } while (-not $listener -and (Get-Date) -lt $deadline); if (-not $listener) { throw 'Backend did not start on port 8080 within 120 seconds.' } }"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
