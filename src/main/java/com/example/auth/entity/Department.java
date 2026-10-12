@@ -34,13 +34,15 @@ public class Department {
     @Builder.Default
     private List<Department> children = new ArrayList<>();
 
+    // Người phụ trách phòng ban
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
-    private User manager; // Người phụ trách phòng ban
+    private User manager;
 
+    // Trạng thái phòng ban
     @Column(name = "status", length = 50)
     @Builder.Default
-    private String status = "ACTIVE"; // ACTIVE, INACTIVE
+    private String status = "ACTIVE";
 
     @Column(name = "created_at")
     @Builder.Default
