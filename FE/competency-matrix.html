@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Quản Trị Chức Danh & Khung Năng Lực Tuyển Dụng | HR MasterCore</title>
+  <meta name="description" content="Phần mềm quản trị dữ liệu nền tảng tuyển dụng: Quản lý chức danh, cấp bậc, khung năng lực trọng số 100% và ngân hàng câu hỏi phỏng vấn chuẩn hoá.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">HR MasterCore <span class="badge-version">Sprint 5 & 6</span></div>
+          <div class="brand-subtitle">Nền tảng Quản trị Chức danh, Khung năng lực & Phỏng vấn</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Theme Switcher (Xanh Da Trời / Xanh Biển Đậm / Xanh Lá) -->
+        <div class="theme-switcher-group" title="Chọn tông màu Xanh đồng nhất">
+          <button class="theme-chip-btn active" data-theme-btn="sky" title="Xanh Da Trời (Sky Blue) - Mặc định">🌤️ Xanh Da Trời</button>
+          <button class="theme-chip-btn" data-theme-btn="blue" title="Xanh Biển Đậm (Deep Ocean)">🌊 Xanh Biển Đậm</button>
+          <button class="theme-chip-btn" data-theme-btn="green" title="Xanh Lá (Emerald Green)">🟢 Xanh Lá</button>
+        </div>
+
+        <div class="user-role-chip">
+          <div class="avatar-ring">TP</div>
+          <div class="role-text">
+            <span class="user-name">Nguyễn Văn Bình</span>
+            <span class="user-title">Trưởng phòng Nhân sự</span>
+          </div>
+        </div>
+        <button id="btn-seed-data" class="btn btn-secondary btn-sm" title="Nạp dữ liệu mẫu chuẩn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+          Đặt lại Data mẫu
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Metric / Overview Ribbon -->
+  <section class="metrics-ribbon">
+    <div class="metric-card">
+      <div class="metric-icon bg-blue">🏢</div>
+      <div class="metric-details">
+        <span class="metric-value" id="stat-total-jobs">0</span>
+        <span class="metric-label">Tổng chức danh</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon bg-emerald">🎯</div>
+      <div class="metric-details">
+        <span class="metric-value" id="stat-ready-jobs">0</span>
+        <span class="metric-label">Khung năng lực đạt 100%</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon bg-amber">⚡</div>
+      <div class="metric-details">
+        <span class="metric-value" id="stat-total-competencies">0</span>
+        <span class="metric-label">Tiêu chí năng lực dùng chung</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon bg-rose">💬</div>
+      <div class="metric-details">
+        <span class="metric-value" id="stat-total-questions">0</span>
+        <span class="metric-label">Ngân hàng câu hỏi PV</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Tab Controls -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-jobs">
+        <span class="tab-icon">📋</span> Danh mục Chức danh
+      </button>
+      <button class="tab-btn" data-tab="tab-matrix">
+        <span class="tab-icon">⚖️</span> Ma trận Năng lực & Trọng số
+        <span class="tab-badge" id="badge-matrix-status">Quan trọng</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-competencies">
+        <span class="tab-icon">🧠</span> Thư viện Năng lực
+      </button>
+      <button class="tab-btn" data-tab="tab-questions">
+        <span class="tab-icon">❓</span> Ngân hàng Câu hỏi
+      </button>
+      <button class="tab-btn highlight" data-tab="tab-evaluation-sprint6">
+        <span class="tab-icon">📝</span> Mô phỏng Phiếu PV (Sprint 6)
+      </button>
+    </nav>
+
+    <!-- TAB 1: DANH MỤC CHỨC DANH -->
+    <section id="tab-jobs" class="tab-content active">
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Danh mục Chức danh Chuẩn hóa</h1>
+          <p class="panel-desc">Quản lý mã chức danh, tên chuẩn và cấp bậc (Level 1 - Level 7) làm nền tảng tham chiếu cho dải lương và tuyển dụng.</p>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" id="btn-add-job">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Thêm Chức danh Mới
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters & Search -->
+      <div class="filter-bar">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="search-job-input" placeholder="Tìm theo mã hoặc tên chức danh...">
+        </div>
+        <div class="filter-dropdowns">
+          <select id="filter-job-level">
+            <option value="">Tất cả Cấp bậc (All Levels)</option>
+            <option value="L1">L1 - Intern / Fresher</option>
+            <option value="L2">L2 - Junior</option>
+            <option value="L3">L3 - Middle</option>
+            <option value="L4">L4 - Senior</option>
+            <option value="L5">L5 - Lead / Supervisor</option>
+            <option value="L6">L6 - Manager / Head</option>
+            <option value="L7">L7 - Director / C-Level</option>
+          </select>
+          <select id="filter-job-dept">
+            <option value="">Tất cả Phòng ban</option>
+          </select>
+          <select id="filter-job-status">
+            <option value="">Tất cả Trạng thái</option>
+            <option value="ACTIVE">Hoạt động (Active)</option>
+            <option value="INACTIVE">Ngưng hoạt động (Inactive)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table View -->
+      <div class="table-responsive">
+        <table class="data-table" id="table-jobs">
+          <thead>
+            <tr>
+              <th>Mã chức danh</th>
+              <th>Tên chức danh</th>
+              <th>Cấp bậc</th>
+              <th>Phòng ban</th>
+              <th>Dải lương tham chiếu</th>
+              <th>Trạng thái khung NL</th>
+              <th>Trạng thái</th>
+              <th class="text-right">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="job-table-body">
+            <!-- Dynamic render -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 2: MA TRẬN NĂNG LỰC & TRỌNG SỐ (CORE BUSINESS RULE: TỔNG = 100%) -->
+    <section id="tab-matrix" class="tab-content">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Thiết lập Khung Năng lực & Trọng số Đánh giá</h2>
+          <p class="panel-desc">Gắn bộ tiêu chí đánh giá cho chức danh và cân chỉnh trọng số. <strong>Quy tắc cốt lõi: Tổng trọng số các tiêu chí bắt buộc phải đúng bằng 100%.</strong></p>
+        </div>
+      </div>
+
+      <!-- Selector for Job Title -->
+      <div class="matrix-selector-card">
+        <div class="matrix-select-group">
+          <label for="select-matrix-job">Chọn Chức danh cần cấu hình:</label>
+          <select id="select-matrix-job" class="form-select select-lg">
+            <!-- Options populated dynamically -->
+          </select>
+        </div>
+        <div class="matrix-job-info" id="matrix-job-meta">
+          <!-- Department, Level badge will display here -->
+        </div>
+      </div>
+
+      <!-- Weight Status & Progress Banner -->
+      <div class="weight-summary-box" id="weight-summary-box">
+        <div class="weight-status-header">
+          <div class="weight-label-wrapper">
+            <span class="weight-badge-icon" id="weight-icon">⚡</span>
+            <span class="weight-label" id="weight-status-text">Đang kiểm tra tổng trọng số...</span>
+          </div>
+          <div class="weight-numerical">
+            Tổng trọng số: <strong id="weight-total-number">0%</strong> / 100%
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="weight-progress-fill" style="width: 0%;"></div>
+        </div>
+        <div class="weight-hint" id="weight-hint-text">
+          Vui lòng phân bổ trọng số cho các tiêu chí sao cho tổng đạt đúng 100% để có thể Lưu & Kích hoạt.
+        </div>
+      </div>
+
+      <!-- Matrix Editing Container -->
+      <div class="matrix-editor-grid">
+        <!-- Left: Selected Criteria with Weights -->
+        <div class="editor-left-card">
+          <div class="card-head">
+            <h3>Bộ tiêu chí đã chọn cho Chức danh (<span id="assigned-count">0</span>)</h3>
+            <span class="helper-text">Kéo thả hoặc nhập trực tiếp trọng số %</span>
+          </div>
+
+          <div id="assigned-criteria-list" class="assigned-criteria-list">
+            <!-- Dynamic items with slider & number input -->
+          </div>
+
+          <div class="matrix-footer-actions">
+            <button id="btn-save-matrix" class="btn btn-success btn-lg" disabled>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Lưu & Kích hoạt Khung năng lực
+            </button>
+            <button id="btn-reset-matrix" class="btn btn-secondary">Khôi phục mặc định</button>
+          </div>
+        </div>
+
+        <!-- Right: Available Competencies Pool -->
+        <div class="editor-right-card">
+          <div class="card-head">
+            <h3>Thư viện Tiêu chí Dùng chung</h3>
+            <span class="helper-text">Nhấp (+) để thêm vào khung năng lực</span>
+          </div>
+          <div class="pool-search-box">
+            <input type="text" id="search-pool-criteria" placeholder="Tìm tiêu chí năng lực...">
+          </div>
+          <div id="available-criteria-pool" class="available-criteria-pool">
+            <!-- Pool list -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: THƯ VIỆN NĂNG LỰC DÙNG CHUNG -->
+    <section id="tab-competencies" class="tab-content">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Thư viện Khung Năng lực Dùng chung</h2>
+          <p class="panel-desc">Tập hợp các năng lực chuyên môn, kỹ năng mềm và kỹ năng quản trị có thể tái sử dụng cho nhiều chức danh.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-add-competency">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Thêm Tiêu chí Mới
+        </button>
+      </div>
+
+      <div class="competency-cards-grid" id="competency-cards-container">
+        <!-- Render competency cards with usage badge -->
+      </div>
+    </section>
+
+    <!-- TAB 4: NGÂN HÀNG CÂU HỎI PHỎNG VẤN -->
+    <section id="tab-questions" class="tab-content">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Ngân hàng Câu hỏi Phỏng vấn Chuẩn hóa</h2>
+          <p class="panel-desc">Kho câu hỏi tình huống & kỹ thuật gắn trực tiếp với từng tiêu chí năng lực để sẵn sàng sinh Phiếu phỏng vấn ở Sprint 6.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-add-question">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Thêm Câu hỏi Mới
+        </button>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-box">
+          <input type="text" id="search-question-input" placeholder="Tìm kiếm nội dung câu hỏi hoặc hành vi nhận diện...">
+        </div>
+        <select id="filter-question-competency">
+          <option value="">Tất cả Tiêu chí năng lực</option>
+        </select>
+        <select id="filter-question-difficulty">
+          <option value="">Tất cả Độ khó</option>
+          <option value="1">Cơ bản (Junior)</option>
+          <option value="2">Nâng cao (Middle/Senior)</option>
+          <option value="3">Chuyên gia / Quản lý</option>
+        </select>
+      </div>
+
+      <div class="question-list" id="question-list-container">
+        <!-- Dynamic list of questions -->
+      </div>
+    </section>
+
+    <!-- TAB 5: DEMO SPRINT 6 - TỰ ĐỘNG SINH PHIẾU ĐÁNH GIÁ PHỎNG VẤN -->
+    <section id="tab-evaluation-sprint6" class="tab-content">
+      <div class="sprint6-banner">
+        <div class="sprint6-badge">SPRINT 6 PREVIEW & CONSUMER</div>
+        <h2>Phiếu Đánh Giá Phỏng Vấn Tự Động Sinh Từ Khung Năng Lực</h2>
+        <p>Minh họa cách Phiếu phỏng vấn kế thừa trực tiếp bộ tiêu chí, trọng số (100%) và câu hỏi phỏng vấn từ chức danh bạn vừa cấu hình.</p>
+      </div>
+
+      <div class="eval-control-bar">
+        <div class="eval-candidate-select">
+          <label>Ứng viên phỏng vấn:</label>
+          <select id="eval-candidate-select" class="form-select">
+            <option value="cand_1">Lê Minh Khang (Ứng tuyển Senior Backend Engineer)</option>
+            <option value="cand_2">Trần Thị Thu Thảo (Ứng tuyển HR Manager)</option>
+            <option value="cand_3">Vũ Hoàng Long (Ứng tuyển B2B Sales Leader)</option>
+          </select>
+        </div>
+        <div class="eval-job-reflect" id="eval-job-reflect-badge">
+          <!-- Will show target Job title & configured weight status -->
+        </div>
+      </div>
+
+      <div id="evaluation-sheet-container" class="evaluation-sheet">
+        <!-- Render Dynamic Evaluation Sheet -->
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: THÊM / SỬA CHỨC DANH -->
+  <div class="modal-backdrop" id="modal-job">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-job-title">Thêm Chức danh Mới</h3>
+        <button class="btn-close" id="btn-close-job-modal">&times;</button>
+      </div>
+      <form id="form-job">
+        <div class="modal-body">
+          <input type="hidden" id="job-id">
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="job-code">Mã chức danh <span class="required">*</span></label>
+              <input type="text" id="job-code" class="form-control" placeholder="VD: DEV_SR, HR_MGR" required>
+              <small class="form-hint">Viết hoa, không dấu, không trùng lặp</small>
+            </div>
+            <div class="form-group col-6">
+              <label for="job-level">Cấp bậc (Level) <span class="required">*</span></label>
+              <select id="job-level" class="form-control" required>
+                <option value="L1">L1 - Intern / Fresher</option>
+                <option value="L2">L2 - Junior</option>
+                <option value="L3">L3 - Middle</option>
+                <option value="L4">L4 - Senior</option>
+                <option value="L5">L5 - Lead / Supervisor</option>
+                <option value="L6">L6 - Manager / Head</option>
+                <option value="L7">L7 - Director / C-Level</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="job-name">Tên chức danh chuẩn hoá <span class="required">*</span></label>
+            <input type="text" id="job-name" class="form-control" placeholder="VD: Kỹ sư Phần mềm Cao cấp" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="job-department">Phòng ban trực thuộc <span class="required">*</span></label>
+              <select id="job-department" class="form-control" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="job-salary-range">Dải lương tham chiếu</label>
+              <select id="job-salary-range" class="form-control">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="job-desc">Mô tả định vị vai trò</label>
+            <textarea id="job-desc" class="form-control" rows="3" placeholder="Mục tiêu cốt lõi và định vị của chức danh này trong cơ cấu tổ chức..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="job-status">Trạng thái sử dụng</label>
+            <select id="job-status" class="form-control">
+              <option value="ACTIVE">Hoạt động (Active)</option>
+              <option value="INACTIVE">Ngưng hoạt động (Inactive)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-job">Hủy bỏ</button>
+          <button type="submit" class="btn btn-primary">Lưu Chức danh</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: THÊM TIÊU CHÍ NĂNG LỰC -->
+  <div class="modal-backdrop" id="modal-competency">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-competency-title">Thêm Tiêu chí Năng lực Dùng chung</h3>
+        <button class="btn-close" id="btn-close-comp-modal">&times;</button>
+      </div>
+      <form id="form-competency">
+        <div class="modal-body">
+          <input type="hidden" id="comp-id">
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="comp-code">Mã năng lực <span class="required">*</span></label>
+              <input type="text" id="comp-code" class="form-control" placeholder="VD: COMP_PROBLEM_SOLVING" required>
+            </div>
+            <div class="form-group col-6">
+              <label for="comp-category">Nhóm năng lực <span class="required">*</span></label>
+              <select id="comp-category" class="form-control" required>
+                <option value="CHUYEN_MON">Năng lực Chuyên môn</option>
+                <option value="KY_NANG_MEM">Kỹ năng mềm / Cốt lõi</option>
+                <option value="LANH_DAO">Năng lực Lãnh đạo & Quản lý</option>
+                <option value="TU_DUY">Tư duy & Đổi mới sáng tạo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="comp-name">Tên tiêu chí năng lực <span class="required">*</span></label>
+            <input type="text" id="comp-name" class="form-control" placeholder="VD: Tư duy Giải quyết vấn đề & Ra quyết định" required>
+          </div>
+
+          <div class="form-group">
+            <label for="comp-desc">Định nghĩa & Biểu hiện hành vi chuẩn</label>
+            <textarea id="comp-desc" class="form-control" rows="3" placeholder="Mô tả hành vi nhận biết khi ứng viên đạt chuẩn năng lực này..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-comp">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu Tiêu chí</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: THÊM CÂU HỎI PHỎNG VẤN -->
+  <div class="modal-backdrop" id="modal-question">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-question-title">Thêm Câu hỏi Phỏng vấn Chuẩn hóa</h3>
+        <button class="btn-close" id="btn-close-ques-modal">&times;</button>
+      </div>
+      <form id="form-question">
+        <div class="modal-body">
+          <input type="hidden" id="ques-id">
+          <div class="form-row">
+            <div class="form-group col-8">
+              <label for="ques-competency">Tiêu chí năng lực liên kết <span class="required">*</span></label>
+              <select id="ques-competency" class="form-control" required>
+                <!-- populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group col-4">
+              <label for="ques-difficulty">Mức độ kỳ vọng <span class="required">*</span></label>
+              <select id="ques-difficulty" class="form-control" required>
+                <option value="1">Cơ bản (Junior)</option>
+                <option value="2" selected>Nâng cao (Middle/Senior)</option>
+                <option value="3">Chuyên gia / Lead</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="ques-text">Nội dung câu hỏi phỏng vấn <span class="required">*</span></label>
+            <textarea id="ques-text" class="form-control" rows="2" placeholder="VD: Hãy kể lại một sự cố hệ thống nghiêm trọng bạn từng xử lý và cách bạn khắc phục?" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="ques-behavior">Gợi ý câu trả lời & Hành vi đạt chuẩn (Rubric gợi ý cho Interviewer)</label>
+            <textarea id="ques-behavior" class="form-control" rows="3" placeholder="VD: Ứng viên trình bày theo mô hình STAR, chỉ rõ nguyên nhân gốc rễ (Root cause), giải pháp dự phòng và bài học rút ra..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-ques">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu Câu hỏi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Center -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
