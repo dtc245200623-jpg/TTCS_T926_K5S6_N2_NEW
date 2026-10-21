@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Khung Năng Lực & Đánh Giá Phỏng Vấn (CFS)</title>
+  
+  <!-- Modern Google Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <!-- Custom Styling -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-chart-pie"></i>
+        </div>
+        <div>
+          <h1 class="brand-title">Competency Framework System</h1>
+          <p class="brand-subtitle">Hệ Thống Khung Năng Lực & Đánh Giá Phỏng Vấn Tuyển Dụng Chuẩn Doanh Nghiệp</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab-btn active" data-tab="tab-eval" onclick="switchTab('tab-eval')">
+          <i class="fa-solid fa-clipboard-check"></i> Phiếu Phỏng Vấn
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-matrix" onclick="switchTab('tab-matrix')">
+          <i class="fa-solid fa-book-bookmark"></i> Từ Điển Năng Lực (5 Cấp)
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-jobs" onclick="switchTab('tab-jobs')">
+          <i class="fa-solid fa-sitemap"></i> Danh Mục Chức Danh
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-history" onclick="switchTab('tab-history')">
+          <i class="fa-solid fa-clock-rotate-left"></i> Lịch Sử Đánh Giá
+        </button>
+      </nav>
+
+      <!-- Quick Action Buttons -->
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="copyReportToClipboard()" title="Sao chép báo cáo text như bản Java">
+          <i class="fa-solid fa-copy"></i> Sao chép Text
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> In Phiếu / Xuất PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="app-container">
+
+    <!-- PRINT-ONLY HEADER (Chỉ hiện khi In hoặc Xuất PDF) -->
+    <div class="print-only" style="display: none;">
+      <div class="print-header">
+        <h2 style="font-size: 11pt; text-transform: uppercase; color: #555; margin-bottom: 4pt;">CÔNG TY CỔ PHẦN CÔNG NGHỆ & PHÁT TRIỂN NGUỒN NHÂN LỰC</h2>
+        <div class="print-title">PHIẾU ĐÁNH GIÁ PHỎNG VẤN TUYỂN DỤNG</div>
+        <div style="font-size: 9pt; font-style: italic; color: #666;">(Áp dụng theo Chuẩn Khung Năng Lực Doanh Nghiệp)</div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         TAB 1: PHIẾU PHỎNG VẤN & ĐÁNH GIÁ TRỰC TIẾP (MAIN FEATURE)
+         ======================================================== -->
+    <section id="tab-eval" class="tab-content active">
+
+      <!-- Overall Performance & Score Banner -->
+      <div class="score-banner">
+        <div>
+          <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.75);">
+            TỔNG ĐIỂM QUY ĐỔI THEO TRỌNG SỐ (WEIGHTED SCORE)
+          </div>
+          <div class="score-display" style="margin-top: 6px;">
+            <span class="score-value" id="summary-score-value">3.55</span>
+            <span class="score-scale">/ 5.0</span>
+          </div>
+          <div id="summary-weight-notice" style="font-size: 0.8rem; margin-top: 4px; font-weight: 600;">
+            Tổng trọng số kiểm tra: 100% ✓ Chuẩn
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Kết luận đề xuất:</div>
+          <div id="summary-decision-badge" class="score-decision-badge pass">
+            <i class="fa-solid fa-circle-check"></i> ĐẠT (Đề xuất tuyển dụng)
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Evaluation Layout: Sidebar Settings + Main Evaluation Form -->
+      <div class="grid-evaluation-layout">
+        
+        <!-- LEFT COLUMN: Candidates Metadata & Spider/Radar Chart -->
+        <aside class="sidebar-controls">
+          
+          <!-- Candidate & Position Form Card -->
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fa-solid fa-user-tie"></i> Thông Tin Ứng Viên</h3>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="select-job-title">Vị trí ứng tuyển & Cấp bậc</label>
+              <select id="select-job-title" class="form-select"></select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="input-candidate-name">Họ & Tên Ứng viên</label>
+              <input type="text" id="input-candidate-name" class="form-input" placeholder="Nguyễn Văn A">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="input-interviewer-name">Người phỏng vấn</label>
+              <input type="text" id="input-interviewer-name" class="form-input" placeholder="Trần Văn B (Tech Lead)">
+            </div>
+
+            <div class="grid-2" style="gap: 10px;">
+              <div class="form-group">
+                <label class="form-label" for="input-interview-date">Ngày PV</label>
+                <input type="date" id="input-interview-date" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="input-interview-round">Vòng PV</label>
+                <select id="input-interview-round" class="form-select">
+                  <option value="Vòng 1 - Sơ vấn & Chuyên môn">Vòng 1 (Kỹ thuật)</option>
+                  <option value="Vòng 2 - Đánh giá Chuyên môn & Năng lực" selected>Vòng 2 (Năng lực)</option>
+                  <option value="Vòng 3 - Phỏng vấn Ban Giám Đốc">Vòng 3 (Văn hóa)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Quick Presets -->
+            <div style="margin-top: 10px; padding-top: 12px; border-top: 1px dashed var(--border-color);">
+              <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">Dữ liệu mẫu thử nghiệm:</div>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn-secondary btn-sm" style="flex: 1; font-size: 0.75rem;" onclick="loadSampleData('senior-pass')">
+                  Mẫu Senior Đạt
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" style="flex: 1; font-size: 0.75rem;" onclick="loadSampleData('junior-consider')">
+                  Mẫu Junior
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Radar Chart Card -->
+          <div class="card chart-card">
+            <div class="card-header" style="margin-bottom: 10px;">
+              <h3 class="card-title"><i class="fa-solid fa-chart-radar"></i> Ma Trận Gap Năng Lực</h3>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">
+              So sánh mức chuẩn yêu cầu (Target) với điểm đánh giá thực tế của ứng viên.
+            </div>
+
+            <div class="chart-wrapper">
+              <div id="radar-chart-container" style="width: 290px; height: 290px;"></div>
+            </div>
+
+            <div class="legend-wrapper">
+              <div class="legend-item">
+                <div class="legend-color" style="background: rgba(14, 165, 233, 0.4); border: 1.5px dashed #0ea5e9;"></div>
+                <span>Yêu cầu vị trí</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color" style="background: rgba(79, 70, 229, 0.7); border: 1.5px solid #4f46e5;"></div>
+                <span>Điểm thực tế</span>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- RIGHT COLUMN: Evaluation Matrix Table & Detailed Behavioral Questions -->
+        <main class="main-evaluation-content">
+
+          <!-- Card 1: Bảng Tổng Hợp Tiêu Chí & Điểm Đánh Giá -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-table-list"></i> Bảng Tiêu Chí, Trọng Số & Cấp Độ Cần Đạt</h3>
+                <p class="card-desc">Bấm trực tiếp vào các nút số (1 - 5) để chấm điểm nhanh cho ứng viên</p>
+              </div>
+              <span class="badge badge-func"><i class="fa-solid fa-calculator"></i> Tính điểm thời gian thực</span>
+            </div>
+
+            <div class="table-responsive">
+              <table class="eval-table">
+                <thead>
+                  <tr>
+                    <th style="width: 45px; text-align: center;">STT</th>
+                    <th style="width: 75px;">Mã</th>
+                    <th>Tên Năng Lực</th>
+                    <th style="width: 90px; text-align: center;">Trọng số</th>
+                    <th style="width: 100px; text-align: center;">Yêu cầu</th>
+                    <th style="width: 210px; text-align: center;">Chấm điểm (1 - 5)</th>
+                    <th style="width: 90px; text-align: center;">Điểm Q.Đổi</th>
+                    <th style="width: 105px; text-align: center;">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody id="eval-table-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Card 2: Chi Tiết Đánh Giá & Gợi Ý Hành Vi Chuẩn Cần Quan Sát -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-list-check"></i> Chi Tiết Đánh Giá & Hành Vi Chuẩn Theo Cấp Độ</h3>
+                <p class="card-desc">Quan sát các hành vi thực tế của ứng viên so với chuẩn cấp độ và ghi chú nhận xét</p>
+              </div>
+            </div>
+
+            <div id="criteria-cards-container">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Card 3: Kết Luận Phỏng Vấn & Đề Xuất Tuyển Dụng -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fa-solid fa-stamp"></i> Kết Luận Phỏng Vấn & Đề Xuất Tuyển Dụng</h3>
+            </div>
+
+            <label class="form-label" style="margin-bottom: 10px;">Quyết định của Hội đồng Phỏng vấn:</label>
+            <div class="decision-group">
+              <div class="decision-card pass" data-decision="PASS" onclick="setDecision('PASS')">
+                <i class="fa-solid fa-circle-check" style="font-size: 1.5rem; margin-bottom: 6px; color: var(--success);"></i>
+                <span class="decision-title">ĐẠT YÊU CẦU</span>
+                <span class="decision-desc">Đề xuất nhận việc & làm thủ tục Onboarding</span>
+              </div>
+
+              <div class="decision-card consider" data-decision="CONSIDER" onclick="setDecision('CONSIDER')">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.5rem; margin-bottom: 6px; color: var(--warning);"></i>
+                <span class="decision-title">CẦN CÂN NHẮC</span>
+                <span class="decision-desc">Cần phỏng vấn thêm hoặc hạ cấp bậc (Down-rank)</span>
+              </div>
+
+              <div class="decision-card fail" data-decision="FAIL" onclick="setDecision('FAIL')">
+                <i class="fa-solid fa-circle-xmark" style="font-size: 1.5rem; margin-bottom: 6px; color: var(--danger);"></i>
+                <span class="decision-title">KHÔNG ĐẠT</span>
+                <span class="decision-desc">Chưa đáp ứng đủ năng lực yêu cầu tối thiểu</span>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label" for="input-suggested-salary"><i class="fa-solid fa-money-bill-wave"></i> Mức lương đề xuất (Gross/Net)</label>
+                <input type="text" id="input-suggested-salary" class="form-input" placeholder="Ví dụ: 35.000.000 - 40.000.000 VNĐ">
+              </div>
+              <div class="form-group">
+                <label class="form-label"><i class="fa-solid fa-calendar-check"></i> Ngày dự kiến nhận việc</label>
+                <input type="text" class="form-input" placeholder="Ví dụ: Ngày 01 tháng sau / Sớm nhất có thể">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="input-general-notes"><i class="fa-solid fa-pen-to-square"></i> Ghi chú chung & Đánh giá tổng quát</label>
+              <textarea id="input-general-notes" class="form-textarea" placeholder="Nhận xét tổng thể về thái độ, tư duy phù hợp văn hóa, điểm mạnh nổi bật, điểm cần phát triển..."></textarea>
+            </div>
+
+            <!-- Digital Signature Canvas -->
+            <div class="form-group" style="margin-top: 16px;">
+              <label class="form-label"><i class="fa-solid fa-signature"></i> Chữ ký xác nhận của Người phỏng vấn:</label>
+              <div class="signature-wrapper">
+                <canvas id="signature-pad" class="signature-canvas"></canvas>
+                <div class="signature-actions">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); margin-right: auto; align-self: center;">
+                    Dùng chuột hoặc ngón tay (cảm ứng) để ký vào ô trên
+                  </span>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="clearSignature()">
+                    <i class="fa-solid fa-eraser"></i> Xóa chữ ký
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom action buttons -->
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-light);">
+              <button type="button" class="btn btn-secondary" onclick="copyReportToClipboard()">
+                <i class="fa-solid fa-copy"></i> Sao chép kết quả Text
+              </button>
+              <button type="button" class="btn btn-success" onclick="saveCurrentEvaluation()">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu Phiếu Đánh Giá
+              </button>
+              <button type="button" class="btn btn-primary" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> In / Xuất PDF
+              </button>
+            </div>
+
+          </div>
+
+        </main>
+      </div>
+
+    </section>
+
+    <!-- ========================================================
+         TAB 2: TỪ ĐIỂN KHUNG NĂNG LỰC DÙNG CHUNG (5 CẤP ĐỘ)
+         ======================================================== -->
+    <section id="tab-matrix" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title"><i class="fa-solid fa-book-open-reader"></i> Từ Điển Khung Năng Lực Doanh Nghiệp</h2>
+            <p class="card-desc">Bảng định nghĩa mô tả chuẩn hành vi từ Cấp 1 (Cơ bản) đến Cấp 5 (Xuất sắc / Chuyên gia)</p>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-secondary btn-sm category-filter-btn active" onclick="filterMatrixCategory('ALL', this)">Tất cả</button>
+            <button class="btn btn-secondary btn-sm category-filter-btn" onclick="filterMatrixCategory('CORE', this)">Cốt lõi (CORE)</button>
+            <button class="btn btn-secondary btn-sm category-filter-btn" onclick="filterMatrixCategory('FUNCTIONAL', this)">Chuyên môn (FUNCTIONAL)</button>
+            <button class="btn btn-secondary btn-sm category-filter-btn" onclick="filterMatrixCategory('MANAGEMENT', this)">Quản lý (MANAGEMENT)</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="eval-table level-matrix-table">
+            <thead>
+              <tr>
+                <th style="width: 220px;">Năng Lực</th>
+                <th style="min-width: 170px;">Cấp 1: Cơ bản</th>
+                <th style="min-width: 170px;">Cấp 2: Đang phát triển</th>
+                <th style="min-width: 180px;">Cấp 3: Thành thạo</th>
+                <th style="min-width: 180px;">Cấp 4: Nâng cao / Chuyên gia</th>
+                <th style="min-width: 180px;">Cấp 5: Xuất sắc / Dẫn dắt</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 3: DANH MỤC CHỨC DANH & MA TRẬN YÊU CẦU
+         ======================================================== -->
+    <section id="tab-jobs" class="tab-content">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title"><i class="fa-solid fa-sitemap"></i> Danh Mục Chức Danh & Ma Trận Khung Tiêu Chuẩn</h2>
+            <p class="card-desc">Mỗi chức danh được gắn các tiêu chí năng lực, cấp độ yêu cầu chuẩn và tỷ lệ trọng số (%)</p>
+          </div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+          Hệ thống đảm bảo tính công bằng và minh bạch trong tuyển dụng. Mỗi vị trí tuyển dụng có một bộ tiêu chuẩn riêng, với tổng trọng số chuẩn hóa bằng 100%. Chọn nút <strong>"Dùng mẫu này"</strong> để nạp ngay tiêu chuẩn vào Phiếu Phỏng Vấn.
+        </p>
+      </div>
+
+      <div class="grid-2" id="jobs-cards-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 4: LỊCH SỬ PHIẾU ĐÃ ĐÁNH GIÁ
+         ======================================================== -->
+    <section id="tab-history" class="tab-content">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Lịch Sử Đánh Giá Phỏng Vấn Đã Lưu</h2>
+            <p class="card-desc">Quản lý và tra cứu lại các hồ sơ ứng viên đã được chấm điểm trên hệ thống</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="history-list-container">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
