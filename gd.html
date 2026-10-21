@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trạng Thái Tài Khoản & Cảnh Báo Bàn Giao</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Quản Lý Bàn Giao & Trạng Thái Tài Khoản</h1>
+                <p class="text-slate-500 text-sm mt-1">Theo dõi tiến độ chuyển giao công việc và quyền truy cập hệ thống.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="refreshData()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Làm mới
+                </button>
+                <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Tạo cảnh báo bàn giao
+                </button>
+            </div>
+        </div>
+
+        <!-- PHẦN 1: THÔNG TIN TRẠNG THÁI TÀI KHOẢN -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Card 1: Người bàn giao (Tài khoản đang xử lý) -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <img class="w-12 h-12 rounded-full object-cover ring-2 ring-indigo-500/20" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Avatar">
+                            <div>
+                                <h3 class="font-semibold text-slate-900">Nguyễn Văn A</h3>
+                                <p class="text-xs text-slate-500">Senior Frontend Developer</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5 animate-pulse"></span> Đang Bàn Giao
+                        </span>
+                    </div>
+
+                    <div class="space-y-3 border-t border-slate-100 pt-4 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Mã nhân viên:</span>
+                            <span class="font-medium text-slate-700">EMP-2024-88</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Trạng thái Account:</span>
+                            <span class="font-medium text-emerald-600 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check text-xs"></i> Hoạt động (Chờ vô hiệu hóa)
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Ngày nghỉ việc dự kiến:</span>
+                            <span class="font-medium text-slate-700">31/10/2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="mt-6 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between text-xs mb-1.5">
+                        <span class="text-slate-500 font-medium">Tiến độ thu hồi & bàn giao</span>
+                        <span class="text-indigo-600 font-bold">65%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2">
+                        <div class="bg-indigo-600 h-2 rounded-full" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Thống kê Cảnh báo Bàn giao -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-semibold text-slate-900 mb-4">Tổng Quan Bàn Giao</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-rose-50 border border-rose-100 rounded-xl">
+                            <div class="flex items-center gap-2 text-rose-600 mb-1">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                <span class="text-xs font-semibold uppercase tracking-wider">Cấp Bách</span>
+                            </div>
+                            <span class="text-2xl font-bold text-rose-900">02</span>
+                            <p class="text-xs text-rose-600 mt-1">Cần xử lý trước 24h</p>
+                        </div>
+                        <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                            <div class="flex items-center gap-2 text-amber-600 mb-1">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span class="text-xs font-semibold uppercase tracking-wider">Cần Theo Dõi</span>
+                            </div>
+                            <span class="text-2xl font-bold text-amber-900">05</span>
+                            <p class="text-xs text-amber-600 mt-1">Hạn dưới 3 ngày</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200/60 flex items-center justify-between text-xs text-slate-600">
+                    <span>Tài nguyên chưa thu hồi: <strong>03 Accounts</strong></span>
+                    <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                </div>
+            </div>
+
+            <!-- Card 3: Trạng thái Khóa / Chuyển giao Quyền -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-semibold text-slate-900 mb-2">Quy Trình Khóa Tài Khoản</h3>
+                    <p class="text-xs text-slate-500 mb-4">Tự động vô hiệu hóa sau khi xác nhận hoàn thành 100% bàn giao.</p>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-medium">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-check-circle text-emerald-600"></i> Thu hồi Email công ty
+                            </span>
+                            <span>Đã xong</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-medium">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-check-circle text-emerald-600"></i> Chuyển quyền Admin GitHub
+                            </span>
+                            <span>Đã xong</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-amber-50 text-amber-800 text-xs font-medium">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-spinner animate-spin text-amber-600"></i> Bàn giao tài khoản Server (AWS)
+                            </span>
+                            <span>Đang chờ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full mt-4 py-2 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-semibold rounded-lg transition-colors">
+                    Khóa Tài Khoản Ngay Tức Thì
+                </button>
+            </div>
+
+        </div>
+
+        <!-- PHẦN 2: BẢNG DANH SÁCH CẢNH BÁO BÀN GIAO -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+            
+            <!-- Table Header / Filters -->
+            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Danh Sách Tác Vụ & Cảnh Báo Bàn Giao</h2>
+                    <p class="text-xs text-slate-500">Các mục cần hoàn thành đúng thời hạn trước khi chính thức vô hiệu hóa tài khoản.</p>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <select id="priorityFilter" onchange="filterAlerts()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="ALL">Tất cả độ ưu tiên</option>
+                        <option value="CRITICAL">Cấp bách (Doạ quá hạn)</option>
+                        <option value="MEDIUM">Trung bình</option>
+                        <option value="LOW">Thấp</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-4">Tên Tác Vụ / Bàn Giao</th>
+                            <th class="px-6 py-4">Người Nhận Bàn Giao</th>
+                            <th class="px-6 py-4">Độ Ưu Tiên</th>
+                            <th class="px-6 py-4">Thời Hạn (Deadline)</th>
+                            <th class="px-6 py-4">Trạng Thái Tác Vụ</th>
+                            <th class="px-6 py-4 text-right">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alertTableBody" class="divide-y divide-slate-100">
+                        <!-- Data render bằng JS -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Dữ liệu mẫu cảnh báo bàn giao
+        const handoverAlerts = [
+            {
+                id: 1,
+                title: "Bàn giao Root Access AWS & Prod Servers",
+                category: "Hệ thống & Infrastructure",
+                assignee: { name: "Trần Văn B", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" },
+                priority: "CRITICAL",
+                deadline: "2026-10-22T17:00:00",
+                status: "PENDING"
+            },
+            {
+                id: 2,
+                title: "Chuyển giao tài khoản Master Figma Org",
+                category: "Thiết kế & UI/UX",
+                assignee: { name: "Lê Thị C", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" },
+                priority: "CRITICAL",
+                deadline: "2026-10-23T12:00:00",
+                status: "IN_PROGRESS"
+            },
+            {
+                id: 3,
+                title: "Tài liệu kỹ thuật Module Thanh Toán API",
+                category: "Source Code & Docs",
+                assignee: { name: "Phạm Văn D", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150" },
+                priority: "MEDIUM",
+                deadline: "2026-10-25T18:00:00",
+                status: "IN_PROGRESS"
+            },
+            {
+                id: 4,
+                title: "Trả lại thiết bị phần cứng (MacBook Pro M2)",
+                category: "Tài sản công ty",
+                assignee: { name: "Phòng IT Support", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150" },
+                priority: "LOW",
+                deadline: "2026-10-30T17:00:00",
+                status: "COMPLETED"
+            }
+        ];
+
+        // Hàm trả về Badge Mức Độ Ưu Tiên
+        function getPriorityBadge(priority) {
+            switch(priority) {
+                case 'CRITICAL':
+                    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-700">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Cấp bách
+                            </span>`;
+                case 'MEDIUM':
+                    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                                <i class="fa-solid fa-clock"></i> Trung bình
+                            </span>`;
+                case 'LOW':
+                    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+                                <i class="fa-solid fa-circle-info"></i> Thấp
+                            </span>`;
+                default:
+                    return '';
+            }
+        }
+
+        // Hàm trả về Badge Trạng Thái Tác Vụ
+        function getStatusBadge(status) {
+            switch(status) {
+                case 'PENDING':
+                    return `<span class="px-2.5 py-1 rounded-md text-xs font-medium bg-rose-50 text-rose-600 border border-rose-200">Chưa bắt đầu</span>`;
+                case 'IN_PROGRESS':
+                    return `<span class="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-600 border border-indigo-200">Đang thực hiện</span>`;
+                case 'COMPLETED':
+                    return `<span class="px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-600 border border-emerald-200">Đã hoàn thành</span>`;
+                default:
+                    return '';
+            }
+        }
+
+        // Render danh sách bảng
+        function renderAlerts(items) {
+            const tbody = document.getElementById('alertTableBody');
+            tbody.innerHTML = '';
+
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="font-semibold text-slate-900">${item.title}</div>
+                        <div class="text-xs text-slate-400 mt-0.5">${item.category}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <img class="w-7 h-7 rounded-full object-cover" src="${item.assignee.avatar}" alt="">
+                            <span class="text-xs font-medium text-slate-700">${item.assignee.name}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">${getPriorityBadge(item.priority)}</td>
+                    <td class="px-6 py-4">
+                        <div class="text-xs font-medium text-slate-700">${new Date(item.deadline).toLocaleDateString('vi-VN')}</div>
+                        <div class="text-[11px] text-slate-400">${new Date(item.deadline).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</div>
+                    </td>
+                    <td class="px-6 py-4">${getStatusBadge(item.status)}</td>
+                    <td class="px-6 py-4 text-right">
+                        ${item.status !== 'COMPLETED' 
+                            ? `<button onclick="markAsComplete(${item.id})" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg shadow-sm transition-colors">
+                                 Xác nhận
+                               </button>`
+                            : `<span class="text-xs text-slate-400 italic"><i class="fa-solid fa-check"></i> Đã xong</span>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Lọc theo Priority
+        function filterAlerts() {
+            const filterValue = document.getElementById('priorityFilter').value;
+            if (filterValue === 'ALL') {
+                renderAlerts(handoverAlerts);
+            } else {
+                const filtered = handoverAlerts.filter(a => a.priority === filterValue);
+                renderAlerts(filtered);
+            }
+        }
+
+        // Đánh dấu hoàn tất
+        function markAsComplete(id) {
+            const item = handoverAlerts.find(a => a.id === id);
+            if (item) {
+                item.status = 'COMPLETED';
+                filterAlerts();
+            }
+        }
+
+        // Reload data
+        function refreshData() {
+            renderAlerts(handoverAlerts);
+        }
+
+        // Chạy khởi tạo
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAlerts(handoverAlerts);
+        });
+    </script>
+</body>
+</html>
