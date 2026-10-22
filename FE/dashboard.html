@@ -1084,13 +1084,16 @@
                     html = `
                         <div class="card-view" style="padding: 0;">
                             <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                                <h3 style="color: #1e293b;">Offer cần phê duyệt đặc biệt</h3>
+                                <div>
+                                    <h3 style="color: #1e293b; margin-bottom: 4px;">Duyệt Offer theo dải lương chức danh</h3>
+                                    <p style="font-size: 13px; color: #64748b; margin: 0;">Quy tắc: Mức lương offer không được vượt ngoài dải lương đã cấu hình cho chức danh</p>
+                                </div>
                                 <button class="btn-primary" onclick="loadPendingOffers()">Làm mới dữ liệu</button>
                             </div>
                             <table class="data-table">
-                                <thead><tr><th>Ứng viên</th><th>Vị trí</th><th>Mức lương đề xuất</th><th>Mức trần quy định</th><th>Thao tác</th></tr></thead>
+                                <thead><tr><th>Ứng viên</th><th>Vị trí</th><th>Mức lương đề xuất</th><th>Dải lương chức danh</th><th>Đánh giá hạn mức</th><th>Thao tác</th></tr></thead>
                                 <tbody id="offer_table_body">
-                                    <tr><td colspan="5" style="text-align:center">Đang tải dữ liệu từ Server...</td></tr>
+                                    <tr><td colspan="6" style="text-align:center">Đang tải dữ liệu từ Server...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1849,7 +1852,7 @@
             }
         }
 
-        // ========================== PHÊ DUYỆT OFFER ==========================
+        // ========================== PHÊ DUYỆT OFFER THEO DẢI LƯƠNG CHỨC DANH ==========================
         async function loadPendingOffers() {
             const tbody = document.getElementById('offer_table_body');
             if (!tbody) return;
@@ -1862,34 +1865,58 @@
                 if (response.ok && result.success) {
                     tbody.innerHTML = '';
                     if (result.data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Không có Offer nào cần duyệt.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 30px;">Hiện không có Offer nào cần duyệt.</td></tr>';
                         return;
                     }
                     result.data.forEach(offer => {
-                        let offered = offer.offeredSalary ? offer.offeredSalary.toLocaleString() + 'đ' : 'N/A';
-                        let max = offer.maxSalary ? offer.maxSalary.toLocaleString() + 'đ' : 'N/A';
+                        let offered = offer.offeredSalary ? Number(offer.offeredSalary).toLocaleString('vi-VN') + ' đ' : 'N/A';
+                        let minStr = offer.minSalary ? Number(offer.minSalary).toLocaleString('vi-VN') + ' đ' : 'Chưa thiết lập';
+                        let maxStr = offer.maxSalary ? Number(offer.maxSalary).toLocaleString('vi-VN') + ' đ' : 'Chưa thiết lập';
+                        let salaryRangeDisplay = `${minStr} - ${maxStr}`;
+
+                        let badgeHtml = '';
+                        let isExceeding = false;
+                        if (offer.salaryStatus === 'EXCEEDS_MAX') {
+                            isExceeding = true;
+                            badgeHtml = `<span style="color:#b91c1c; background:#fee2e2; padding:3px 8px; border-radius:4px; font-weight:600; font-size:11px;">⚠️ Vượt mức trần</span>`;
+                        } else if (offer.salaryStatus === 'BELOW_MIN') {
+                            isExceeding = true;
+                            badgeHtml = `<span style="color:#b45309; background:#fef3c7; padding:3px 8px; border-radius:4px; font-weight:600; font-size:11px;">⚠️ Dưới mức sàn</span>`;
+                        } else if (offer.salaryStatus === 'VALID') {
+                            badgeHtml = `<span style="color:#166534; background:#dcfce7; padding:3px 8px; border-radius:4px; font-weight:600; font-size:11px;">✓ Hợp lệ</span>`;
+                        } else {
+                            badgeHtml = `<span style="color:#64748b; background:#f1f5f9; padding:3px 8px; border-radius:4px; font-size:11px;">Chưa kiểm tra</span>`;
+                        }
+
                         tbody.innerHTML += `
                             <tr>
                                 <td><strong>${offer.candidateName || 'N/A'}</strong></td>
                                 <td>${offer.jobTitle || 'N/A'}</td>
-                                <td>${offered}</td>
-                                <td>${max}</td>
+                                <td><span style="font-weight:600; color:#1e293b;">${offered}</span></td>
+                                <td><span style="font-size:12px; color:#047857;">${salaryRangeDisplay}</span></td>
+                                <td>${badgeHtml}</td>
                                 <td>
-                                    <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#10b981;" onclick="processOffer(${offer.id}, true)">Phê duyệt</button>
-                                    <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#ef4444;" onclick="processOffer(${offer.id}, false)">Từ chối</button>
+                                    <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:${isExceeding ? '#f59e0b' : '#10b981'};" onclick="processOffer(${offer.id}, true, ${isExceeding})">Phê duyệt</button>
+                                    <button class="btn-primary" style="padding: 4px 10px; font-size:12px; background:#ef4444;" onclick="processOffer(${offer.id}, false, false)">Từ chối</button>
                                 </td>
                             </tr>
                         `;
                     });
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Lỗi: ${result.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Lỗi: ${result.message}</td></tr>`;
                 }
             } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Lỗi kết nối Backend.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Lỗi kết nối Backend.</td></tr>`;
             }
         }
 
-        async function processOffer(id, isApproved) {
+        async function processOffer(id, isApproved, isExceeding) {
+            if (isApproved && isExceeding) {
+                if (!confirm('CẢNH BÁO HẠN MỨC LƯƠNG:\nMức lương offer này vượt ngoài dải lương đã cấu hình cho chức danh. Bạn có chắc chắn muốn duyệt không?')) {
+                    return;
+                }
+            }
+
             const token = localStorage.getItem('accessToken');
             try {
                 const response = await fetch(`http://localhost:8080/api/offers/${id}/approve?isApproved=${isApproved}`, {
@@ -1901,7 +1928,7 @@
                     alert(result.message);
                     loadPendingOffers();
                 } else {
-                    alert('Lỗi: ' + result.message);
+                    alert('Lỗi: ' + (result.message || 'Không thể xử lý Offer'));
                 }
             } catch (error) {
                 alert('Lỗi kết nối Backend.');
