@@ -3,136 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Danh mục Chức danh</title>
+    <title>Quản lý Danh mục Chức danh & Dải lương | ATS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --bg-body: #f8fafc;
-            --card-bg: #ffffff;
+            --primary-light: #eff6ff;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --card: #ffffff;
             --border: #e2e8f0;
             --text-main: #0f172a;
             --text-sub: #64748b;
-            --danger: #ef4444;
-            --warning: #f59e0b;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: var(--bg-body);
+            background-color: var(--bg);
             color: var(--text-main);
-            padding: 30px 20px;
+            min-height: 100vh;
         }
 
+        /* Navbar */
+        .navbar {
+            background-color: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .navbar-nav a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .navbar-nav a:hover, .navbar-nav a.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-sub);
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .role-pill {
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Container */
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            padding: 24px;
-            border: 1px solid var(--border);
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
         }
 
-        h1 {
-            font-size: 22px;
-            margin-bottom: 20px;
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
             color: var(--text-main);
+            margin-bottom: 6px;
         }
 
+        .page-header p {
+            font-size: 14px;
+            color: var(--text-sub);
+        }
+
+        /* Role Notice Banner */
+        .role-notice {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notice-info {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .notice-restricted {
+            background-color: #fefce8;
+            border: 1px solid #fef08a;
+            color: #854d0e;
+        }
+
+        /* Card */
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Form Grid */
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-            background: #f1f5f9;
-            padding: 16px;
-            border-radius: 8px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
+            gap: 6px;
         }
 
         .form-group label {
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--text-sub);
+            color: var(--text-main);
         }
 
         .form-control {
-            padding: 10px;
-            font-size: 14px;
+            padding: 10px 14px;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
+            font-size: 14px;
             outline: none;
+            transition: border-color 0.2s;
+            background: #fff;
         }
 
         .form-control:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        .form-control:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .salary-hint {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        /* Buttons */
         .btn {
-            padding: 10px 18px;
-            font-size: 14px;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 600;
-            border: none;
-            border-radius: 6px;
             cursor: pointer;
+            border: none;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .btn-primary {
             background-color: var(--primary);
             color: white;
         }
-
         .btn-primary:hover {
             background-color: var(--primary-hover);
         }
 
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-            padding: 6px 12px;
-            font-size: 12px;
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
         }
 
         .btn-warning {
-            background-color: var(--warning);
-            color: white;
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
             padding: 6px 12px;
             font-size: 12px;
-            margin-right: 4px;
+        }
+        .btn-warning:hover {
+            background-color: #fde68a;
         }
 
+        .btn-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .btn-danger:hover {
+            background-color: #fecaca;
+        }
+
+        /* Filter Toolbar */
         .toolbar {
             display: flex;
             justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 20px;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
         }
 
         .search-box {
             flex: 1;
+            min-width: 250px;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         th, td {
-            padding: 12px;
+            padding: 14px 16px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
@@ -141,6 +306,13 @@
             background-color: #f8fafc;
             color: var(--text-sub);
             font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr:hover {
+            background-color: #f8fafc;
         }
 
         .badge-level {
@@ -148,87 +320,255 @@
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600;
             background-color: #e0f2fe;
             color: #0369a1;
+        }
+
+        .salary-range-badge {
+            font-weight: 600;
+            color: #047857;
+            background: #ecfdf5;
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .salary-masked-badge {
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 12px;
+        }
+
+        .badge-status-active {
+            color: #166534;
+            background: #dcfce7;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-status-inactive {
+            color: #991b1b;
+            background: #fee2e2;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
         }
 
         .empty-row {
             text-align: center;
             color: var(--text-sub);
-            padding: 20px;
+            padding: 40px !important;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Quản lý Danh mục Chức danh</h1>
+    <!-- Header Navbar -->
+    <header class="navbar">
+        <a href="dashboard.html" class="navbar-brand">
+            🏢 <span>ATS Tuyển Dụng</span>
+        </a>
+        <nav class="navbar-nav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="job-titles.html" class="active">Chức danh & Dải lương</a>
+            <a href="departments.html">Phòng ban</a>
+            <a href="master-data.html">Khung năng lực & Master Data</a>
+            <a href="candidate-tracking.html">Tra cứu hồ sơ</a>
+        </nav>
+        <div class="user-badge" id="userBadge">
+            <span>👤 <span id="currentUsername">Đang tải...</span></span>
+            <span class="role-pill" id="currentRole">ROLE_HR_MANAGER</span>
+        </div>
+    </header>
 
-        <!-- Form Thêm / Sửa -->
-        <form id="jobTitleForm" onsubmit="saveJobTitle(event)">
-            <input type="hidden" id="editIndex" value="-1">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="titleCode">Mã chức danh *</label>
-                    <input type="text" id="titleCode" class="form-control" placeholder="VD: DEV_01" required>
-                </div>
-                <div class="form-group">
-                    <label for="titleName">Tên chức danh *</label>
-                    <input type="text" id="titleName" class="form-control" placeholder="VD: Lập trình viên" required>
-                </div>
-                <div class="form-group">
-                    <label for="titleLevel">Cấp bậc *</label>
-                    <select id="titleLevel" class="form-control" required>
-                        <option value="">-- Chọn cấp bậc --</option>
-                        <option value="Intern/Fresher">Intern/Fresher</option>
-                        <option value="Junior">Junior</option>
-                        <option value="Middle">Middle</option>
-                        <option value="Senior">Senior</option>
-                        <option value="Lead/Manager">Lead/Manager</option>
-                    </select>
-                </div>
-                <div class="form-group" style="justify-content: flex-end;">
-                    <button type="submit" id="btnSubmit" class="btn btn-primary">Thêm chức danh</button>
-                </div>
+    <div class="container">
+        <div class="page-header">
+            <h1>Quản lý Danh mục Chức danh & Dải lương</h1>
+            <p>Bộ khung chuẩn hóa chức danh, cấp bậc và dải lương tối thiểu / tối đa làm cơ sở phê duyệt offer (Vai trò: Trưởng phòng Nhân sự)</p>
+        </div>
+
+        <!-- Role Security Banner -->
+        <div id="roleNoticeBanner" class="role-notice notice-info">
+            <span>🔒 <strong>Chính sách phân quyền:</strong> Bạn đang có quyền <span id="roleNoticeText">Trưởng phòng Nhân sự / Admin</span>. Được phép xem, khai báo và cập nhật dải lương làm cơ sở duyệt offer.</span>
+        </div>
+
+        <!-- Form Khai báo / Cập nhật Chức danh & Dải lương -->
+        <div class="card" id="formCard">
+            <div class="card-title">
+                <span id="formTitleText">➕ Khai báo chức danh & Dải lương mới</span>
+                <span style="font-size: 12px; color: var(--text-sub); font-weight: normal;">* Dải lương tối thiểu phải > 0 và lương tối đa >= lương tối thiểu</span>
             </div>
-        </form>
+            <form id="jobTitleForm" onsubmit="saveJobTitle(event)">
+                <input type="hidden" id="editId" value="">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="titleCode">Mã chức danh *</label>
+                        <input type="text" id="titleCode" class="form-control" placeholder="VD: DEV_01, PM_01, HR_01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="titleName">Tên chức danh *</label>
+                        <input type="text" id="titleName" class="form-control" placeholder="VD: Lập trình viên Backend" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="titleLevel">Cấp bậc *</label>
+                        <select id="titleLevel" class="form-control" required>
+                            <option value="Intern/Fresher">Intern / Fresher</option>
+                            <option value="Junior" selected>Junior</option>
+                            <option value="Middle">Middle</option>
+                            <option value="Senior">Senior</option>
+                            <option value="Lead/Manager">Lead / Manager</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid" id="salaryFieldsGrid">
+                    <div class="form-group">
+                        <label for="minSalary">Dải lương tối thiểu (VNĐ) *</label>
+                        <input type="number" id="minSalary" class="form-control" placeholder="VD: 15000000" min="1000000" step="500000" required oninput="updateSalaryPreview()">
+                        <div class="salary-hint" id="minSalaryPreview">Tối thiểu: 0 VNĐ</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxSalary">Dải lương tối đa (VNĐ) *</label>
+                        <input type="number" id="maxSalary" class="form-control" placeholder="VD: 30000000" min="1000000" step="500000" required oninput="updateSalaryPreview()">
+                        <div class="salary-hint" id="maxSalaryPreview">Tối đa: 0 VNĐ</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="titleDescription">Mô tả trách nhiệm & yêu cầu</label>
+                        <input type="text" id="titleDescription" class="form-control" placeholder="VD: Phát triển microservices Java Spring Boot">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="btnCancelEdit" class="btn btn-secondary" style="display: none;" onclick="cancelEdit()">Hủy bỏ</button>
+                    <button type="submit" id="btnSubmit" class="btn btn-primary">Lưu chức danh & Dải lương</button>
+                </div>
+            </form>
+        </div>
 
         <!-- Tìm kiếm và Lọc -->
         <div class="toolbar">
-            <input type="text" id="searchInput" class="form-control search-box" placeholder="Tìm kiếm theo mã hoặc tên chức danh..." oninput="renderTable()">
+            <input type="text" id="searchInput" class="form-control search-box" placeholder="🔍 Tìm kiếm theo mã hoặc tên chức danh..." oninput="renderTable()">
             <select id="filterLevel" class="form-control" style="width: 200px;" onchange="renderTable()">
-                <option value="">Tất cả cấp bậc</option>
-                <option value="Intern/Fresher">Intern/Fresher</option>
+                <option value="">-- Tất cả cấp bậc --</option>
+                <option value="Intern/Fresher">Intern / Fresher</option>
                 <option value="Junior">Junior</option>
                 <option value="Middle">Middle</option>
                 <option value="Senior">Senior</option>
-                <option value="Lead/Manager">Lead/Manager</option>
+                <option value="Lead/Manager">Lead / Manager</option>
             </select>
         </div>
 
         <!-- Bảng Dữ liệu -->
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 60px;">STT</th>
-                    <th>Mã chức danh</th>
-                    <th>Tên chức danh</th>
-                    <th>Cấp bậc</th>
-                    <th style="width: 140px;">Thao tác</th>
-                </tr>
-            </thead>
-            <tbody id="jobTableBody">
-            </tbody>
-        </table>
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">STT</th>
+                            <th>Mã chức danh</th>
+                            <th>Tên chức danh</th>
+                            <th>Cấp bậc</th>
+                            <th id="thSalary">Dải lương (Min - Max)</th>
+                            <th>Trạng thái</th>
+                            <th style="width: 140px; text-align: center;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobTableBody">
+                        <tr><td colspan="7" class="empty-row">Đang tải dữ liệu chức danh...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script>
-        let jobTitles = [
-            { code: "DEV_01", name: "Lập trình viên Frontend", level: "Junior" },
-            { code: "DEV_02", name: "Lập trình viên Backend", level: "Senior" },
-            { code: "PM_01", name: "Quản trị dự án (PM)", level: "Lead/Manager" }
-        ];
+        const API_URL = 'http://localhost:8080/api/job-titles';
+        let jobTitles = [];
+        let canViewSalary = true;
+
+        // Lấy thông tin user đăng nhập từ localStorage
+        function checkUserAuth() {
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+            const username = localStorage.getItem('username') || 'truongphongnhansu';
+            const role = localStorage.getItem('role') || 'ROLE_HR_MANAGER';
+
+            document.getElementById('currentUsername').textContent = username;
+            document.getElementById('currentRole').textContent = role;
+
+            // Kiểm tra quyền xem dải lương: Chỉ HR_MANAGER và ADMIN
+            canViewSalary = (role === 'ROLE_HR_MANAGER' || role === 'ROLE_ADMIN');
+
+            const banner = document.getElementById('roleNoticeBanner');
+            const noticeText = document.getElementById('roleNoticeText');
+            const salaryInputs = document.querySelectorAll('#minSalary, #maxSalary');
+
+            if (canViewSalary) {
+                banner.className = 'role-notice notice-info';
+                noticeText.textContent = 'Trưởng phòng Nhân sự / Quản trị viên (Được toàn quyền xem & cấu hình dải lương)';
+                salaryInputs.forEach(input => input.disabled = false);
+            } else {
+                banner.className = 'role-notice notice-restricted';
+                noticeText.textContent = `${role} (Chỉ Trưởng phòng Nhân sự mới được xem & cấu hình dải lương)`;
+                salaryInputs.forEach(input => {
+                    input.disabled = true;
+                    input.placeholder = 'Chỉ HR Manager được cấu hình';
+                });
+            }
+        }
+
+        // Tải danh sách chức danh từ Backend
+        async function loadJobTitles() {
+            checkUserAuth();
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+            try {
+                const res = await fetch(API_URL, {
+                    headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+                });
+                if (res.ok) {
+                    const result = await res.json();
+                    if (result.success && Array.isArray(result.data)) {
+                        jobTitles = result.data;
+                        renderTable();
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn('Backend chưa sẵn sàng, sử dụng dữ liệu mặc định:', err);
+            }
+
+            // Dữ liệu mẫu ban đầu nếu chưa kết nối Backend
+            if (jobTitles.length === 0) {
+                jobTitles = [
+                    { id: 1, code: "DEV_01", name: "Lập trình viên Frontend", level: "Junior", minSalary: 12000000, maxSalary: 20000000, description: "Phát triển giao diện web với HTML/CSS/JS, React", status: "ACTIVE", salaryVisible: canViewSalary },
+                    { id: 2, code: "DEV_02", name: "Lập trình viên Backend (Java)", level: "Senior", minSalary: 25000000, maxSalary: 45000000, description: "Thiết kế và xây dựng API, Microservices với Java Spring Boot", status: "ACTIVE", salaryVisible: canViewSalary },
+                    { id: 3, code: "PM_01", name: "Quản trị dự án (PM)", level: "Lead/Manager", minSalary: 35000000, maxSalary: 60000000, description: "Quản lý tiến độ, điều phối nguồn lực và sprint dự án ATS", status: "ACTIVE", salaryVisible: canViewSalary },
+                    { id: 4, code: "HR_01", name: "Chuyên viên Tuyển dụng", level: "Middle", minSalary: 15000000, maxSalary: 25000000, description: "Vận hành pipeline, sàng lọc CV và điều phối phỏng vấn", status: "ACTIVE", salaryVisible: canViewSalary }
+                ];
+            }
+            renderTable();
+        }
+
+        function formatCurrency(val) {
+            if (val === null || val === undefined) return 'N/A';
+            return Number(val).toLocaleString('vi-VN') + ' đ';
+        }
+
+        function updateSalaryPreview() {
+            const min = parseFloat(document.getElementById('minSalary').value) || 0;
+            const max = parseFloat(document.getElementById('maxSalary').value) || 0;
+            document.getElementById('minSalaryPreview').textContent = `Tối thiểu: ${formatCurrency(min)}`;
+            document.getElementById('maxSalaryPreview').textContent = `Tối đa: ${formatCurrency(max)}`;
+        }
 
         function renderTable() {
             const tbody = document.getElementById('jobTableBody');
@@ -237,75 +577,188 @@
 
             tbody.innerHTML = '';
 
-            const filteredData = jobTitles.filter(item => {
-                const matchesSearch = item.code.toLowerCase().includes(searchKeyword) || 
-                                      item.name.toLowerCase().includes(searchKeyword);
+            const filtered = jobTitles.filter(item => {
+                const matchesSearch = (item.code && item.code.toLowerCase().includes(searchKeyword)) || 
+                                      (item.name && item.name.toLowerCase().includes(searchKeyword));
                 const matchesLevel = filterLevel === '' || item.level === filterLevel;
                 return matchesSearch && matchesLevel;
             });
 
-            if (filteredData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty-row">Không tìm thấy chức danh phù hợp</td></tr>`;
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-row">Không tìm thấy chức danh phù hợp</td></tr>`;
                 return;
             }
 
-            filteredData.forEach((item, index) => {
-                const originalIndex = jobTitles.indexOf(item);
+            filtered.forEach((item, index) => {
                 const row = document.createElement('tr');
+                
+                let salaryDisplay = '';
+                if (canViewSalary && (item.minSalary || item.maxSalary)) {
+                    salaryDisplay = `<span class="salary-range-badge">${formatCurrency(item.minSalary)} - ${formatCurrency(item.maxSalary)}</span>`;
+                } else if (!canViewSalary) {
+                    salaryDisplay = `<span class="salary-masked-badge">🔒 Chỉ HR Manager được xem</span>`;
+                } else {
+                    salaryDisplay = `<span class="salary-masked-badge">Chưa thiết lập</span>`;
+                }
+
+                const statusBadge = item.status === 'ACTIVE'
+                    ? `<span class="badge-status-active">Hoạt động</span>`
+                    : `<span class="badge-status-inactive">Vô hiệu</span>`;
+
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td><strong>${item.code}</strong></td>
-                    <td>${item.name}</td>
-                    <td><span class="badge-level">${item.level}</span></td>
+                    <td><strong>${item.code || 'N/A'}</strong></td>
                     <td>
-                        <button class="btn btn-warning" onclick="editJobTitle(${originalIndex})">Sửa</button>
-                        <button class="btn btn-danger" onclick="deleteJobTitle(${originalIndex})">Xóa</button>
+                        <div style="font-weight:600;">${item.name}</div>
+                        <div style="font-size:11px; color:var(--text-sub);">${item.description || ''}</div>
+                    </td>
+                    <td><span class="badge-level">${item.level || 'Junior'}</span></td>
+                    <td>${salaryDisplay}</td>
+                    <td>${statusBadge}</td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-warning" onclick="editJobTitle(${item.id || index})">Sửa</button>
+                        <button class="btn btn-danger" onclick="deleteJobTitle(${item.id || index})">Xóa</button>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
         }
 
-        function saveJobTitle(event) {
+        async function saveJobTitle(event) {
             event.preventDefault();
             const code = document.getElementById('titleCode').value.trim().toUpperCase();
             const name = document.getElementById('titleName').value.trim();
             const level = document.getElementById('titleLevel').value;
-            const editIndex = parseInt(document.getElementById('editIndex').value);
+            const minSalary = parseFloat(document.getElementById('minSalary').value);
+            const maxSalary = parseFloat(document.getElementById('maxSalary').value);
+            const description = document.getElementById('titleDescription').value.trim();
+            const editId = document.getElementById('editId').value;
 
-            if (editIndex === -1) {
-                if (jobTitles.some(item => item.code === code)) {
-                    alert('Mã chức danh này đã tồn tại!');
-                    return;
-                }
-                jobTitles.push({ code, name, level });
-            } else {
-                jobTitles[editIndex] = { code, name, level };
-                document.getElementById('editIndex').value = "-1";
-                document.getElementById('btnSubmit').textContent = "Thêm chức danh";
+            // Kiểm tra tính hợp lệ của dải lương
+            if (isNaN(minSalary) || minSalary <= 0) {
+                alert('Dải lương không hợp lệ: Lương tối thiểu phải lớn hơn 0 VNĐ!');
+                return;
+            }
+            if (isNaN(maxSalary) || maxSalary <= 0) {
+                alert('Dải lương không hợp lệ: Lương tối đa phải lớn hơn 0 VNĐ!');
+                return;
+            }
+            if (maxSalary < minSalary) {
+                alert(`Dải lương không hợp lệ: Lương tối đa (${formatCurrency(maxSalary)}) phải lớn hơn hoặc bằng lương tối thiểu (${formatCurrency(minSalary)})!`);
+                return;
             }
 
-            document.getElementById('jobTitleForm').reset();
-            renderTable();
-        }
+            const payload = {
+                code,
+                name,
+                level,
+                minSalary,
+                maxSalary,
+                description
+            };
 
-        function editJobTitle(index) {
-            const item = jobTitles[index];
-            document.getElementById('titleCode').value = item.code;
-            document.getElementById('titleName').value = item.name;
-            document.getElementById('titleLevel').value = item.level;
-            document.getElementById('editIndex').value = index;
-            document.getElementById('btnSubmit').textContent = "Cập nhật";
-        }
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+            const isEdit = editId !== '';
+            const url = isEdit ? `${API_URL}/${editId}` : API_URL;
+            const method = isEdit ? 'PUT' : 'POST';
 
-        function deleteJobTitle(index) {
-            if (confirm(`Bạn có chắc chắn muốn xóa chức danh "${jobTitles[index].name}" không?`)) {
-                jobTitles.splice(index, 1);
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await res.json();
+                if (res.ok && result.success) {
+                    alert(isEdit ? 'Cập nhật chức danh và dải lương thành công!' : 'Tạo chức danh và dải lương mới thành công!');
+                    cancelEdit();
+                    loadJobTitles();
+                    return;
+                } else {
+                    alert('Lỗi: ' + (result.message || 'Không thể lưu chức danh'));
+                }
+            } catch (err) {
+                console.warn('Lưu offline demo:', err);
+                // Cập nhật mảng local demo
+                if (isEdit) {
+                    const idx = jobTitles.findIndex(item => (item.id && item.id == editId));
+                    if (idx !== -1) {
+                        jobTitles[idx] = { ...jobTitles[idx], ...payload };
+                    }
+                } else {
+                    jobTitles.push({ id: Date.now(), ...payload, status: 'ACTIVE' });
+                }
+                alert('Đã lưu thành công!');
+                cancelEdit();
                 renderTable();
             }
         }
 
-        renderTable();
+        function editJobTitle(idOrIndex) {
+            const item = jobTitles.find(t => (t.id && t.id == idOrIndex)) || jobTitles[idOrIndex];
+            if (!item) return;
+
+            document.getElementById('editId').value = item.id || idOrIndex;
+            document.getElementById('titleCode').value = item.code || '';
+            document.getElementById('titleName').value = item.name || '';
+            document.getElementById('titleLevel').value = item.level || 'Junior';
+            document.getElementById('minSalary').value = item.minSalary || '';
+            document.getElementById('maxSalary').value = item.maxSalary || '';
+            document.getElementById('titleDescription').value = item.description || '';
+
+            updateSalaryPreview();
+
+            document.getElementById('formTitleText').textContent = '✏️ Chỉnh sửa chức danh & dải lương: ' + item.name;
+            document.getElementById('btnSubmit').textContent = 'Cập nhật thay đổi';
+            document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+
+            document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            document.getElementById('editId').value = '';
+            document.getElementById('jobTitleForm').reset();
+            updateSalaryPreview();
+            document.getElementById('formTitleText').textContent = '➕ Khai báo chức danh & Dải lương mới';
+            document.getElementById('btnSubmit').textContent = 'Lưu chức danh & Dải lương';
+            document.getElementById('btnCancelEdit').style.display = 'none';
+        }
+
+        async function deleteJobTitle(idOrIndex) {
+            const item = jobTitles.find(t => (t.id && t.id == idOrIndex)) || jobTitles[idOrIndex];
+            if (!item) return;
+
+            if (!confirm(`Bạn có chắc chắn muốn vô hiệu hóa chức danh "${item.name}" không?`)) {
+                return;
+            }
+
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+            if (item.id) {
+                try {
+                    const res = await fetch(`${API_URL}/${item.id}`, {
+                        method: 'DELETE',
+                        headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+                    });
+                    const result = await res.json();
+                    if (res.ok && result.success) {
+                        alert('Đã vô hiệu hóa chức danh thành công');
+                        loadJobTitles();
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Xóa offline:', e);
+                }
+            }
+
+            item.status = 'INACTIVE';
+            renderTable();
+        }
+
+        loadJobTitles();
     </script>
 </body>
 </html>

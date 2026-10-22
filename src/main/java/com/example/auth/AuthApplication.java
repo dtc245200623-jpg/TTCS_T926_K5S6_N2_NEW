@@ -105,4 +105,53 @@ public class AuthApplication {
                 }
             };
         }
+
+        @Bean
+        public CommandLineRunner initJobTitles(com.example.auth.repository.JobTitleRepository jobTitleRepo) {
+            return args -> {
+                if (jobTitleRepo.count() == 0) {
+                    jobTitleRepo.save(com.example.auth.entity.JobTitle.builder()
+                            .code("DEV_01")
+                            .name("Lập trình viên Frontend")
+                            .level("Junior")
+                            .minSalary(12000000D)
+                            .maxSalary(20000000D)
+                            .description("Phát triển giao diện web với HTML/CSS/JS, React")
+                            .status("ACTIVE")
+                            .build());
+
+                    jobTitleRepo.save(com.example.auth.entity.JobTitle.builder()
+                            .code("DEV_02")
+                            .name("Lập trình viên Backend (Java)")
+                            .level("Senior")
+                            .minSalary(25000000D)
+                            .maxSalary(45000000D)
+                            .description("Thiết kế và xây dựng API, Microservices với Java Spring Boot")
+                            .status("ACTIVE")
+                            .build());
+
+                    jobTitleRepo.save(com.example.auth.entity.JobTitle.builder()
+                            .code("PM_01")
+                            .name("Quản trị dự án (PM)")
+                            .level("Lead/Manager")
+                            .minSalary(35000000D)
+                            .maxSalary(60000000D)
+                            .description("Quản lý tiến độ, điều phối nguồn lực và sprint dự án ATS")
+                            .status("ACTIVE")
+                            .build());
+
+                    jobTitleRepo.save(com.example.auth.entity.JobTitle.builder()
+                            .code("HR_01")
+                            .name("Chuyên viên Tuyển dụng")
+                            .level("Middle")
+                            .minSalary(15000000D)
+                            .maxSalary(25000000D)
+                            .description("Vận hành pipeline, sàng lọc CV và điều phối phỏng vấn")
+                            .status("ACTIVE")
+                            .build());
+
+                    System.out.println(">>> Đã khởi tạo danh mục chức danh và dải lương mẫu thành công!");
+                }
+            };
+        }
 }
