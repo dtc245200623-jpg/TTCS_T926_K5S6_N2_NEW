@@ -154,4 +154,57 @@ public class AuthApplication {
                 }
             };
         }
+        @Bean
+        public CommandLineRunner initApplications(
+                com.example.auth.repository.ApplicationRepository appRepo,
+                com.example.auth.repository.CandidateProfileRepository profileRepo,
+                com.example.auth.repository.JobRequestRepository jobRepo,
+                UserRepository userRepo) {
+            return args -> {
+                if (appRepo.count() == 0) {
+                    User candidateUser = userRepo.findByUsername("ungvien").orElse(null);
+                    com.example.auth.entity.JobRequest job = jobRepo.findAll().stream().findFirst().orElse(null);
+                    if (candidateUser != null && job != null) {
+                        com.example.auth.entity.CandidateProfile profile = profileRepo.findByUserId(candidateUser.getId()).orElseGet(() -> {
+                            return profileRepo.save(com.example.auth.entity.CandidateProfile.builder()
+                                    .user(candidateUser)
+                                    .fullName("Nguyễn Văn Ứng Viên")
+                                    .phone("0987654321")
+                                    .currentTitle("Junior Developer")
+                                    .build());
+                        });
+
+                        appRepo.save(com.example.auth.entity.Application.builder()
+                                .trackingCode("TRK-2026-001")
+                                .candidateProfile(profile)
+                                .jobRequest(job)
+                                .status("APPLIED")
+                                .build());
+
+                        appRepo.save(com.example.auth.entity.Application.builder()
+                                .trackingCode("TRK-2026-002")
+                                .candidateProfile(profile)
+                                .jobRequest(job)
+                                .status("SCREENING")
+                                .build());
+
+                        appRepo.save(com.example.auth.entity.Application.builder()
+                                .trackingCode("TRK-2026-003")
+                                .candidateProfile(profile)
+                                .jobRequest(job)
+                                .status("INTERVIEWING")
+                                .build());
+
+                        appRepo.save(com.example.auth.entity.Application.builder()
+                                .trackingCode("TRK-2026-004")
+                                .candidateProfile(profile)
+                                .jobRequest(job)
+                                .status("HIRED")
+                                .build());
+
+                        System.out.println(">>> Đã khởi tạo hồ sơ ứng tuyển mẫu với mã tra cứu: TRK-2026-001 -> 004");
+                    }
+                }
+            };
+        }
 }

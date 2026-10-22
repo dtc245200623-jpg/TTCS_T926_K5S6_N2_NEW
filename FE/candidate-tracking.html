@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng Tra Cứu Trạng Thái Ứng Tuyển | ATS Tuyển Dụng</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+            color: var(--gray-900);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-500);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* Main Container */
+        main {
+            flex: 1;
+            max-width: 860px;
+            width: 100%;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: var(--gray-500);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search Card */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 16px;
+            align-items: flex-end;
+        }
+
+        @media (max-width: 680px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .btn-track {
+            background: var(--primary);
+            color: #ffffff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 44px;
+        }
+
+        .btn-track:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .quick-samples {
+            margin-top: 14px;
+            font-size: 12px;
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .sample-pill {
+            background: var(--gray-100);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s;
+        }
+
+        .sample-pill:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        /* Result Section */
+        .result-container {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .result-title h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .result-title p {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-1 { background: #dbeafe; color: #1e40af; } /* Đã nhận */
+        .status-2 { background: #fef3c7; color: #92400e; } /* Đang xem xét */
+        .status-3 { background: #e0e7ff; color: #4338ca; } /* Mời phỏng vấn */
+        .status-4 { background: #dcfce7; color: #166534; } /* Kết thúc */
+
+        /* 4-Step Progress Stepper */
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 40px 10px 40px 10px;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            right: 30px;
+            height: 4px;
+            background: var(--gray-200);
+            z-index: 1;
+        }
+
+        .step-progress-bar {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            height: 4px;
+            background: var(--primary);
+            z-index: 2;
+            transition: width 0.4s ease;
+        }
+
+        .step-item {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80px;
+        }
+
+        .step-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--gray-500);
+            transition: all 0.3s ease;
+        }
+
+        .step-item.active .step-circle {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-item.completed .step-circle {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .step-label {
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-align: center;
+        }
+
+        .step-item.active .step-label {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .step-item.completed .step-label {
+            color: var(--gray-900);
+        }
+
+        /* Message Box */
+        .status-message-box {
+            background: #f8fafc;
+            border: 1px solid var(--gray-200);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .status-message-box h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .status-message-box p {
+            font-size: 14px;
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            background: var(--gray-50);
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-item span:first-child {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--gray-500);
+        }
+
+        .info-item span:last-child {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* Security Disclaimer */
+        .security-banner {
+            background: #f8fafc;
+            border: 1px dashed var(--gray-200);
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--gray-500);
+            line-height: 1.4;
+        }
+
+        /* Loading & Error */
+        .alert-error {
+            display: none;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 13px;
+            color: var(--gray-500);
+            border-top: 1px solid var(--gray-200);
+            background: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="candidate-tracking.html" class="logo">
+            🎯 <span>Cổng Tuyển Dụng ATS</span>
+        </a>
+        <nav class="nav-links">
+            <a href="job-titles.html">Danh mục Chức danh</a>
+            <a href="dashboard.html">Đăng nhập Nội bộ</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h1>Tra Cứu Trạng Thái Hồ Sơ Ứng Tuyển</h1>
+            <p>Nhập mã tra cứu được cung cấp khi nộp hồ sơ cùng email cá nhân để xem tiến độ xử lý hồ sơ của bạn.</p>
+        </div>
+
+        <!-- Search Form Card -->
+        <div class="card">
+            <form id="trackingForm" onsubmit="handleSearch(event)">
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="trackingCodeInput">Mã tra cứu hồ sơ *</label>
+                        <input type="text" id="trackingCodeInput" class="form-control" placeholder="VD: TRK-2026-001" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailInput">Email ứng tuyển *</label>
+                        <input type="email" id="emailInput" class="form-control" placeholder="VD: ungvien@ictu.edu.vn" required>
+                    </div>
+                    <button type="submit" id="btnSubmit" class="btn-track">
+                        <span>🔍 Tra cứu hồ sơ</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="quick-samples">
+                <span>⚡ Thử nhanh mã mẫu:</span>
+                <span class="sample-pill" onclick="fillSample('TRK-2026-001', 'ungvien@ictu.edu.vn')">TRK-2026-001 (Đã nhận)</span>
+                <span class="sample-pill" onclick="fillSample('TRK-2026-002', 'ungvien@ictu.edu.vn')">TRK-2026-002 (Đang xem xét)</span>
+                <span class="sample-pill" onclick="fillSample('TRK-2026-003', 'ungvien@ictu.edu.vn')">TRK-2026-003 (Mời phỏng vấn)</span>
+                <span class="sample-pill" onclick="fillSample('TRK-2026-004', 'ungvien@ictu.edu.vn')">TRK-2026-004 (Kết thúc)</span>
+            </div>
+        </div>
+
+        <!-- Alert Error Message -->
+        <div id="alertError" class="alert-error"></div>
+
+        <!-- Result Card -->
+        <div id="resultCard" class="card result-container">
+            <div class="result-header">
+                <div class="result-title">
+                    <h2 id="resJobTitle">Lập trình viên Backend (Java)</h2>
+                    <p>Mã tra cứu: <strong id="resTrackingCode" style="color:var(--primary);">TRK-2026-001</strong> | Nộp ngày: <span id="resAppliedAt">22/10/2026</span></p>
+                </div>
+                <div id="resBadge" class="status-badge status-1">
+                    <span>●</span> <span id="resStatusText">Đã nhận</span>
+                </div>
+            </div>
+
+            <!-- 4-Stage Progress Stepper -->
+            <div class="stepper">
+                <div id="stepperBar" class="step-progress-bar" style="width: 0%;"></div>
+                
+                <div class="step-item" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Đã nhận</div>
+                </div>
+                
+                <div class="step-item" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Đang xem xét</div>
+                </div>
+
+                <div class="step-item" id="step3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Mời phỏng vấn</div>
+                </div>
+
+                <div class="step-item" id="step4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Kết thúc</div>
+                </div>
+            </div>
+
+            <!-- Status Description Message Box -->
+            <div class="status-message-box">
+                <h4 id="resMessageTitle">Thông báo trạng thái</h4>
+                <p id="resDescription">Hồ sơ ứng tuyển của bạn đã được hệ thống ghi nhận thành công.</p>
+            </div>
+
+            <!-- Candidate Metadata Grid -->
+            <div class="info-grid">
+                <div class="info-item">
+                    <span>Ứng viên</span>
+                    <span id="resCandidateName">Nguyễn Văn Ứng Viên</span>
+                </div>
+                <div class="info-item">
+                    <span>Email xác thực</span>
+                    <span id="resMaskedEmail">u***n@ictu.edu.vn</span>
+                </div>
+                <div class="info-item">
+                    <span>Bộ phận / Đơn vị</span>
+                    <span id="resDepartment">Phòng IT</span>
+                </div>
+                <div class="info-item">
+                    <span>Trạng thái tổng quát</span>
+                    <span id="resGeneralStatus">Đã nhận</span>
+                </div>
+            </div>
+
+            <!-- Privacy Guarantee Banner -->
+            <div class="security-banner">
+                <span style="font-size: 20px;">🔒</span>
+                <div>
+                    <strong>Chính sách minh bạch & bảo mật ATS:</strong> Hệ thống chỉ hiển thị tiến độ ở mức tổng quát. Mọi nhận xét nội bộ chuyên môn và thông tin người phỏng vấn được bảo mật tuyệt đối theo quy định công ty.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Hệ Thống Quản Lý Tuyển Dụng Nội Bộ (ATS) - Nhóm 2 TTCS</p>
+    </footer>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api/applications/track';
+
+        function fillSample(code, email) {
+            document.getElementById('trackingCodeInput').value = code;
+            document.getElementById('emailInput').value = email;
+            handleSearch(new Event('submit'));
+        }
+
+        async function handleSearch(e) {
+            if (e && e.preventDefault) e.preventDefault();
+
+            const trackingCode = document.getElementById('trackingCodeInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+
+            const alertError = document.getElementById('alertError');
+            const resultCard = document.getElementById('resultCard');
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            alertError.style.display = 'none';
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span>⏳ Đang tra cứu...</span>';
+
+            try {
+                const response = await fetch(`${API_URL}?trackingCode=${encodeURIComponent(trackingCode)}&email=${encodeURIComponent(email)}`);
+                const resJson = await response.json();
+
+                if (response.ok && resJson.success && resJson.data) {
+                    renderResult(resJson.data);
+                } else {
+                    showError(resJson.message || 'Không tìm thấy hồ sơ với thông tin tra cứu đã cung cấp.');
+                }
+            } catch (err) {
+                console.warn('Backend không phản hồi, dùng bộ giả lập mẫu:', err);
+                mockSearch(trackingCode, email);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<span>🔍 Tra cứu hồ sơ</span>';
+            }
+        }
+
+        function renderResult(data) {
+            const resultCard = document.getElementById('resultCard');
+            document.getElementById('alertError').style.display = 'none';
+
+            document.getElementById('resJobTitle').textContent = data.jobTitle || 'Vị trí tuyển dụng';
+            document.getElementById('resTrackingCode').textContent = data.trackingCode;
+            document.getElementById('resAppliedAt').textContent = data.appliedAt ? new Date(data.appliedAt).toLocaleDateString('vi-VN') : 'Mới nộp';
+            document.getElementById('resStatusText').textContent = data.generalStatus;
+            document.getElementById('resCandidateName').textContent = data.candidateName || 'Ứng viên';
+            document.getElementById('resMaskedEmail').textContent = data.maskedEmail || 'Xác thực thành công';
+            document.getElementById('resDepartment').textContent = data.departmentName || 'Công ty';
+            document.getElementById('resGeneralStatus').textContent = data.generalStatus;
+            document.getElementById('resDescription').textContent = data.statusDescription;
+            document.getElementById('resMessageTitle').textContent = `Tiến độ: ${data.generalStatus}`;
+
+            const badge = document.getElementById('resBadge');
+            badge.className = `status-badge status-${data.currentStep || 1}`;
+
+            // Cập nhật Stepper (4 bước)
+            const step = data.currentStep || 1;
+            const percentages = [0, 0, 33, 66, 100];
+            document.getElementById('stepperBar').style.width = `${percentages[step]}%`;
+
+            for (let i = 1; i <= 4; i++) {
+                const stepEl = document.getElementById(`step${i}`);
+                stepEl.className = 'step-item';
+                if (i < step) {
+                    stepEl.classList.add('completed');
+                } else if (i === step) {
+                    stepEl.classList.add('active');
+                }
+            }
+
+            resultCard.style.display = 'block';
+            resultCard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showError(msg) {
+            const alertError = document.getElementById('alertError');
+            const resultCard = document.getElementById('resultCard');
+            resultCard.style.display = 'none';
+            alertError.textContent = '⚠️ ' + msg;
+            alertError.style.display = 'block';
+        }
+
+        // Dữ liệu mô phỏng dự phòng nếu Backend offline
+        function mockSearch(code, email) {
+            const mockMap = {
+                'TRK-2026-001': {
+                    trackingCode: 'TRK-2026-001',
+                    candidateName: 'Nguyễn Văn Ứng Viên',
+                    maskedEmail: 'u***n@ictu.edu.vn',
+                    jobTitle: 'Lập trình viên Backend (Java)',
+                    departmentName: 'Phòng IT',
+                    appliedAt: '2026-10-22T08:00:00',
+                    generalStatus: 'Đã nhận',
+                    currentStep: 1,
+                    statusDescription: 'Hồ sơ ứng tuyển của bạn đã được hệ thống tiếp nhận thành công và đã chuyển tới bộ phận tuyển dụng.'
+                },
+                'TRK-2026-002': {
+                    trackingCode: 'TRK-2026-002',
+                    candidateName: 'Nguyễn Văn Ứng Viên',
+                    maskedEmail: 'u***n@ictu.edu.vn',
+                    jobTitle: 'Lập trình viên Backend (Java)',
+                    departmentName: 'Phòng IT',
+                    appliedAt: '2026-10-21T10:30:00',
+                    generalStatus: 'Đang xem xét',
+                    currentStep: 2,
+                    statusDescription: 'Hồ sơ của bạn đang được Phòng Nhân sự và Trưởng bộ phận chuyên môn xem xét, đánh giá độ phù hợp.'
+                },
+                'TRK-2026-003': {
+                    trackingCode: 'TRK-2026-003',
+                    candidateName: 'Nguyễn Văn Ứng Viên',
+                    maskedEmail: 'u***n@ictu.edu.vn',
+                    jobTitle: 'Lập trình viên Backend (Java)',
+                    departmentName: 'Phòng IT',
+                    appliedAt: '2026-10-20T14:15:00',
+                    generalStatus: 'Mời phỏng vấn',
+                    currentStep: 3,
+                    statusDescription: 'Chúc mừng bạn! Hồ sơ của bạn đã đạt tiêu chuẩn và được mời tham gia phỏng vấn. Vui lòng kiểm tra email để biết lịch phỏng vấn chi tiết.'
+                },
+                'TRK-2026-004': {
+                    trackingCode: 'TRK-2026-004',
+                    candidateName: 'Nguyễn Văn Ứng Viên',
+                    maskedEmail: 'u***n@ictu.edu.vn',
+                    jobTitle: 'Lập trình viên Backend (Java)',
+                    departmentName: 'Phòng IT',
+                    appliedAt: '2026-10-18T09:00:00',
+                    generalStatus: 'Kết thúc',
+                    currentStep: 4,
+                    statusDescription: 'Quy trình ứng tuyển cho vị trí này đã hoàn tất. Cảm ơn bạn đã quan tâm và dành thời gian ứng tuyển vào công ty.'
+                }
+            };
+
+            const item = mockMap[code.toUpperCase()];
+            if (item && email.toLowerCase() === 'ungvien@ictu.edu.vn') {
+                renderResult(item);
+            } else {
+                showError('Mã tra cứu hoặc Email không chính xác. Vui lòng kiểm tra lại!');
+            }
+        }
+    </script>
+</body>
+</html>

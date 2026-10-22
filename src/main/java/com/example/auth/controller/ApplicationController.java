@@ -2,6 +2,7 @@ package com.example.auth.controller;
 
 import com.example.auth.dto.ApplicationDto;
 import com.example.auth.dto.ApiResponse;
+import com.example.auth.dto.CandidateTrackingDto;
 import com.example.auth.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,24 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ApplicationController {
     private final ApplicationService applicationService;
+
+    /**
+     * Tra cứu trạng thái hồ sơ công khai dành cho Ứng viên (Không cần đăng nhập)
+     * Yêu cầu nhập Mã tra cứu và Email ứng tuyển
+     * Chỉ hiển thị 4 trạng thái tổng quát: Đã nhận, Đang xem xét, Mời phỏng vấn, Kết thúc
+     * Không tiết lộ nhận xét nội bộ hay tên người phỏng vấn
+     */
+    @GetMapping("/track")
+    public ResponseEntity<ApiResponse<CandidateTrackingDto>> trackApplication(
+            @RequestParam String trackingCode,
+            @RequestParam String email) {
+        try {
+            CandidateTrackingDto dto = applicationService.trackApplication(trackingCode, email);
+            return ResponseEntity.ok(ApiResponse.success("Tra cứu hồ sơ thành công", dto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
 
     @PostMapping(value = "/{jobId}/apply", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('CANDIDATE') or hasRole('ADMIN')")
